@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/xkakr/AndroidStudioProjects/mapAPITest/app/src/main/res/drawable/layout_background.xml" value="0.1" />
+        <entry key="..\:/Users/xkakr/AndroidStudioProjects/mapAPITest/app/src/main/res/layout/activity_main.xml" value="0.625" />
+        <entry key="..\:/Users/xkakr/AndroidStudioProjects/mapAPITest/app/src/main/res/layout/activity_main2.xml" value="0.42857142857142855" />
+        <entry key="..\:/Users/xkakr/AndroidStudioProjects/mapAPITest/app/src/main/res/layout/activity_maps.xml" value="0.1" />
+        <entry key="..\:/Users/xkakr/AndroidStudioProjects/mapAPITest/app/src/main/res/layout/activity_qr.xml" value="0.5364583333333334" />
+        <entry key="..\:/Users/xkakr/AndroidStudioProjects/mapAPITest/app/src/main/res/layout/activity_qractivity.xml" value="0.5364583333333334" />
+        <entry key="..\:/Users/xkakr/AndroidStudioProjects/mapAPITest/app/src/main/res/layout/listview_item.xml" value="0.5714285714285714" />
+        <entry key="..\:/Users/xkakr/AppData/Local/Android/Sdk/platforms/android-32/data/res/layout/simple_list_item_1.xml" value="0.10285714285714286" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
