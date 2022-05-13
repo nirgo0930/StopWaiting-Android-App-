@@ -1,0 +1,18 @@
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+new file mode 100644
+--- /dev/null	(date 1652426330276)
++++ b/.idea/workspace.xml	(date 1652426330276)
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="PropertiesComponent">
++    <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
++    <property name="settings.editor.selected.configurable" value="AndroidSdkUpdater" />
++  </component>
++</project>
+\ No newline at end of file
