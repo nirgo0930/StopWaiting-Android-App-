@@ -1,12 +1,8 @@
 package com.example.stopwaiting;
 
-<<<<<<< HEAD
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-=======
-import android.content.Context;
->>>>>>> origin/master
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,20 +15,14 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 public class MyWaitingListAdapter extends RecyclerView.Adapter<MyWaitingListItemViewHolder> {
-<<<<<<< HEAD
     private Context mContext;
-    private List<MyWaitingListItem> mItemList;
-=======
-    Context mContext;
-    List<MyWaitingListItem> mItemList;
->>>>>>> origin/master
+    private List<WaitingListItem> mItemList;
 
-    public MyWaitingListAdapter(Context a_context, List<MyWaitingListItem> a_itemList) {
+    public MyWaitingListAdapter(Context a_context, List<WaitingListItem> a_itemList) {
         mContext = a_context;
         mItemList = a_itemList;
     }
 
-<<<<<<< HEAD
     public interface OnItemClickEventListener {
         void onItemClick(String name);
     }
@@ -51,19 +41,14 @@ public class MyWaitingListAdapter extends RecyclerView.Adapter<MyWaitingListItem
 
     @Override
     public MyWaitingListItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.mywaiting_item, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.waiting_item, parent, false);
         return new MyWaitingListItemViewHolder(view, mItemClickListener).linkAdapter(this);
-=======
-    @Override
-    public MyWaitingListItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.mywaiting_item, parent, false);
-        return new MyWaitingListItemViewHolder(view).linkAdapter(this);
->>>>>>> origin/master
+
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyWaitingListItemViewHolder holder, int position) {
-        final MyWaitingListItem waitingItem = mItemList.get(position);
+        final WaitingListItem waitingItem = mItemList.get(position);
 
         Glide.with(mContext.getApplicationContext())
                 .load(waitingItem.getImgUri())

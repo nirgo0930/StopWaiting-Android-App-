@@ -14,11 +14,13 @@ public class WaitingInfo implements Serializable {
     private String type; //normal time
     private int maxPerson; //최대인원
     private ArrayList<String> timetable = new ArrayList(); //운영 타임 ex)12:00 13:00
+    private String admin; //개설자
 
     public WaitingInfo() {
     }
 
-    public WaitingInfo(Long id, Double latitude, Double longitude, String name, String locDetail, String info, String type, int maxPerson) {
+    public WaitingInfo(String adm, Long id, Double latitude, Double longitude, String name, String locDetail, String info, String type, int maxPerson) {
+        this.admin = adm;
         this.id = id;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -27,9 +29,11 @@ public class WaitingInfo implements Serializable {
         this.info = info;
         this.type = type;
         this.maxPerson = maxPerson;
+
     }
 
-    public WaitingInfo(Long id, Double latitude, Double longitude, String name, String locDetail, String info, String type, int maxPerson, ArrayList timetable) {
+    public WaitingInfo(String adm, Long id, Double latitude, Double longitude, String name, String locDetail, String info, String type, int maxPerson, ArrayList timetable) {
+        this.admin = adm;
         this.id = id;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -39,6 +43,14 @@ public class WaitingInfo implements Serializable {
         this.type = type;
         this.maxPerson = maxPerson;
         this.timetable = timetable;
+    }
+
+    public String getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(String admin) {
+        this.admin = admin;
     }
 
     public Long getId() {

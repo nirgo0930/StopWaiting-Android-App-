@@ -58,7 +58,7 @@ public class MyPageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = myIntent;
-                intent.setClass(MyPageActivity.this, ManageWaitingActivity.class);
+                intent.setClass(MyPageActivity.this, ManageWaitingListActivity.class);
 
                 startActivity(intent);
             }

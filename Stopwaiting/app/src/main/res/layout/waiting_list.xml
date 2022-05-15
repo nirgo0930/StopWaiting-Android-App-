@@ -7,7 +7,7 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/txtTitle"
         android:layout_width="300dp"
         android:layout_height="70dp"
         android:layout_marginTop="30dp"
@@ -18,7 +18,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-<<<<<<< HEAD
     <TextView
         android:id="@+id/txtResult"
         android:layout_width="wrap_content"
@@ -27,16 +26,14 @@
         android:text=" "
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView1" />
+        app:layout_constraintTop_toBottomOf="@+id/txtTitle" />
 
-=======
->>>>>>> origin/master
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="0dp"
         android:layout_height="400dp"
         android:layout_marginStart="20dp"
-<<<<<<< HEAD
         android:layout_marginTop="15dp"
         android:layout_marginEnd="20dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -44,12 +41,4 @@
         app:layout_constraintTop_toBottomOf="@+id/txtResult">
 
     </androidx.recyclerview.widget.RecyclerView>
-=======
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView1" />
->>>>>>> origin/master
-
 </androidx.constraintlayout.widget.ConstraintLayout>

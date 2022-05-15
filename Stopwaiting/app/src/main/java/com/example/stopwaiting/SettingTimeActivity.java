@@ -80,7 +80,7 @@ public class SettingTimeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //서버 전송
-                ((DataApplication) getApplication()).testDBList.add(new WaitingInfo(11L,
+                ((DataApplication) getApplication()).testDBList.add(new WaitingInfo(((DataApplication) getApplication()).userId, 11L,
                         timeIntent.getDoubleExtra("latitude", 0),
                         timeIntent.getDoubleExtra("longitude", 0),
                         timeIntent.getStringExtra("name"), timeIntent.getStringExtra("detail"), timeIntent.getStringExtra("info"),

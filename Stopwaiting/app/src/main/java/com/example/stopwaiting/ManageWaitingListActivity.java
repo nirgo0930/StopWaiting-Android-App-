@@ -10,23 +10,24 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class CheckMyWaitingActivity extends AppCompatActivity {
+public class ManageWaitingListActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ArrayList<WaitingQueue> mWaitingQueue;
     private ArrayList<WaitingListItem> mWaitingList;
     private MyWaitingListAdapter mListAdapter;
-    public static Activity myWaitingActivity;
+    public static Activity manageWaitingActivity;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.waiting_list);
-        myWaitingActivity = CheckMyWaitingActivity.this;
+        manageWaitingActivity = ManageWaitingListActivity.this;
         TextView result = findViewById(R.id.txtResult);
         recyclerView = findViewById(R.id.recyclerView);
         mWaitingList = new ArrayList<>();
 
         mWaitingQueue = new ArrayList<>();
         mWaitingQueue = ((DataApplication) getApplication()).myWaiting;
+
         if (mWaitingQueue.size() > 0) {
             for (int i = 0; i < mWaitingQueue.size(); i++) {
                 WaitingInfo tempInfo = new WaitingInfo();
@@ -51,10 +52,12 @@ public class CheckMyWaitingActivity extends AppCompatActivity {
                         tempInfo.getLocDetail()));
 
             }
-            result.setText("신청한 웨이팅은 총 " + mWaitingList.size() + "건 입니다.");
+            result.setText("개설한 웨이팅은 총 " + mWaitingList.size() + "건 입니다.");
         } else {
-            result.setText("신청한 웨이팅이 없습니다.");
+
+            result.setText("개설한 웨이팅이 없습니다.");
         }
+
         mListAdapter = new MyWaitingListAdapter(this, mWaitingList);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());

@@ -2,13 +2,13 @@ package com.example.stopwaiting;
 
 import android.net.Uri;
 
-public class MyWaitingListItem {
+public class WaitingListItem {
     private Uri imgUri;
     private String name;
     private int waitingCnt;
     private String locDetail;
 
-    public MyWaitingListItem(Uri imgId, String txtName, int txtWaitingCnt, String txtLocDetail) {
+    public WaitingListItem(Uri imgId, String txtName, int txtWaitingCnt, String txtLocDetail) {
         this.imgUri = imgId;
         this.name = txtName;
         this.waitingCnt = txtWaitingCnt;

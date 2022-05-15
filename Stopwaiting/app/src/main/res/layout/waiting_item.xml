@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-<<<<<<< HEAD
     android:id="@+id/waitinglistItem"
-=======
->>>>>>> origin/master
     android:layout_width="match_parent"
     android:layout_height="100dp"
     android:background="?android:attr/activatedBackgroundIndicator"
     android:gravity="center_vertical"
     android:orientation="horizontal">
 
-    <!-- Icon -->
     <ImageView
         android:id="@+id/imgItem"
         android:layout_width="70dp"
@@ -19,7 +15,6 @@
         android:layout_gravity="center_vertical"
         android:layout_margin="10dp" />
 
-    <!-- Country name -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

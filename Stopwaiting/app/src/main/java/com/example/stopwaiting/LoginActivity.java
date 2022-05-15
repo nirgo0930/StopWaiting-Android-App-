@@ -114,17 +114,17 @@ public class LoginActivity extends AppCompatActivity {
         temp.add("14:00");
         temp.add("15:00");
         ((DataApplication) this.getApplication()).testDBList.add(new WaitingInfo
-                (1L, 36.144760, 128.393884, "미용실", "학생회관 B208", "미용실입니다.", "time", 5, temp));
+                ("test", 1L, 36.144760, 128.393884, "미용실", "학생회관 B208", "미용실입니다.", "time", 5, temp));
         for (int i = 0; i < temp.size(); i++) {
             ((DataApplication) getApplication()).testWaitingQueueDBList.add(new WaitingQueue("미용실", temp.get(i), 5));
         }
 
         ((DataApplication) this.getApplication()).testDBList.add(new WaitingInfo
-                (2L, 36.145619, 128.392535, "특식배부", "디지털관 330", "컴소공 특식배부.", "normal", 3));
+                ("test", 2L, 36.145619, 128.392535, "특식배부", "디지털관 330", "컴소공 특식배부.", "normal", 3));
         ((DataApplication) getApplication()).testWaitingQueueDBList.add(new WaitingQueue("특식배부", "normal", 3));
 
         ((DataApplication) this.getApplication()).testDBList.add(new WaitingInfo
-                (3L, 36.145123, 128.394244, "북카페", "학생회관 B218", "북카페입니다.", "normal", 10));
+                ("admin", 3L, 36.145123, 128.394244, "북카페", "학생회관 B218", "북카페입니다.", "normal", 10));
         ((DataApplication) getApplication()).testWaitingQueueDBList.add(new WaitingQueue("북카페", "normal", 10));
 
         String root = "android.resource://" + R.class.getPackage().getName() + "/";

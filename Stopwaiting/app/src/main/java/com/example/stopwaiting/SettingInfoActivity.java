@@ -142,7 +142,7 @@ public class SettingInfoActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (rdoGroup.getCheckedRadioButtonId() == R.id.rdoNormal) {
                     //서버 데이터 전송
-                    ((DataApplication) getApplication()).testDBList.add(new WaitingInfo(10L,
+                    ((DataApplication) getApplication()).testDBList.add(new WaitingInfo(((DataApplication) getApplication()).userId, 10L,
                             settingInfoIntent.getDoubleExtra("latitude", 0),
                             settingInfoIntent.getDoubleExtra("longitude", 0),
                             edtName.getText().toString(), edtDetail.getText().toString(), edtInfo.getText().toString(),
