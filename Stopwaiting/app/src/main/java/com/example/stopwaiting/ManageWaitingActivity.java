@@ -15,7 +15,8 @@ public class ManageWaitingActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.manage_waiting);
+        setContentView(R.layout.manage_waiting);
+        Intent intent = getIntent();
         manageWaitingActivity = ManageWaitingActivity.this;
 
         btnCheckIn = (Button) findViewById(R.id.btnCheckIn);

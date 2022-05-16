@@ -38,6 +38,8 @@
         <activity android:name=".SettingInfoActivity" />
         <activity android:name=".SettingLocationActivity" />
         <activity android:name=".SettingTimeActivity" />
+        <activity android:name=".ManageWaitingListActivity" />
+        <activity android:name=".ManageWaitingActivity" />
 
         <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"

@@ -3,6 +3,7 @@ package com.example.stopwaiting;
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,7 +15,7 @@ public class ManageWaitingListActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ArrayList<WaitingQueue> mWaitingQueue;
     private ArrayList<WaitingListItem> mWaitingList;
-    private MyWaitingListAdapter mListAdapter;
+    private ManageWaitingListAdapter mListAdapter;
     public static Activity manageWaitingActivity;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,11 +23,24 @@ public class ManageWaitingListActivity extends AppCompatActivity {
         setContentView(R.layout.waiting_list);
         manageWaitingActivity = ManageWaitingListActivity.this;
         TextView result = findViewById(R.id.txtResult);
+        TextView title = findViewById(R.id.txtTitle);
+        title.setText("개설한 웨이팅");
         recyclerView = findViewById(R.id.recyclerView);
         mWaitingList = new ArrayList<>();
 
         mWaitingQueue = new ArrayList<>();
-        mWaitingQueue = ((DataApplication) getApplication()).myWaiting;
+        for (int i = 0; i < ((DataApplication) getApplication()).testDBList.size(); i++) {
+            WaitingInfo tempInfo = ((DataApplication) getApplication()).testDBList.get(i);
+            if (tempInfo.getAdmin().equals(((DataApplication) getApplication()).userId)) {
+                String qName = tempInfo.getName();
+                for (int j = 0; j < ((DataApplication) getApplication()).testWaitingQueueDBList.size(); j++) {
+                    WaitingQueue tempQ = ((DataApplication) getApplication()).testWaitingQueueDBList.get(j);
+                    if (tempQ.getQueueName().equals(qName)) {
+                        mWaitingQueue.add(tempQ);
+                    }
+                }
+            }
+        }
 
         if (mWaitingQueue.size() > 0) {
             for (int i = 0; i < mWaitingQueue.size(); i++) {
@@ -46,10 +60,18 @@ public class ManageWaitingListActivity extends AppCompatActivity {
                         break;
                     }
                 }
-
-                mWaitingList.add(new WaitingListItem(tempImg.getUri(), mWaitingQueue.get(i).getQueueName(),
-                        mWaitingQueue.get(i).getWaitingPersonList().indexOf(((DataApplication) getApplication()).userId),
-                        tempInfo.getLocDetail()));
+                boolean check = false;
+                for (int j = 0; j < mWaitingList.size(); j++) {
+                    if (mWaitingList.get(j).getName().equals(mWaitingQueue.get(i).getQueueName())) {
+                        check = true;
+                        break;
+                    }
+                }
+                if (!check) {
+                    mWaitingList.add(new WaitingListItem(tempImg.getUri(), mWaitingQueue.get(i).getQueueName(),
+                            mWaitingQueue.get(i).getWaitingPersonList().size(),
+                            tempInfo.getLocDetail()));
+                }
 
             }
             result.setText("개설한 웨이팅은 총 " + mWaitingList.size() + "건 입니다.");
@@ -58,7 +80,7 @@ public class ManageWaitingListActivity extends AppCompatActivity {
             result.setText("개설한 웨이팅이 없습니다.");
         }
 
-        mListAdapter = new MyWaitingListAdapter(this, mWaitingList);
+        mListAdapter = new ManageWaitingListAdapter(this, mWaitingList);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
