@@ -1,5 +1,7 @@
 package com.example.mapapitest;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -7,17 +9,30 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.Application;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowInsets;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import androidx.core.app.ActivityCompat;
+//import androidx.test.core.app.ApplicationProvider;
 import androidx.wear.widget.SwipeDismissFrameLayout;
 
 import com.example.mapapitest.databinding.ActivityMapsBinding;
+import com.google.android.gms.tasks.OnSuccessListener;
+
+import java.util.Map;
+import java.util.function.Consumer;
 
 public class MapsActivity extends Activity implements OnMapReadyCallback {
 
@@ -28,6 +43,15 @@ public class MapsActivity extends Activity implements OnMapReadyCallback {
      */
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
+    private FusedLocationProviderClient locationSource;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1000;
+    private static final int WAITING_LOCATION_REQUEST_CODE = 2000;
+    private static final String[] PERMISSIONS = {
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+    };
+    private double cur_lat;
+    private double cur_lon;
 
     public void onCreate(Bundle savedState) {
         super.onCreate(savedState);
@@ -51,7 +75,6 @@ public class MapsActivity extends Activity implements OnMapReadyCallback {
                 finish();
             }
         });
-
         // Adjusts margins to account for the system window insets when they become available.
         swipeDismissRootFrameLayout.setOnApplyWindowInsetsListener(
                 new View.OnApplyWindowInsetsListener() {
@@ -79,12 +102,79 @@ public class MapsActivity extends Activity implements OnMapReadyCallback {
                 (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+//        //자기 위치 반환
+        locationSource = new FusedLocationProviderClient(this);
+//
+//
+//        LocationManager locationManager = (LocationManager) ApplicationProvider.getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+//        //마지막 위치 받아오기
+//
+//
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            // TODO: Consider calling
+//            //    ActivityCompat#requestPermissions
+//            // here to request the missing permissions, and then overriding
+//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//            //                                          int[] grantResults)
+//            // to handle the case where the user grants the permission. See the documentation
+//            // for ActivityCompat#requestPermissions for more details.
+//            return;
+//        }
+//        locationSource = LocationServices.getFusedLocationProviderClient(this);
+//        //Location loc_Current = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//
+////        locationSource.getLastLocation()
+////                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+////                    @Override
+////                    public void onSuccess(Location location) {
+////                        if(location !=null){
+////                            cur_lat = location.getLatitude(); //위도
+////                            cur_lon = location.getLongitude(); //경도
+////                            Toast.makeText(MapsActivity.this,cur_lat+" "+cur_lon,Toast.LENGTH_SHORT).show();
+////                        }
+////                    }
+////                });
+//
+//        Application application = getApplication();
+////        locationSource.getCurrentLocation(
+////                LocationManager.GPS_PROVIDER,
+////                null,
+////                getApplication().getMainExecutor(),
+////                new Consumer<Location>(){
+////                    @Override
+////                    public void accept(Location location){
+////                        cur_lat = location.getLatitude(); //위도
+////                        cur_lon = location.getLongitude(); //경도
+////
+////                    }
+////                }
+////        )
+//
+//
+//
+////        locationManager.getCurrentLocation(
+////                LocationManager.GPS_PROVIDER,
+////                null,
+////                application.getMainExecutor(),
+////                new Consumer<Location>() {
+////                    @Override
+////                    public void accept(Location location) {
+////                        cur_lat = location.getLatitude(); //위도
+////                        cur_lon = location.getLongitude(); //경도
+////                        Toast.makeText(MapsActivity.this, cur_lat + " " + cur_lon, Toast.LENGTH_SHORT).show();
+////                    }
+////                }
+////        );
+//
+
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         // Map is ready to be used.
         mMap = googleMap;
+
+        //googleMap.(locationSource);
 
         // Inform user how to close app (Swipe-To-Close).
         int duration = Toast.LENGTH_LONG;
@@ -93,7 +183,7 @@ public class MapsActivity extends Activity implements OnMapReadyCallback {
         toast.show();
 
         //얘네들 서버로 받아서 for문돌리든가 해야할듯
-       // Adds a marker in Sydney, Australia and moves the camera.
+        // Adds a marker in Sydney, Australia and moves the camera.
         LatLng salon = new LatLng(36.144760, 128.393884);
         mMap.addMarker(new MarkerOptions().position(salon).title("미용실"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(salon));
@@ -107,14 +197,32 @@ public class MapsActivity extends Activity implements OnMapReadyCallback {
         mMap.moveCamera(CameraUpdateFactory.newLatLng(book_cafe));
 
         //mMap.setMyLocationEnabled();
-        //mMap.getUiSettings().isMyLocationButtonEnabled();
+
+        //mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.getUiSettings().setZoomControlsEnabled(true);
         //googleMap.getUiSettings().setMyLocationButtonEnabled(true);
-       // mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        // mMap.getUiSettings().setMyLocationButtonEnabled(true);
 //        googleMap.setMyLocationEnabled();
 //        mMap.setMyLocationEnabled();
 //        mMap.isMyLocationEnabled()=true;
-//        googleMap.getUiSettings().isZoomControlsEnabled(true);
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            // TODO: Consider calling
+//            //    ActivityCompat#requestPermissions
+//            // here to request the missing permissions, and then overriding
+//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//            //                                          int[] grantResults)
+//            // to handle the case where the user grants the permission. See the documentation
+//            // for ActivityCompat#requestPermissions for more details.
+//            return;
+//        }
+//        mMap.setMyLocationEnabled(true);
+//        mMap.setOnMyLocationButtonClickListener((GoogleMap.OnMyLocationButtonClickListener) this);
+//        mMap.setOnMyLocationClickListener((GoogleMap.OnMyLocationClickListener) this);
+//
+        //mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        //        Toast.makeText(this,cur_lat+" "+cur_lon,Toast.LENGTH_SHORT).show();
+
+        //LatLng tempLoc = new LatLng(cur_lat,cur_lon);
         //초기줌 설정
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(book_cafe, 16));
 

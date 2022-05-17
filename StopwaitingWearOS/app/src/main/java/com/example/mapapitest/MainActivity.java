@@ -1,7 +1,6 @@
 package com.example.mapapitest;
 
 import android.app.Activity;
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -12,13 +11,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.core.app.NotificationCompat;
-
-import com.example.mapapitest.databinding.ActivityMainBinding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +22,7 @@ import java.util.List;
 public class MainActivity extends Activity {
 
     private TextView mTextView;
-    private ActivityMainBinding binding;
+//    private ActivityMainBinding binding;
 
     private ListView listView;
 
@@ -69,10 +65,12 @@ public class MainActivity extends Activity {
         str= "time/11:00/미용실";
         str2="time/12:00/북카페";
         str3="time/15:00/특식 배부";
+        String str4="normal/5/zz";
         List<String> strs = new ArrayList<>();
         strs.add(str);
         strs.add(str2);
         strs.add(str3);
+        strs.add(str4);
 
 
 //        strList = str.split("/");
@@ -87,10 +85,14 @@ public class MainActivity extends Activity {
 //        waitingList.add(str);
 //        waitingList.add(str2);`
 
-        for(int i=0; i<3; i++){ //나중에 서버에서 받아온 수만큼 for문 돌리기
+        for(int i=0; i<4; i++){ //나중에 서버에서 받아온 수만큼 for문 돌리기
             strList = strs.get(i).split("/");
-            screenList.add("\t"+strList[1]+"\t\t"+strList[2]);
-            waitingList.add(strList[1]+"/"+strList[2]);
+            if(strList[0].equals("normal")){
+                screenList.add("\t"+strList[1]+"명\t\t\t"+strList[2]);
+            }
+            else{
+                screenList.add("\t"+strList[1]+"\t\t"+strList[2]);
+            }
         }
 
         textWaitingAdapter = new ArrayAdapter<String>(this, R.layout.listview_item, screenList);
@@ -104,21 +106,22 @@ public class MainActivity extends Activity {
                 //waitingList.get(i);
 
                 type = strList[0];
-                Intent intent = new Intent(getApplicationContext(), MainActivity2.class);
+                Intent intent = new Intent(getApplicationContext(), WaitingDetailActivity.class);
                 if(type.equals("time")){
                     // 13:00 북카페
 //                    time = strList[1];
 //                    location = strList[2];
-                    intent.putExtra("text",waitingList.get(i));
+                    intent.putExtra("text",strs.get(i));
                     startActivity(intent);
                 }
 
                 else if(type.equals("normal")){
                     // 5 북카페
-                    count = strList[1];
-                    location = strList[2];
+//                    count = strList[1];
+//                    location = strList[2];
 //                    intent.putExtra("count",count);
 //                    intent.putExtra("location",location);
+                    intent.putExtra("text",strs.get(i));
                     startActivity(intent);
                 }
 

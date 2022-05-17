@@ -6,17 +6,17 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import com.example.mapapitest.databinding.ActivityMain2Binding;
+//import com.example.mapapitest.databinding.ActivityMain2Binding;
 
-public class MainActivity2 extends Activity {
+public class WaitingDetailActivity extends Activity {
 
     private TextView mTextView;
-private ActivityMain2Binding binding;
+//private ActivityMain2Binding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main2);
+        setContentView(R.layout.activity_detail);
 
 
         //binding = ActivityMain2Binding.inflate(getLayoutInflater());
@@ -32,8 +32,13 @@ private ActivityMain2Binding binding;
 
         TextView textLoc = findViewById(R.id.textLoc);
         TextView textTime = findViewById(R.id.textTime);
-        textTime.setText(textList[0]);
-        textLoc.setText(textList[1]);
+        if(textList[0].equals("normal")){
+            textTime.setText(textList[1]+"명 남음");
+        }
+        else{
+            textTime.setText(textList[1]);
+        }
+        textLoc.setText(textList[2]);
 
         //취소하기
         Button btnCancel = (Button) findViewById(R.id.btnCancel);
