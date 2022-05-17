@@ -13,9 +13,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,12 +20,12 @@ import java.util.Date;
 public class ManageWaitingActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     public static Activity manageWaitingActivity;
     private ArrayList<WaitingQueue> wQueue;
-    private WaitingInfo wInfo;
-    private Button btnCheckOut;
-    private Button btnCheckIn;
-    private TextView txtWaitingCnt, choice;
-    private Spinner spinner;
     private ArrayList<String> timeList;
+    private WaitingInfo wInfo;
+    private WaitingQueue selectQ;
+    private Button btnShowList, btnCheckIn, btnRefresh;
+    private TextView txtWaitingCnt, txtChoice, txtNextName, txtWaitingName;
+    private Spinner spinner;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +34,16 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
         manageWaitingActivity = ManageWaitingActivity.this;
         wQueue = new ArrayList<>();
         wInfo = new WaitingInfo();
+        selectQ = new WaitingQueue();
+
+        btnCheckIn = findViewById(R.id.btnCheckIn);
+        btnShowList = findViewById(R.id.btnShowList);
+        btnRefresh = findViewById(R.id.btnRefresh);
+        txtWaitingCnt = findViewById(R.id.txtWaitingCnt);
+        txtChoice = findViewById(R.id.txtSelectTime);
+        txtNextName = findViewById(R.id.txtNextName);
+        txtWaitingName = findViewById(R.id.txtWaitingName);
+        spinner = findViewById(R.id.spnTime);
 
         for (int i = 0; i < ((DataApplication) getApplication()).testDBList.size(); i++) {
             if (((DataApplication) getApplication()).testDBList.get(i).getName().equals(intent.getStringExtra("name"))) {
@@ -50,12 +57,8 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
                 wQueue.add(((DataApplication) getApplication()).testWaitingQueueDBList.get(i));
             }
         }
-        btnCheckIn = (Button) findViewById(R.id.btnCheckIn);
-        btnCheckOut = (Button) findViewById(R.id.btnCheckOut);
-        txtWaitingCnt = findViewById(R.id.txtWaitingCnt);
-        choice = findViewById(R.id.txtSelectTime);
-        spinner = findViewById(R.id.spnTime);
-        choice = findViewById(R.id.txtSelectTime);
+        txtWaitingName.setText(wInfo.getName());
+        selectQ = wQueue.get(0);
 
         btnCheckIn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -64,10 +67,18 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
             }
         });
 
-        btnCheckOut.setOnClickListener(new View.OnClickListener() {
+        btnShowList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = new Intent(ManageWaitingActivity.this, ManageWaitingPersonActivity.class);
+                startActivityForResult(intent, 5000);
+            }
+        });
 
+        btnRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                refresh();
             }
         });
 
@@ -85,58 +96,80 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
             timeList.add("normal");
         }
 
+    }
 
+    void refresh() {
+        WaitingQueue temp = new WaitingQueue();
+
+        String wCnt = "";
+        String next = "";
+
+        if (wQueue.get(0).getTime().equals("normal")) {
+            temp = wQueue.get(0);
+
+            wCnt = (temp.getWaitingPersonList().size()) + " 명";
+            next = temp.getWaitingPersonList().get(0);
+        } else {
+            for (int i = 0; i < wQueue.size(); i++) {
+                temp = wQueue.get(i);
+                if (temp.getTime().equals(txtChoice.getText().toString())) {
+                    if (temp.getWaitingPersonList() != null) {
+                        wCnt = (temp.getWaitingPersonList().size()) + " 명";
+                        next = temp.getWaitingPersonList().get(0);
+                    } else {
+                        wCnt = "0 명";
+                        next = "-";
+                    }
+
+                    selectQ = temp;
+                    break;
+                }
+            }
+        }
+
+        txtWaitingCnt.setText(wCnt);
+        txtNextName.setText(next);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
+
         if (requestCode == 4000) {
             if (resultCode == RESULT_OK) {
-                if (result != null) {
-                    if (result.getContents() == null) {
-                    } else {
-                        String selectQr = data.getStringExtra("qr");
-                        if (selectQr == ((DataApplication) getApplication()).userCode) {
-                            String tempName = "test";
+                String selectQr = data.getStringExtra("qr");
+                if (selectQr.equals(((DataApplication) getApplication()).userCode)) {
+                    String tempName = "test"; //DB에서 일치하는 학번 검색
 
+                    if (selectQ.getWaitingPersonList() != null) {
+                        int selectNum = ((DataApplication) getApplication()).testWaitingQueueDBList.indexOf(selectQ);
+                        Toast.makeText(this, String.valueOf(selectNum), Toast.LENGTH_SHORT).show();
+                        int check = selectQ.removeWPerson(tempName);
+                        switch (check) {
+                            case 0:
+                                ((DataApplication) getApplication()).testWaitingQueueDBList.set(selectNum, selectQ);
+                                Toast.makeText(getApplicationContext(), tempName + " 님 어서오세요.", Toast.LENGTH_SHORT).show();
+                                break;
+                            case 1:
+                                Toast.makeText(getApplicationContext(), "등록된 웨이팅이 아닙니다.", Toast.LENGTH_SHORT).show();
+                                break;
                         }
                     }
-                } else {
-                    super.onActivityResult(requestCode, resultCode, data);
                 }
             }
+        } else if (requestCode == 5000) {
+            refresh();
         }
     }
 
     public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
         String spinner_item = adapterView.getItemAtPosition(pos).toString();
+        txtChoice.setText(spinner_item);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-        String nowTime = sdf.format(new Date(System.currentTimeMillis()));
-
-        txtWaitingCnt.setText("0 명");
-
-        if (((DataApplication) this.getApplication()).firstIsLater(spinner_item, nowTime)) {
-            for (int i = 0; i < wQueue.size(); i++) {
-                WaitingQueue temp = wQueue.get(i);
-                if (temp.getTime().equals(spinner_item)) {
-                    if (temp.getWaitingPersonList() != null) {
-                        txtWaitingCnt.setText(String.valueOf(temp.getWaitingPersonList().size()) + " 명");
-                    } else {
-                        txtWaitingCnt.setText("0 명");
-                    }
-                    break;
-                }
-            }
-            choice.setText(spinner_item);
-        } else {
-            onNothingSelected(adapterView);
-            Toast.makeText(this, "선택한 시간은 예약이 불가능합니다.", Toast.LENGTH_SHORT).show();
-        }
+        refresh();
     }
 
     public void onNothingSelected(AdapterView<?> adapterView) {
-        choice.setText("예약할 시간을 선택해 주세요.");
+        txtChoice.setText("예약할 시간을 선택해 주세요.");
     }
 }
