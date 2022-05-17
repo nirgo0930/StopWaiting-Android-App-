@@ -64,6 +64,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (userID.equals("test") && userPass.equals("test")) {
                     Toast.makeText(getApplicationContext(), "로그인에 성공하였습니다.\n 잠시만 기다려주세요", Toast.LENGTH_SHORT).show();
                     ((DataApplication) getApplication()).userId = userID;
+                    ((DataApplication) getApplication()).userCode = "20170873";
                     getTestInfo();
 
                     Intent loginIntent = new Intent(LoginActivity.this, MainActivity.class);

@@ -9,6 +9,7 @@ public class DataApplication extends Application {
     static public ArrayList<ImgItem> testImageDBList = new ArrayList<>();
     static public ArrayList<WaitingQueue> testWaitingQueueDBList = new ArrayList<>();
     static public String userId = "";
+    static public String userCode ="";
     static public ArrayList<WaitingQueue> myWaiting = new ArrayList<>();
 
     public ArrayList<WaitingInfo> getTestDBList() {
