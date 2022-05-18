@@ -1,4 +1,4 @@
-package com.example.stopwaiting;
+package com.example.stopwaiting.Activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -17,6 +17,11 @@ import android.widget.NumberPicker;
 import android.widget.TimePicker;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.stopwaiting.DTO.ImgItem;
+import com.example.stopwaiting.R;
+import com.example.stopwaiting.DTO.WaitingInfo;
+import com.example.stopwaiting.DTO.WaitingQueue;
 
 import java.util.ArrayList;
 import java.util.List;

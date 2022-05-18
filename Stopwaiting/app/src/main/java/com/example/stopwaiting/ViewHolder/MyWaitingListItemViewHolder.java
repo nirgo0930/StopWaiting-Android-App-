@@ -1,10 +1,13 @@
-package com.example.stopwaiting;
+package com.example.stopwaiting.ViewHolder;
 
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.stopwaiting.Adapter.MyWaitingListAdapter;
+import com.example.stopwaiting.R;
 
 public class MyWaitingListItemViewHolder extends RecyclerView.ViewHolder {
     public ImageView imgItem;

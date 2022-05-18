@@ -1,4 +1,4 @@
-package com.example.stopwaiting;
+package com.example.stopwaiting.Activity;
 
 import android.Manifest;
 import android.app.Activity;
@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentManager;
 
+import com.example.stopwaiting.R;
 import com.naver.maps.geometry.LatLng;
 import com.naver.maps.map.LocationTrackingMode;
 import com.naver.maps.map.MapFragment;

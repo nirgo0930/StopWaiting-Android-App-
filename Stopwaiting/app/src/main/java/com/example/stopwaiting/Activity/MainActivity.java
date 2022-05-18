@@ -1,4 +1,4 @@
-package com.example.stopwaiting;
+package com.example.stopwaiting.Activity;
 
 import android.Manifest;
 import android.app.Activity;
@@ -8,13 +8,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentManager;
 
+import com.example.stopwaiting.R;
+import com.example.stopwaiting.DTO.WaitingInfo;
 import com.naver.maps.geometry.LatLng;
 import com.naver.maps.map.CameraAnimation;
 import com.naver.maps.map.CameraUpdate;
@@ -90,7 +91,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
                 markers = new ArrayList<>();
                 getMarkerInfo();
-//                Toast.makeText(getApplicationContext(), String.valueOf(waitingList.size()), Toast.LENGTH_SHORT).show();
+
+                ActivityCompat.requestPermissions(mainActivity, PERMISSIONS, LOCATION_PERMISSION_REQUEST_CODE);
             }
         });
 
@@ -194,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //                    Toast.makeText(this, temp.getLatitude() + " " + temp.getLatitude(), Toast.LENGTH_SHORT).show();
                     if (temp.getName().equals(selectName)) {
                         CameraUpdate cameraUpdate = CameraUpdate.scrollAndZoomTo(
-                                new LatLng(temp.getLatitude(), temp.getLongitude()), 15)
+                                        new LatLng(temp.getLatitude(), temp.getLongitude()), 15)
                                 .animate(CameraAnimation.Fly, 1000);
                         naverMap.moveCamera(cameraUpdate);
 

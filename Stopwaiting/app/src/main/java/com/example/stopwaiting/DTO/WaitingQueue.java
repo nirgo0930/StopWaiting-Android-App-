@@ -1,4 +1,6 @@
-package com.example.stopwaiting;
+package com.example.stopwaiting.DTO;
+
+import com.example.stopwaiting.Activity.DataApplication;
 
 import java.util.ArrayList;
 
@@ -52,7 +54,9 @@ public class WaitingQueue {
     public int addWPerson(String n) {
         if (!(DataApplication.myWaiting.contains(this))) {
             if (waitingPersonList.size() < maxPerson) {
-                DataApplication.myWaiting.add(this);
+                if (n.equals(DataApplication.userId)) {
+                    DataApplication.myWaiting.add(this); //test code
+                }
                 waitingPersonList.add(n);
                 return 0;
             } else {
@@ -66,6 +70,9 @@ public class WaitingQueue {
     public int removeWPerson(String n) {
         if (waitingPersonList.contains(n)) {
             waitingPersonList.remove(waitingPersonList.indexOf(n));
+            if (n.equals(DataApplication.userId)) {
+                DataApplication.myWaiting.remove(this); //test code
+            }
             return 0;
         } else {
             return 1;

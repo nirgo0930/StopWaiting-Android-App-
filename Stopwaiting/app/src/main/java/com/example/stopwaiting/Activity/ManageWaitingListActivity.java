@@ -1,13 +1,19 @@
-package com.example.stopwaiting;
+package com.example.stopwaiting.Activity;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.stopwaiting.DTO.ImgItem;
+import com.example.stopwaiting.Adapter.ManageWaitingListAdapter;
+import com.example.stopwaiting.R;
+import com.example.stopwaiting.DTO.WaitingInfo;
+import com.example.stopwaiting.DTO.WaitingListItem;
+import com.example.stopwaiting.DTO.WaitingQueue;
 
 import java.util.ArrayList;
 
@@ -22,7 +28,7 @@ public class ManageWaitingListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.waiting_list);
         manageWaitingActivity = ManageWaitingListActivity.this;
-        TextView result = findViewById(R.id.txtResult);
+        TextView result = findViewById(R.id.txtNotice);
         TextView title = findViewById(R.id.txtTitle);
         title.setText("개설한 웨이팅");
         recyclerView = findViewById(R.id.recyclerView);

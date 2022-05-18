@@ -1,4 +1,4 @@
-package com.example.stopwaiting;
+package com.example.stopwaiting.DTO;
 
 import java.io.Serializable;
 import java.util.ArrayList;

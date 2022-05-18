@@ -1,8 +1,9 @@
-package com.example.stopwaiting;
+package com.example.stopwaiting.Activity;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -13,9 +14,11 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.text.SimpleDateFormat;
+import com.example.stopwaiting.R;
+import com.example.stopwaiting.DTO.WaitingInfo;
+import com.example.stopwaiting.DTO.WaitingQueue;
+
 import java.util.ArrayList;
-import java.util.Date;
 
 public class ManageWaitingActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     public static Activity manageWaitingActivity;
@@ -26,6 +29,7 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
     private Button btnShowList, btnCheckIn, btnRefresh;
     private TextView txtWaitingCnt, txtChoice, txtNextName, txtWaitingName;
     private Spinner spinner;
+    private ArrayAdapter<String> mAdapter;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +57,7 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
         }
 
         for (int i = 0; i < ((DataApplication) getApplication()).testWaitingQueueDBList.size(); i++) {
-            if (((DataApplication) getApplication()).testWaitingQueueDBList.get(i).equals(wInfo.getName())) {
+            if (((DataApplication) getApplication()).testWaitingQueueDBList.get(i).getQueueName().equals(wInfo.getName())) {
                 wQueue.add(((DataApplication) getApplication()).testWaitingQueueDBList.get(i));
             }
         }
@@ -71,6 +75,8 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(ManageWaitingActivity.this, ManageWaitingPersonActivity.class);
+                intent.putExtra("qName", selectQ.getQueueName());
+
                 startActivityForResult(intent, 5000);
             }
         });
@@ -89,16 +95,37 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
                 spinner.setOnItemSelectedListener(this);
             }
 
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, timeList);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinner.setAdapter(adapter);
+            mAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, timeList);
+            mAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(mAdapter);
         } else {
             timeList.add("normal");
         }
 
+        refresh();
     }
 
     void refresh() {
+        for (int i = 0; i < ((DataApplication) getApplication()).testDBList.size(); i++) {
+            if (((DataApplication) getApplication()).testDBList.get(i).getName().equals(wInfo.getName())) {
+                wInfo = ((DataApplication) getApplication()).testDBList.get(i);
+                break;
+            }
+        }
+
+        for (int i = 0; i < ((DataApplication) getApplication()).testWaitingQueueDBList.size(); i++) {
+            if (((DataApplication) getApplication()).testWaitingQueueDBList.get(i).getQueueName().equals(wInfo.getName())) {
+                wQueue.add(((DataApplication) getApplication()).testWaitingQueueDBList.get(i));
+            }
+        }
+        timeList = new ArrayList<>();
+        if (wInfo.getTimetable() != null) {
+            timeList = wInfo.getTimetable();
+            mAdapter.notifyDataSetChanged();
+        } else {
+            timeList.add("normal");
+        }
+
         WaitingQueue temp = new WaitingQueue();
 
         String wCnt = "";
@@ -107,13 +134,18 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
         if (wQueue.get(0).getTime().equals("normal")) {
             temp = wQueue.get(0);
 
-            wCnt = (temp.getWaitingPersonList().size()) + " 명";
-            next = temp.getWaitingPersonList().get(0);
+            if (temp.getWaitingPersonList().size() != 0) {
+                wCnt = (temp.getWaitingPersonList().size()) + " 명";
+                next = temp.getWaitingPersonList().get(0);
+            } else {
+                wCnt = "0 명";
+                next = "-";
+            }
         } else {
             for (int i = 0; i < wQueue.size(); i++) {
                 temp = wQueue.get(i);
                 if (temp.getTime().equals(txtChoice.getText().toString())) {
-                    if (temp.getWaitingPersonList() != null) {
+                    if (temp.getWaitingPersonList().size() != 0) {
                         wCnt = (temp.getWaitingPersonList().size()) + " 명";
                         next = temp.getWaitingPersonList().get(0);
                     } else {
@@ -141,7 +173,7 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
                 if (selectQr.equals(((DataApplication) getApplication()).userCode)) {
                     String tempName = "test"; //DB에서 일치하는 학번 검색
 
-                    if (selectQ.getWaitingPersonList() != null) {
+                    if (selectQ.getWaitingPersonList().size() != 0) {
                         int selectNum = ((DataApplication) getApplication()).testWaitingQueueDBList.indexOf(selectQ);
                         Toast.makeText(this, String.valueOf(selectNum), Toast.LENGTH_SHORT).show();
                         int check = selectQ.removeWPerson(tempName);
@@ -156,6 +188,8 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
                         }
                     }
                 }
+            } else {
+                refresh();
             }
         } else if (requestCode == 5000) {
             refresh();

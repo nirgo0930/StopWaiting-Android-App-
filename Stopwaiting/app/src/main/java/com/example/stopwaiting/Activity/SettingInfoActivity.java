@@ -1,4 +1,4 @@
-package com.example.stopwaiting;
+package com.example.stopwaiting.Activity;
 
 import android.app.Activity;
 import android.content.ClipData;
@@ -17,6 +17,12 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.stopwaiting.DTO.ImgItem;
+import com.example.stopwaiting.R;
+import com.example.stopwaiting.Adapter.SettingImageAdapter;
+import com.example.stopwaiting.DTO.WaitingInfo;
+import com.example.stopwaiting.DTO.WaitingQueue;
 
 import java.util.ArrayList;
 

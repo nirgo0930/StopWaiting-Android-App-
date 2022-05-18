@@ -1,4 +1,4 @@
-package com.example.stopwaiting;
+package com.example.stopwaiting.Activity;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -7,6 +7,13 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.stopwaiting.DTO.ImgItem;
+import com.example.stopwaiting.Adapter.MyWaitingListAdapter;
+import com.example.stopwaiting.R;
+import com.example.stopwaiting.DTO.WaitingInfo;
+import com.example.stopwaiting.DTO.WaitingListItem;
+import com.example.stopwaiting.DTO.WaitingQueue;
 
 import java.util.ArrayList;
 
@@ -21,11 +28,11 @@ public class CheckMyWaitingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.waiting_list);
         myWaitingActivity = CheckMyWaitingActivity.this;
-        TextView result = findViewById(R.id.txtResult);
+        TextView txtNotice = findViewById(R.id.txtNotice);
         recyclerView = findViewById(R.id.recyclerView);
         mWaitingList = new ArrayList<>();
-
         mWaitingQueue = new ArrayList<>();
+
         mWaitingQueue = ((DataApplication) getApplication()).myWaiting;
         if (mWaitingQueue.size() > 0) {
             for (int i = 0; i < mWaitingQueue.size(); i++) {
@@ -51,9 +58,9 @@ public class CheckMyWaitingActivity extends AppCompatActivity {
                         tempInfo.getLocDetail()));
 
             }
-            result.setText("신청한 웨이팅은 총 " + mWaitingList.size() + "건 입니다.");
+            txtNotice.setText("신청한 웨이팅은 총 " + mWaitingList.size() + "건 입니다.");
         } else {
-            result.setText("신청한 웨이팅이 없습니다.");
+            txtNotice.setText("신청한 웨이팅이 없습니다.");
         }
         mListAdapter = new MyWaitingListAdapter(this, mWaitingList);
 

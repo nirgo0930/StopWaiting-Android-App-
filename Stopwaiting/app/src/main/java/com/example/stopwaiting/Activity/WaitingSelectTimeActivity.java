@@ -1,4 +1,4 @@
-package com.example.stopwaiting;
+package com.example.stopwaiting.Activity;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -19,6 +19,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.example.stopwaiting.DTO.ImgItem;
+import com.example.stopwaiting.R;
+import com.example.stopwaiting.DTO.WaitingInfo;
+import com.example.stopwaiting.DTO.WaitingQueue;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

@@ -1,6 +1,10 @@
-package com.example.stopwaiting;
+package com.example.stopwaiting.Activity;
 
 import android.app.Application;
+
+import com.example.stopwaiting.DTO.ImgItem;
+import com.example.stopwaiting.DTO.WaitingInfo;
+import com.example.stopwaiting.DTO.WaitingQueue;
 
 import java.util.ArrayList;
 
