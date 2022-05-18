@@ -16,6 +16,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -24,8 +25,10 @@ import android.view.WindowInsets;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 //import androidx.test.core.app.ApplicationProvider;
+import androidx.core.content.ContextCompat;
 import androidx.wear.widget.SwipeDismissFrameLayout;
 
 import com.example.mapapitest.databinding.ActivityMapsBinding;
@@ -50,8 +53,8 @@ public class MapsActivity extends Activity implements OnMapReadyCallback {
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
     };
-    private double cur_lat;
-    private double cur_lon;
+    private double latitude;
+    private double longitude;
 
     public void onCreate(Bundle savedState) {
         super.onCreate(savedState);
@@ -75,6 +78,7 @@ public class MapsActivity extends Activity implements OnMapReadyCallback {
                 finish();
             }
         });
+
         // Adjusts margins to account for the system window insets when they become available.
         swipeDismissRootFrameLayout.setOnApplyWindowInsetsListener(
                 new View.OnApplyWindowInsetsListener() {
@@ -103,71 +107,64 @@ public class MapsActivity extends Activity implements OnMapReadyCallback {
         mapFragment.getMapAsync(this);
 
 //        //자기 위치 반환
-        locationSource = new FusedLocationProviderClient(this);
-//
-//
-//        LocationManager locationManager = (LocationManager) ApplicationProvider.getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-//        //마지막 위치 받아오기
-//
-//
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            // TODO: Consider calling
-//            //    ActivityCompat#requestPermissions
-//            // here to request the missing permissions, and then overriding
-//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//            //                                          int[] grantResults)
-//            // to handle the case where the user grants the permission. See the documentation
-//            // for ActivityCompat#requestPermissions for more details.
-//            return;
-//        }
-//        locationSource = LocationServices.getFusedLocationProviderClient(this);
-//        //Location loc_Current = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//
-////        locationSource.getLastLocation()
-////                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-////                    @Override
-////                    public void onSuccess(Location location) {
-////                        if(location !=null){
-////                            cur_lat = location.getLatitude(); //위도
-////                            cur_lon = location.getLongitude(); //경도
-////                            Toast.makeText(MapsActivity.this,cur_lat+" "+cur_lon,Toast.LENGTH_SHORT).show();
-////                        }
-////                    }
-////                });
-//
-//        Application application = getApplication();
-////        locationSource.getCurrentLocation(
-////                LocationManager.GPS_PROVIDER,
-////                null,
-////                getApplication().getMainExecutor(),
-////                new Consumer<Location>(){
-////                    @Override
-////                    public void accept(Location location){
-////                        cur_lat = location.getLatitude(); //위도
-////                        cur_lon = location.getLongitude(); //경도
-////
-////                    }
-////                }
-////        )
-//
-//
-//
-////        locationManager.getCurrentLocation(
-////                LocationManager.GPS_PROVIDER,
-////                null,
-////                application.getMainExecutor(),
-////                new Consumer<Location>() {
-////                    @Override
-////                    public void accept(Location location) {
-////                        cur_lat = location.getLatitude(); //위도
-////                        cur_lon = location.getLongitude(); //경도
-////                        Toast.makeText(MapsActivity.this, cur_lat + " " + cur_lon, Toast.LENGTH_SHORT).show();
-////                    }
-////                }
-////        );
-//
+        locationSource = LocationServices.getFusedLocationProviderClient(this);
+
+
+        // 권한ID를 가져옵니다
+        int permission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int permission2 = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+        // 권한이 열려있는지 확인
+        if (permission == PackageManager.PERMISSION_DENIED || permission2 == PackageManager.PERMISSION_DENIED) {
+            // 마쉬멜로우 이상버전부터 권한을 물어본다
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                // 권한 체크(READ_PHONE_STATE의 requestCode를 1000으로 세팅
+                requestPermissions(
+                        new String[]
+                                {Manifest.permission.ACCESS_FINE_LOCATION,
+                                        Manifest.permission.ACCESS_COARSE_LOCATION},
+                        1000);
+            }
+            return;
+        }
+
+
 
     }
+
+    // 권한 체크 이후로직
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grandResults) {
+        // READ_PHONE_STATE의 권한 체크 결과를 불러온다
+        if (requestCode == 1000) {
+            boolean check_result = true;
+
+            // 모든 퍼미션을 허용했는지 체크
+            for (int result : grandResults) {
+                if (result != PackageManager.PERMISSION_GRANTED) {
+                    check_result = false;
+                    break;
+                }
+            }
+
+            // 권한 체크에 동의를 하지 않으면 안드로이드 종료
+            if (check_result == true) {
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+                mMap.setMyLocationEnabled(true);
+            } else {
+                finish();
+            }
+        }
+    }
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -182,49 +179,20 @@ public class MapsActivity extends Activity implements OnMapReadyCallback {
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
 
-        //얘네들 서버로 받아서 for문돌리든가 해야할듯
-        // Adds a marker in Sydney, Australia and moves the camera.
-        LatLng salon = new LatLng(36.144760, 128.393884);
-        mMap.addMarker(new MarkerOptions().position(salon).title("미용실"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(salon));
+        //얘네들 서버로 받아서 좌표랑 이름 입력
+        latitude = 36.145123;
+        longitude = 128.394244;
+        String name ="북카페";
 
-        LatLng special_meal = new LatLng(36.145619, 128.392535);
-        mMap.addMarker(new MarkerOptions().position(special_meal).title("특식 배부"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(special_meal));
+        LatLng location2 = new LatLng(latitude, longitude);
+        mMap.addMarker(new MarkerOptions().position(location2).title(name));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(location2));
 
-        LatLng book_cafe = new LatLng(36.145123, 128.394244);
-        mMap.addMarker(new MarkerOptions().position(book_cafe).title("북카페"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(book_cafe));
-
-        //mMap.setMyLocationEnabled();
-
-        //mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        //줌버튼 입력
         mMap.getUiSettings().setZoomControlsEnabled(true);
-        //googleMap.getUiSettings().setMyLocationButtonEnabled(true);
-        // mMap.getUiSettings().setMyLocationButtonEnabled(true);
-//        googleMap.setMyLocationEnabled();
-//        mMap.setMyLocationEnabled();
-//        mMap.isMyLocationEnabled()=true;
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            // TODO: Consider calling
-//            //    ActivityCompat#requestPermissions
-//            // here to request the missing permissions, and then overriding
-//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//            //                                          int[] grantResults)
-//            // to handle the case where the user grants the permission. See the documentation
-//            // for ActivityCompat#requestPermissions for more details.
-//            return;
-//        }
-//        mMap.setMyLocationEnabled(true);
-//        mMap.setOnMyLocationButtonClickListener((GoogleMap.OnMyLocationButtonClickListener) this);
-//        mMap.setOnMyLocationClickListener((GoogleMap.OnMyLocationClickListener) this);
-//
-        //mMap.getUiSettings().setMyLocationButtonEnabled(true);
-        //        Toast.makeText(this,cur_lat+" "+cur_lon,Toast.LENGTH_SHORT).show();
-
-        //LatLng tempLoc = new LatLng(cur_lat,cur_lon);
+        
         //초기줌 설정
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(book_cafe, 16));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location2, 16));
 
     }
 }
