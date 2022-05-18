@@ -66,7 +66,6 @@ public class WaitingQueue {
     public int removeWPerson(String n) {
         if (waitingPersonList.contains(n)) {
             waitingPersonList.remove(waitingPersonList.indexOf(n));
-
             return 0;
         } else {
             return 1;

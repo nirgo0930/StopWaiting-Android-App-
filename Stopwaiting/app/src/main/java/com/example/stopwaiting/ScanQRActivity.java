@@ -29,12 +29,11 @@ public class ScanQRActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
-            if (result.getContents() == null) {
-            } else {
+            if (result.getContents() != null) {
                 Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
 
-                Intent retunData = new Intent();
-                retunData.putExtra("qr", result.getContents());
+                Intent returnData = new Intent();
+                returnData.putExtra("qr", result.getContents());
                 setResult(Activity.RESULT_OK, data);
             }
             finish();

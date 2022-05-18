@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
                 markers = new ArrayList<>();
                 getMarkerInfo();
-                Toast.makeText(getApplicationContext(), String.valueOf(waitingList.size()), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), String.valueOf(waitingList.size()), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -187,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (requestCode == WAITING_LOCATION_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 String selectName = data.getStringExtra("name");
-                Toast.makeText(this, selectName, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, selectName, Toast.LENGTH_SHORT).show();
 
                 for (int i = 0; i < ((DataApplication) getApplication()).testDBList.size(); i++) {
                     WaitingInfo temp = ((DataApplication) getApplication()).testDBList.get(i);
