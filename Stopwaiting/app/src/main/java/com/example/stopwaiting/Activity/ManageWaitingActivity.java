@@ -51,6 +51,7 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
         wInfo = new WaitingInfo();
         selectQ = new WaitingQueue();
 
+
         btnCheckIn = findViewById(R.id.btnCheckIn);
         btnShowList = findViewById(R.id.btnShowList);
         btnRefresh = findViewById(R.id.btnRefresh);
