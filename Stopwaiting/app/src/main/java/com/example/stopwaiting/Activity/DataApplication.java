@@ -2,6 +2,7 @@ package com.example.stopwaiting.Activity;
 
 import android.app.Application;
 
+import com.android.volley.RequestQueue;
 import com.example.stopwaiting.DTO.ImgItem;
 import com.example.stopwaiting.DTO.WaitingInfo;
 import com.example.stopwaiting.DTO.WaitingQueue;
@@ -12,6 +13,8 @@ public class DataApplication extends Application {
     static public ArrayList<WaitingInfo> testDBList = new ArrayList<>();
     static public ArrayList<ImgItem> testImageDBList = new ArrayList<>();
     static public ArrayList<WaitingQueue> testWaitingQueueDBList = new ArrayList<>();
+    static public String serverURL = "http://dodam123.dothome.co.kr/Login.php";
+    public static RequestQueue requestQueue;
     static public String userId = "";
     static public String userCode ="";
     static public ArrayList<WaitingQueue> myWaiting = new ArrayList<>();

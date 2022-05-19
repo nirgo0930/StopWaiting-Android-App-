@@ -14,11 +14,22 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.example.stopwaiting.R;
 import com.example.stopwaiting.DTO.WaitingInfo;
 import com.example.stopwaiting.DTO.WaitingQueue;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ManageWaitingActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     public static Activity manageWaitingActivity;
@@ -48,6 +59,8 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
         txtNextName = findViewById(R.id.txtNextName);
         txtWaitingName = findViewById(R.id.txtWaitingName);
         spinner = findViewById(R.id.spnTime);
+
+        waitingInfoRequest(intent.getStringExtra("name"));
 
         for (int i = 0; i < ((DataApplication) getApplication()).testDBList.size(); i++) {
             if (((DataApplication) getApplication()).testDBList.get(i).getName().equals(intent.getStringExtra("name"))) {
@@ -169,8 +182,8 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
 
         if (requestCode == 4000) {
             if (resultCode == RESULT_OK) {
-                String selectQr = data.getStringExtra("qr");
-                if (selectQr.equals(((DataApplication) getApplication()).userCode)) {
+                String qr = data.getStringExtra("qr");
+                if (qr.equals(((DataApplication) getApplication()).userCode)) {
                     String tempName = "test"; //DB에서 일치하는 학번 검색
 
                     if (selectQ.getWaitingPersonList().size() != 0) {
@@ -205,5 +218,119 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
 
     public void onNothingSelected(AdapterView<?> adapterView) {
         txtChoice.setText("예약할 시간을 선택해 주세요.");
+    }
+
+    public void waitingInfoRequest(String sName) {
+        StringRequest waitingRequest = new StringRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            boolean success = jsonObject.getBoolean("success");
+                            if (success) {
+                                wInfo = new WaitingInfo();
+
+                                wInfo.setId(jsonObject.getLong("id"));
+                                wInfo.setAdmin(jsonObject.getString("admin"));
+                                wInfo.setName(jsonObject.getString("name"));
+                                wInfo.setLatitude(jsonObject.getDouble("lat"));
+                                wInfo.setLongitude(jsonObject.getDouble("lon"));
+                                wInfo.setLocDetail(jsonObject.getString("locDetail"));
+                                wInfo.setInfo(jsonObject.getString("info"));
+                                wInfo.setType(jsonObject.getString("type"));
+                                wInfo.setMaxPerson(jsonObject.getInt("max"));
+                                if (wInfo.getType().equals("time")) {
+                                    ArrayList<String> timetable = new ArrayList();
+                                    JSONArray timeArray = jsonObject.getJSONArray("timetable");
+                                    for (int j = 0; j < timeArray.length(); j++) {
+                                        timetable.add(timeArray.getString(j));
+                                    }
+                                    wInfo.setTimetable(timetable);
+                                }
+                            } else {
+                                Toast.makeText(getApplicationContext(), "로딩에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getApplicationContext(), "로딩에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("type", "waitinginfo");
+                params.put("name", sName);
+
+                return params;
+            }
+        };
+
+        waitingRequest.setShouldCache(false);
+        ((DataApplication) getApplication()).requestQueue.add(waitingRequest);
+    }
+
+    public void queueInfoRequest(String sName) {
+        StringRequest loginRequest = new StringRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            boolean success = jsonObject.getBoolean("success");
+                            if (success) {
+                                wInfo = new WaitingInfo();
+
+                                wInfo.setId(jsonObject.getLong("id"));
+                                wInfo.setAdmin(jsonObject.getString("admin"));
+                                wInfo.setName(jsonObject.getString("name"));
+                                wInfo.setLatitude(jsonObject.getDouble("lat"));
+                                wInfo.setLongitude(jsonObject.getDouble("lon"));
+                                wInfo.setLocDetail(jsonObject.getString("locDetail"));
+                                wInfo.setInfo(jsonObject.getString("info"));
+                                wInfo.setType(jsonObject.getString("type"));
+                                wInfo.setMaxPerson(jsonObject.getInt("max"));
+                                if (wInfo.getType().equals("time")) {
+                                    ArrayList<String> timetable = new ArrayList();
+                                    JSONArray timeArray = jsonObject.getJSONArray("timetable");
+                                    for (int j = 0; j < timeArray.length(); j++) {
+                                        timetable.add(timeArray.getString(j));
+                                    }
+                                    wInfo.setTimetable(timetable);
+                                }
+                            } else {
+                                Toast.makeText(getApplicationContext(), "로딩에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getApplicationContext(), "로딩에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("type", "waitinginfo");
+                params.put("name", sName);
+
+                return params;
+            }
+        };
+
+        loginRequest.setShouldCache(false);
+        ((DataApplication) getApplication()).requestQueue.add(loginRequest);
     }
 }

@@ -16,15 +16,26 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.stopwaiting.DTO.ImgItem;
 import com.example.stopwaiting.R;
 import com.example.stopwaiting.DTO.WaitingInfo;
 import com.example.stopwaiting.DTO.WaitingQueue;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
-    private EditText edt_id, edt_pass;
+    private EditText edt_id, edt_password;
     private Button btn_login, btn_new;
     public static Activity login_Activity;
 
@@ -47,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
         login_Activity = LoginActivity.this;
 
         edt_id = findViewById(R.id.edtId);
-        edt_pass = findViewById(R.id.edtPw);
+        edt_password = findViewById(R.id.edtPw);
         btn_login = findViewById(R.id.btnLogin);
         btn_new = findViewById(R.id.btnNewSignIn);
 
@@ -63,12 +74,12 @@ public class LoginActivity extends AppCompatActivity {
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String userID = edt_id.getText().toString();
-                String userPass = edt_pass.getText().toString();
+                //loginRequest();
 
-                if (userID.equals("test") && userPass.equals("test")) {
+                if (edt_id.getText().toString().equals("test") && edt_password.getText().toString().equals("test")) {
                     Toast.makeText(getApplicationContext(), "로그인에 성공하였습니다.\n 잠시만 기다려주세요", Toast.LENGTH_SHORT).show();
-                    ((DataApplication) getApplication()).userId = userID;
+
+                    ((DataApplication) getApplication()).userId = edt_id.getText().toString();
                     ((DataApplication) getApplication()).userCode = "20170873";
                     getTestInfo();
 
@@ -78,39 +89,12 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "로그인에 실패하였습니다.", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
-//                Response.Listener<String> responseListener = new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String response) {
-//                        try {
-//                            JSONObject jsonObject = new JSONObject(response);
-//                            boolean success = jsonObject.getBoolean("success");
-//                            if (success) { // 로그인에 성공한 경우
-//                                String userID = jsonObject.getString("userID");
-//                                String userPass = jsonObject.getString("userPassword");
-//
-//                                Toast.makeText(getApplicationContext(), "로그인에 성공하였습니다.", Toast.LENGTH_SHORT).show();
-//                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-//                                intent.putExtra("userID", userID);
-//                                intent.putExtra("userPass", userPass);
-//                                startActivity(intent);
-//                            } else { // 로그인에 실패한 경우
-//                                Toast.makeText(getApplicationContext(), "로그인에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-//                                return;
-//                            }
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                };
-
-//                LoginRequest loginRequest = new LoginRequest(userID, userPass, responseListener);
-//                RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
-//                queue.add(loginRequest);
             }
         });
 
         checkPermissions(permission_list);
+        if (((DataApplication) getApplication()).requestQueue == null)
+            ((DataApplication) getApplication()).requestQueue = Volley.newRequestQueue(getApplicationContext());
     }
 
     public void getTestInfo() {
@@ -178,5 +162,51 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 return;
         }
+    }
+
+    public void loginRequest() {
+        StringRequest loginRequest = new StringRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            boolean success = jsonObject.getBoolean("success");
+                            if (success) {
+                                Toast.makeText(getApplicationContext(), "로그인에 성공하였습니다.\n 잠시만 기다려주세요", Toast.LENGTH_SHORT).show();
+//                                String userID = jsonObject.getString("userID");
+
+                                ((DataApplication) getApplication()).userId = edt_id.getText().toString();
+
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(getApplicationContext(), "로그인에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+//                        textView.setText(error.getMessage());
+                    }
+                }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("type", "login");
+                params.put("id", edt_id.getText().toString());
+                params.put("pw", edt_password.getText().toString());
+
+                return params;
+            }
+        };
+
+        loginRequest.setShouldCache(false);
+        ((DataApplication) getApplication()).requestQueue.add(loginRequest);
     }
 }
