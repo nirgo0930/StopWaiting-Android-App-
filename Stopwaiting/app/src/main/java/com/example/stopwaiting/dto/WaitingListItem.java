@@ -1,4 +1,4 @@
-package com.example.stopwaiting.DTO;
+package com.example.stopwaiting.dto;
 
 import android.net.Uri;
 

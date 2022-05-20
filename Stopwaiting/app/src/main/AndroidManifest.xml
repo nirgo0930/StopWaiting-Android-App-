@@ -12,7 +12,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
-        android:name=".Activity.DataApplication"
+        android:name=".activity.DataApplication"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
@@ -23,26 +23,26 @@
         android:usesCleartextTraffic="true">
 
         <activity
-            android:name=".Activity.LoginActivity"
+            android:name=".activity.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activity.MainActivity" />
-        <activity android:name=".Activity.SignInActivity" />
-        <activity android:name=".Activity.MyPageActivity" />
-        <activity android:name=".Activity.CheckMyWaitingActivity" />
-        <activity android:name=".Activity.WaitingNormalActivity" />
-        <activity android:name=".Activity.WaitingSelectTimeActivity" />
-        <activity android:name=".Activity.SettingInfoActivity" />
-        <activity android:name=".Activity.SettingLocationActivity" />
-        <activity android:name=".Activity.SettingTimeActivity" />
-        <activity android:name=".Activity.ManageWaitingListActivity" />
-        <activity android:name=".Activity.ManageWaitingActivity" />
-        <activity android:name=".Activity.ManageWaitingPersonActivity" />
-        <activity android:name=".Activity.ScanQRActivity" />
+        <activity android:name=".activity.MainActivity" />
+        <activity android:name=".activity.SignInActivity" />
+        <activity android:name=".activity.MyPageActivity" />
+        <activity android:name=".activity.CheckMyWaitingActivity" />
+        <activity android:name=".activity.WaitingNormalActivity" />
+        <activity android:name=".activity.WaitingSelectTimeActivity" />
+        <activity android:name=".activity.SettingInfoActivity" />
+        <activity android:name=".activity.SettingLocationActivity" />
+        <activity android:name=".activity.SettingTimeActivity" />
+        <activity android:name=".activity.ManageWaitingListActivity" />
+        <activity android:name=".activity.ManageWaitingActivity" />
+        <activity android:name=".activity.ManageWaitingPersonActivity" />
+        <activity android:name=".activity.ScanQRActivity" />
 
         <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"

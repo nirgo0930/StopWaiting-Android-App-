@@ -1,15 +1,15 @@
-package com.example.stopwaiting.ViewHolder;
+package com.example.stopwaiting.viewholder;
 
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.stopwaiting.Adapter.ManageWaitingPersonAdapter;
+import com.example.stopwaiting.adapter.ManageWaitingPersonAdapter;
 import com.example.stopwaiting.R;
 
 public class ManageWaitingPersonViewHolder extends RecyclerView.ViewHolder {
-    public TextView txtName, txtCnt;
+    public TextView txtName, txtCnt, txtTelNum, txtSCode;
     public ManageWaitingPersonAdapter adapter;
 
     public ManageWaitingPersonViewHolder(View view, ManageWaitingPersonAdapter.OnItemLongClickEventListener mItemLongClickListener) {
@@ -17,6 +17,8 @@ public class ManageWaitingPersonViewHolder extends RecyclerView.ViewHolder {
 
         txtName = view.findViewById(R.id.txtName);
         txtCnt = view.findViewById(R.id.txtCnt);
+        txtTelNum = view.findViewById(R.id.txtTelNum);
+        txtSCode = view.findViewById(R.id.txtStudentCode);
 
         view.setOnLongClickListener(new View.OnLongClickListener() {
             @Override

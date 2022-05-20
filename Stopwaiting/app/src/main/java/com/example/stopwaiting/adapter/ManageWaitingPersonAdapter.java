@@ -1,4 +1,4 @@
-package com.example.stopwaiting.Adapter;
+package com.example.stopwaiting.adapter;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -10,20 +10,20 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.stopwaiting.Activity.DataApplication;
-import com.example.stopwaiting.Activity.ManageWaitingPersonActivity;
-import com.example.stopwaiting.DTO.WaitingQueue;
+import com.example.stopwaiting.activity.DataApplication;
+import com.example.stopwaiting.activity.ManageWaitingPersonActivity;
+import com.example.stopwaiting.dto.UserInfo;
+import com.example.stopwaiting.dto.WaitingQueue;
 import com.example.stopwaiting.R;
-import com.example.stopwaiting.ViewHolder.ManageWaitingPersonViewHolder;
+import com.example.stopwaiting.viewholder.ManageWaitingPersonViewHolder;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ManageWaitingPersonAdapter extends RecyclerView.Adapter<ManageWaitingPersonViewHolder> {
     private Context mContext;
-    private ArrayList<String> mItemList;
+    private ArrayList<UserInfo> mItemList;
 
-    public ManageWaitingPersonAdapter(Context a_context, ArrayList<String> a_itemList) {
+    public ManageWaitingPersonAdapter(Context a_context, ArrayList<UserInfo> a_itemList) {
         mContext = a_context;
         mItemList = a_itemList;
     }
@@ -37,18 +37,18 @@ public class ManageWaitingPersonAdapter extends RecyclerView.Adapter<ManageWaiti
         public void onItemLongClick(int pos) {
             new AlertDialog.Builder(mContext)
                     .setTitle("재확인")
-                    .setMessage(mItemList.get(pos) + " 님을 명단에서 제외하시겟습니까?")
+                    .setMessage(mItemList.get(pos).getName() + " 님을 명단에서 제외하시겟습니까?")
                     .setIcon(android.R.drawable.ic_menu_save)
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             // 확인시 처리 로직
-                            String name = mItemList.get(pos);
+                            UserInfo userInfo = mItemList.get(pos);
                             mItemList.remove(pos);
 
                             for (int i = 0; i < DataApplication.testWaitingQueueDBList.size(); i++) {
-                                if (DataApplication.testWaitingQueueDBList.get(i).getQueueName().equals(ManageWaitingPersonActivity.qName)) {
+                                if (DataApplication.testWaitingQueueDBList.get(i).getQId().equals(ManageWaitingPersonActivity.qId)) {
                                     WaitingQueue temp = DataApplication.testWaitingQueueDBList.get(i);
-                                    temp.removeWPerson(name);
+                                    temp.removeWPerson(userInfo.getName());
 
                                     DataApplication.testWaitingQueueDBList.set(i, temp);
                                     break;
@@ -77,10 +77,11 @@ public class ManageWaitingPersonAdapter extends RecyclerView.Adapter<ManageWaiti
 
     @Override
     public void onBindViewHolder(@NonNull ManageWaitingPersonViewHolder holder, int position) {
-        final String waitingPerson = mItemList.get(position);
+        final UserInfo waitingPerson = mItemList.get(position);
 
-        holder.txtName.setText(waitingPerson);
+        holder.txtName.setText(waitingPerson.getName());
         holder.txtCnt.setText(String.valueOf(position + 1) + ".");
+        holder.txtTelNum.setText(waitingPerson.getTel());
     }
 
     @Override

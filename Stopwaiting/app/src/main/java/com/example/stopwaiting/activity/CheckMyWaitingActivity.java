@@ -1,4 +1,4 @@
-package com.example.stopwaiting.Activity;
+package com.example.stopwaiting.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -8,12 +8,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.stopwaiting.DTO.ImgItem;
-import com.example.stopwaiting.Adapter.MyWaitingListAdapter;
+import com.example.stopwaiting.dto.ImgItem;
+import com.example.stopwaiting.adapter.MyWaitingListAdapter;
 import com.example.stopwaiting.R;
-import com.example.stopwaiting.DTO.WaitingInfo;
-import com.example.stopwaiting.DTO.WaitingListItem;
-import com.example.stopwaiting.DTO.WaitingQueue;
+import com.example.stopwaiting.dto.WaitingInfo;
+import com.example.stopwaiting.dto.WaitingListItem;
+import com.example.stopwaiting.dto.WaitingQueue;
 
 import java.util.ArrayList;
 
@@ -54,7 +54,7 @@ public class CheckMyWaitingActivity extends AppCompatActivity {
                 }
 
                 mWaitingList.add(new WaitingListItem(tempImg.getUri(), mWaitingQueue.get(i).getQueueName(),
-                        mWaitingQueue.get(i).getWaitingPersonList().indexOf(((DataApplication) getApplication()).userId),
+                        mWaitingQueue.get(i).getWaitingPersonList().indexOf(((DataApplication) getApplication()).currentUser),
                         tempInfo.getLocDetail()));
 
             }

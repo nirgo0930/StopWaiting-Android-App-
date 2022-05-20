@@ -1,22 +1,33 @@
-package com.example.stopwaiting.DTO;
+package com.example.stopwaiting.dto;
 
-import com.example.stopwaiting.Activity.DataApplication;
+import com.example.stopwaiting.activity.DataApplication;
 
 import java.util.ArrayList;
 
 public class WaitingQueue {
+    private Long qId;
     private String queueName;
     private String time;
     private int maxPerson;
-    private ArrayList<String> waitingPersonList = new ArrayList<>();
+    private ArrayList<UserInfo> waitingPersonList = new ArrayList<>();
 
     public WaitingQueue() {
     }
 
-    public WaitingQueue(String queueName, String time, int maxPerson) {
+    public WaitingQueue(Long qId, String queueName, String time, int maxPerson) {
+        this.qId = qId;
         this.queueName = queueName;
         this.time = time;
         this.maxPerson = maxPerson;
+    }
+
+
+    public Long getQId() {
+        return qId;
+    }
+
+    public void setQId(Long qId) {
+        this.qId = qId;
     }
 
     public String getQueueName() {
@@ -43,18 +54,18 @@ public class WaitingQueue {
         this.maxPerson = maxPerson;
     }
 
-    public ArrayList<String> getWaitingPersonList() {
+    public ArrayList<UserInfo> getWaitingPersonList() {
         return waitingPersonList;
     }
 
-    public void setWaitingPersonList(ArrayList<String> waitingPersonList) {
+    public void setWaitingPersonList(ArrayList<UserInfo> waitingPersonList) {
         this.waitingPersonList = waitingPersonList;
     }
 
-    public int addWPerson(String n) {
+    public int addWPerson(UserInfo n) {
         if (!(DataApplication.myWaiting.contains(this))) {
             if (waitingPersonList.size() < maxPerson) {
-                if (n.equals(DataApplication.userId)) {
+                if (n.getName().equals(DataApplication.currentUser.getName())) {
                     DataApplication.myWaiting.add(this); //test code
                 }
                 waitingPersonList.add(n);
@@ -70,7 +81,7 @@ public class WaitingQueue {
     public int removeWPerson(String n) {
         if (waitingPersonList.contains(n)) {
             waitingPersonList.remove(waitingPersonList.indexOf(n));
-            if (n.equals(DataApplication.userId)) {
+            if (n.equals(DataApplication.currentUser)) {
                 DataApplication.myWaiting.remove(this); //test code
             }
             return 0;

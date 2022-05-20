@@ -1,4 +1,4 @@
-package com.example.stopwaiting.Activity;
+package com.example.stopwaiting.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -31,7 +31,7 @@ public class MyPageActivity extends AppCompatActivity {
         }
         Intent myIntent = getIntent();
         TextView name = findViewById(R.id.txtMyName);
-        name.setText(((DataApplication) getApplication()).userId + " 님");
+        name.setText(((DataApplication) getApplication()).currentUser.getName() + " 님");
 
         Button myWaiting = findViewById(R.id.btnMyWaiting);
         myWaiting.setOnClickListener(new View.OnClickListener() {

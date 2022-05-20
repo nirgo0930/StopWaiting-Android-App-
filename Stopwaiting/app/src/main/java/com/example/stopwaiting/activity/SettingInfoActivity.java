@@ -1,4 +1,4 @@
-package com.example.stopwaiting.Activity;
+package com.example.stopwaiting.activity;
 
 import android.app.Activity;
 import android.content.ClipData;
@@ -18,11 +18,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.stopwaiting.DTO.ImgItem;
+import com.example.stopwaiting.dto.ImgItem;
 import com.example.stopwaiting.R;
-import com.example.stopwaiting.Adapter.SettingImageAdapter;
-import com.example.stopwaiting.DTO.WaitingInfo;
-import com.example.stopwaiting.DTO.WaitingQueue;
+import com.example.stopwaiting.adapter.SettingImageAdapter;
+import com.example.stopwaiting.dto.WaitingInfo;
+import com.example.stopwaiting.dto.WaitingQueue;
 
 import java.util.ArrayList;
 
@@ -148,7 +148,7 @@ public class SettingInfoActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (rdoGroup.getCheckedRadioButtonId() == R.id.rdoNormal) {
                     //서버 데이터 전송
-                    ((DataApplication) getApplication()).testDBList.add(new WaitingInfo(((DataApplication) getApplication()).userId, 10L,
+                    ((DataApplication) getApplication()).testDBList.add(new WaitingInfo(((DataApplication) getApplication()).currentUser.getStudentCode(), 10L,
                             settingInfoIntent.getDoubleExtra("latitude", 0),
                             settingInfoIntent.getDoubleExtra("longitude", 0),
                             edtName.getText().toString(), edtDetail.getText().toString(), edtInfo.getText().toString(),
@@ -161,7 +161,7 @@ public class SettingInfoActivity extends AppCompatActivity {
                         }
                     }
                     ((DataApplication) getApplication()).testWaitingQueueDBList.add(
-                            new WaitingQueue(edtName.getText().toString(), "normal", Integer.valueOf(edtPerson.getText().toString())));
+                            new WaitingQueue(((DataApplication) getApplication()).qCnt++, edtName.getText().toString(), "normal", Integer.valueOf(edtPerson.getText().toString())));
 
                     Intent temp = new Intent(SettingInfoActivity.this, MyPageActivity.class);
                     temp.putExtra("userID", settingInfoIntent.getStringExtra("userID"));

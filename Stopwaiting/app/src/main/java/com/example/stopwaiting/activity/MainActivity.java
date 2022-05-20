@@ -1,4 +1,4 @@
-package com.example.stopwaiting.Activity;
+package com.example.stopwaiting.activity;
 
 import android.Manifest;
 import android.app.Activity;
@@ -21,7 +21,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.stopwaiting.R;
-import com.example.stopwaiting.DTO.WaitingInfo;
+import com.example.stopwaiting.dto.WaitingInfo;
 import com.naver.maps.geometry.LatLng;
 import com.naver.maps.map.CameraAnimation;
 import com.naver.maps.map.CameraUpdate;
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         context_main = this;
 
         TextView userId = findViewById(R.id.txtUser);
-        userId.setText(((DataApplication) getApplication()).userId + " 님");
+        userId.setText(((DataApplication) getApplication()).currentUser.getName() + " 님");
 
         markers = new ArrayList<>();
         waitingList = new ArrayList<>();
@@ -246,7 +246,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     WaitingInfo data = new WaitingInfo();
 
                                     data.setId(dataObject.getLong("id"));
-                                    data.setAdmin(dataObject.getString("admin"));
+                                    data.setAdminId(dataObject.getLong("adminId"));
                                     data.setName(dataObject.getString("name"));
                                     data.setLatitude(dataObject.getDouble("lat"));
                                     data.setLongitude(dataObject.getDouble("lon"));

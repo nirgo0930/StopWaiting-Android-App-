@@ -1,4 +1,4 @@
-package com.example.stopwaiting.Activity;
+package com.example.stopwaiting.activity;
 
 import android.app.Activity;
 import android.content.Intent;

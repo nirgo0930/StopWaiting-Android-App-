@@ -1,4 +1,4 @@
-package com.example.stopwaiting.Adapter;
+package com.example.stopwaiting.adapter;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -12,11 +12,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.stopwaiting.Activity.ManageWaitingActivity;
-import com.example.stopwaiting.Activity.DataApplication;
-import com.example.stopwaiting.ViewHolder.ManageWaitingListItemViewHolder;
+import com.example.stopwaiting.activity.ManageWaitingActivity;
+import com.example.stopwaiting.activity.DataApplication;
+import com.example.stopwaiting.viewholder.ManageWaitingListItemViewHolder;
 import com.example.stopwaiting.R;
-import com.example.stopwaiting.DTO.WaitingListItem;
+import com.example.stopwaiting.dto.WaitingListItem;
 
 import java.util.List;
 

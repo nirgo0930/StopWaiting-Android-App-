@@ -1,4 +1,4 @@
-package com.example.stopwaiting.Activity;
+package com.example.stopwaiting.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -18,10 +18,10 @@ import android.widget.TimePicker;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.stopwaiting.DTO.ImgItem;
+import com.example.stopwaiting.dto.ImgItem;
 import com.example.stopwaiting.R;
-import com.example.stopwaiting.DTO.WaitingInfo;
-import com.example.stopwaiting.DTO.WaitingQueue;
+import com.example.stopwaiting.dto.WaitingInfo;
+import com.example.stopwaiting.dto.WaitingQueue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +85,7 @@ public class SettingTimeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //서버 전송
-                ((DataApplication) getApplication()).testDBList.add(new WaitingInfo(((DataApplication) getApplication()).userId, 11L,
+                ((DataApplication) getApplication()).testDBList.add(new WaitingInfo(((DataApplication) getApplication()).currentUser.getStudentCode(), 11L,
                         timeIntent.getDoubleExtra("latitude", 0),
                         timeIntent.getDoubleExtra("longitude", 0),
                         timeIntent.getStringExtra("name"), timeIntent.getStringExtra("detail"), timeIntent.getStringExtra("info"),
@@ -99,7 +99,8 @@ public class SettingTimeActivity extends AppCompatActivity {
                 }
                 for (int i = 0; i < mTimeList.size(); i++) {
                     ((DataApplication) getApplication()).testWaitingQueueDBList.add(
-                            new WaitingQueue(timeIntent.getStringExtra("name"), mTimeList.get(i), timeIntent.getIntExtra("maxPerson", 1)));
+                            new WaitingQueue(((DataApplication) getApplication()).qCnt++, timeIntent.getStringExtra("name"), mTimeList.get(i),
+                                    timeIntent.getIntExtra("maxPerson", 1)));
                 }
                 Intent temp = new Intent(SettingTimeActivity.this, MyPageActivity.class);
                 temp.putExtra("userID", timeIntent.getStringExtra("userID"));

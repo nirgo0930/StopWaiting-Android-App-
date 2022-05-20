@@ -1,10 +1,11 @@
-package com.example.stopwaiting.DTO;
+package com.example.stopwaiting.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class WaitingInfo implements Serializable {
+    private Long adminId; //개설자
     private Long id; //id
     private Double latitude; //위도
     private Double longitude; //경도
@@ -14,13 +15,12 @@ public class WaitingInfo implements Serializable {
     private String type; //normal time
     private int maxPerson; //최대인원
     private ArrayList<String> timetable = new ArrayList(); //운영 타임 ex)12:00 13:00
-    private String admin; //개설자
 
     public WaitingInfo() {
     }
 
-    public WaitingInfo(String adm, Long id, Double latitude, Double longitude, String name, String locDetail, String info, String type, int maxPerson) {
-        this.admin = adm;
+    public WaitingInfo(Long adm, Long id, Double latitude, Double longitude, String name, String locDetail, String info, String type, int maxPerson) {
+        this.adminId = adm;
         this.id = id;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -32,8 +32,8 @@ public class WaitingInfo implements Serializable {
 
     }
 
-    public WaitingInfo(String adm, Long id, Double latitude, Double longitude, String name, String locDetail, String info, String type, int maxPerson, ArrayList timetable) {
-        this.admin = adm;
+    public WaitingInfo(Long adm, Long id, Double latitude, Double longitude, String name, String locDetail, String info, String type, int maxPerson, ArrayList timetable) {
+        this.adminId = adm;
         this.id = id;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -45,12 +45,12 @@ public class WaitingInfo implements Serializable {
         this.timetable = timetable;
     }
 
-    public String getAdmin() {
-        return admin;
+    public Long getAdminId() {
+        return adminId;
     }
 
-    public void setAdmin(String admin) {
-        this.admin = admin;
+    public void setAdminId(Long adminId) {
+        this.adminId = adminId;
     }
 
     public Long getId() {

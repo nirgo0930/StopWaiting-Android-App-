@@ -1,4 +1,4 @@
-package com.example.stopwaiting.Activity;
+package com.example.stopwaiting.activity;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -16,10 +16,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
-import com.example.stopwaiting.DTO.ImgItem;
+import com.example.stopwaiting.dto.ImgItem;
 import com.example.stopwaiting.R;
-import com.example.stopwaiting.DTO.WaitingInfo;
-import com.example.stopwaiting.DTO.WaitingQueue;
+import com.example.stopwaiting.dto.WaitingInfo;
+import com.example.stopwaiting.dto.WaitingQueue;
 
 import java.util.ArrayList;
 
@@ -125,7 +125,7 @@ public class WaitingNormalActivity extends AppCompatActivity {
                     WaitingQueue temp = ((DataApplication) getApplication()).testWaitingQueueDBList.get(i);
                     if (temp.getQueueName().equals(name.getText()) && temp.getTime().equals("normal")) {
                         if (temp.getWaitingPersonList() != null) {
-                            int check = temp.addWPerson(((DataApplication) getApplication()).userId);
+                            int check = temp.addWPerson(((DataApplication) getApplication()).currentUser);
                             switch (check) {
                                 case 0:
                                     ((DataApplication) getApplication()).testWaitingQueueDBList.set(i, temp);

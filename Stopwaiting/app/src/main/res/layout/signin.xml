@@ -10,81 +10,91 @@
         android:id="@+id/txtWaitingName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="65dp"
+        android:layout_marginTop="70dp"
         android:text="회원가입"
         android:textSize="30sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/edtName"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/edtName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="2dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="100dp"
         android:ems="10"
         android:hint="이름"
         android:inputType="text"
         android:minHeight="48dp"
-        app:layout_constraintBottom_toTopOf="@+id/edtStudentcode"
-        app:layout_constraintEnd_toEndOf="@+id/btnCheckDuplicate" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtWaitingName" />
+
+    <EditText
+        android:id="@+id/edtStudentCode"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="6dp"
+        android:ems="10"
+        android:hint="학번"
+        android:inputType="number"
+        app:layout_constraintEnd_toStartOf="@+id/btnCheckDuplicate"
+        app:layout_constraintStart_toStartOf="@+id/edtName"
+        app:layout_constraintTop_toBottomOf="@+id/edtName" />
+
+    <EditText
+        android:id="@+id/edtTelNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:ems="10"
+        android:hint="전화번호"
+        android:inputType="phone"
+        app:layout_constraintStart_toStartOf="@+id/edtName"
+        app:layout_constraintTop_toBottomOf="@+id/edtStudentCode" />
 
     <EditText
         android:id="@+id/edtPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
+        android:layout_marginTop="24dp"
         android:ems="10"
         android:hint="비밀번호"
         android:inputType="textPassword"
         android:minHeight="48dp"
-        app:layout_constraintBottom_toTopOf="@+id/edtPwck"
-        app:layout_constraintStart_toStartOf="@+id/edtStudentcode" />
+        app:layout_constraintStart_toStartOf="@+id/edtTelNumber"
+        app:layout_constraintTop_toBottomOf="@+id/edtTelNumber" />
 
     <EditText
         android:id="@+id/edtPwck"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="267dp"
+        android:layout_marginTop="24dp"
         android:ems="10"
         android:hint="비밀번호 확인"
         android:inputType="textPassword"
         android:minHeight="48dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/edtPassword" />
-
-    <EditText
-        android:id="@+id/edtStudentcode"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginEnd="6dp"
-        android:layout_marginBottom="24dp"
-        android:ems="10"
-        android:hint="학번"
-        android:inputType="text"
-        app:layout_constraintBottom_toTopOf="@+id/edtPassword"
-        app:layout_constraintEnd_toStartOf="@+id/btnCheckDuplicate"
-        app:layout_constraintStart_toStartOf="@+id/edtName" />
+        app:layout_constraintStart_toStartOf="@+id/edtPassword"
+        app:layout_constraintTop_toBottomOf="@+id/edtPassword" />
 
     <Button
         android:id="@+id/btnCheckDuplicate"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="97dp"
-        android:layout_marginRight="97dp"
         android:text="확인"
-        app:layout_constraintBaseline_toBaselineOf="@+id/edtStudentcode"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edtName" />
 
     <Button
         android:id="@+id/btnCancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="36dp"
-        android:layout_marginLeft="36dp"
-        android:layout_marginTop="71dp"
+        android:layout_marginTop="50dp"
         android:text="취소"
         app:layout_constraintStart_toEndOf="@+id/btnNewSignIn"
         app:layout_constraintTop_toBottomOf="@+id/edtPwck" />

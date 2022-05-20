@@ -1,4 +1,4 @@
-package com.example.stopwaiting.Adapter;
+package com.example.stopwaiting.adapter;
 
 import android.content.Context;
 import android.net.Uri;
@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.stopwaiting.R;
-import com.example.stopwaiting.ViewHolder.SettingImageViewHolder;
+import com.example.stopwaiting.viewholder.SettingImageViewHolder;
 
 import java.util.List;
 
