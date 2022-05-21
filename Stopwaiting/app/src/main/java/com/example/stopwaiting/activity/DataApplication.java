@@ -18,9 +18,8 @@ public class DataApplication extends Application {
     static Long qCnt;
 
     static public String serverURL = "http://dodam123.dothome.co.kr/Login.php";
-    public static RequestQueue requestQueue;
+    static public RequestQueue requestQueue;
     static public UserInfo currentUser = new UserInfo();
-
 
     public ArrayList<WaitingInfo> getTestDBList() {
         return testDBList;

@@ -49,6 +49,7 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
         manageWaitingActivity = ManageWaitingActivity.this;
         wQueue = new ArrayList<>();
         wInfo = new WaitingInfo();
+        timeList = new ArrayList<>();
         selectQ = new WaitingQueue();
 
         btnCheckIn = findViewById(R.id.btnCheckIn);
@@ -61,6 +62,7 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
         spinner = findViewById(R.id.spnTime);
 
         wInfo.setName(intent.getStringExtra("name"));
+        Toast.makeText(this, intent.getStringExtra("name") + "/" + wInfo.getName(), Toast.LENGTH_SHORT).show();
 
         if (spinner != null) {
             spinner.setOnItemSelectedListener(this);
@@ -145,6 +147,9 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
                     break;
                 }
             }
+
+            txtWaitingName.setText(wInfo.getName());
+
 
             wQueue = new ArrayList<>();
             for (int i = 0; i < ((DataApplication) getApplication()).testWaitingQueueDBList.size(); i++) {

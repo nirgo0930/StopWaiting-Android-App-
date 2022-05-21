@@ -22,6 +22,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.stopwaiting.R;
 import com.example.stopwaiting.dto.WaitingInfo;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.wearable.DataClient;
+import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
+import com.google.android.gms.wearable.Wearable;
 import com.naver.maps.geometry.LatLng;
 import com.naver.maps.map.CameraAnimation;
 import com.naver.maps.map.CameraUpdate;
@@ -58,6 +64,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             Manifest.permission.ACCESS_COARSE_LOCATION
     };
 
+
+    private static final String COUNT_KEY = "com.example.key.count";
+    private DataClient dataClient;
+    private int count = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         TextView userId = findViewById(R.id.txtUser);
         userId.setText(((DataApplication) getApplication()).currentUser.getName() + " 님");
+        dataClient = Wearable.getDataClient(this);
 
         markers = new ArrayList<>();
         waitingList = new ArrayList<>();
@@ -192,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     WaitingInfo temp = waitingList.get(i);
                     if (temp.getName().equals(selectName)) {
                         CameraUpdate cameraUpdate = CameraUpdate.scrollAndZoomTo(
-                                        new LatLng(temp.getLatitude(), temp.getLongitude()), 15)
+                                new LatLng(temp.getLatitude(), temp.getLongitude()), 15)
                                 .animate(CameraAnimation.Fly, 1000);
                         naverMap.moveCamera(cameraUpdate);
 
@@ -216,6 +228,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         getMarkerInfo();
 
         ActivityCompat.requestPermissions(mainActivity, PERMISSIONS, LOCATION_PERMISSION_REQUEST_CODE);
+
+        increaseCounter();
     }
 
     public void getMarkerInfo() {
@@ -291,5 +305,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         loginRequest.setShouldCache(false);
         ((DataApplication) getApplication()).requestQueue.add(loginRequest);
+    }
+
+    private void increaseCounter() {
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/count");
+        putDataMapReq.getDataMap().putInt(COUNT_KEY, count++);
+        PutDataRequest putDataReq = putDataMapReq.setUrgent().asPutDataRequest();
+        Toast.makeText(getApplicationContext(), "1", Toast.LENGTH_SHORT).show();
+
+        Task<DataItem> putDataTask = dataClient.putDataItem(putDataReq);
+        Toast.makeText(getApplicationContext(), "2", Toast.LENGTH_SHORT).show();
+
+//        try {
+//            DataItem item = Tasks.await(putDataTask);
+//            Log.d(TAG, "Data item set: " + item.getUri());
+//        } catch (ExecutionException | InterruptedException e) {
+//
+//        }
     }
 }

@@ -12,11 +12,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.stopwaiting.activity.ManageWaitingActivity;
-import com.example.stopwaiting.activity.DataApplication;
-import com.example.stopwaiting.viewholder.ManageWaitingListItemViewHolder;
 import com.example.stopwaiting.R;
+import com.example.stopwaiting.activity.DataApplication;
+import com.example.stopwaiting.activity.ManageWaitingActivity;
 import com.example.stopwaiting.dto.WaitingListItem;
+import com.example.stopwaiting.viewholder.ManageWaitingListItemViewHolder;
 
 import java.util.List;
 
@@ -89,8 +89,12 @@ public class ManageWaitingListAdapter extends RecyclerView.Adapter<ManageWaiting
     public void onBindViewHolder(@NonNull ManageWaitingListItemViewHolder holder, int position) {
         final WaitingListItem waitingItem = mItemList.get(position);
 
+//        Glide.with(mContext.getApplicationContext())
+//                .load(waitingItem.getImgUri())
+//                .into(holder.imgItem);
+
         Glide.with(mContext.getApplicationContext())
-                .load(waitingItem.getImgUri())
+                .load("http://goo.gl/gEgYUd")
                 .into(holder.imgItem);
 
         holder.txtName.setText(waitingItem.getName());

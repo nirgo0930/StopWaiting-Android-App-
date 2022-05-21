@@ -22,8 +22,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.stopwaiting.dto.ImgItem;
 import com.example.stopwaiting.R;
+import com.example.stopwaiting.dto.ImgItem;
 import com.example.stopwaiting.dto.UserInfo;
 import com.example.stopwaiting.dto.WaitingInfo;
 import com.example.stopwaiting.dto.WaitingQueue;
@@ -77,10 +77,11 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //loginRequest();
 
-                if (edt_id.getText().toString().equals("test") && edt_password.getText().toString().equals("test")) {
+                if (edt_id.getText().toString().equals("20170873") && edt_password.getText().toString().equals("test")) {
                     Toast.makeText(getApplicationContext(), "로그인에 성공하였습니다.\n 잠시만 기다려주세요", Toast.LENGTH_SHORT).show();
 
-                    UserInfo temp = new UserInfo("test", 20170873L, "01094536639");
+                    ((DataApplication) getApplication()).currentUser = new UserInfo();
+                    UserInfo temp = new UserInfo("test", Long.valueOf(edt_id.getText().toString()), "01094536639");
                     ((DataApplication) getApplication()).currentUser = temp;
 
                     getTestInfo();
@@ -97,6 +98,7 @@ public class LoginActivity extends AppCompatActivity {
         checkPermissions(permission_list);
         if (((DataApplication) getApplication()).requestQueue == null)
             ((DataApplication) getApplication()).requestQueue = Volley.newRequestQueue(getApplicationContext());
+
     }
 
     public void getTestInfo() {

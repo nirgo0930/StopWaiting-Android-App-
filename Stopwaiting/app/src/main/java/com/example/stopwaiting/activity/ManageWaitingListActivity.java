@@ -60,7 +60,7 @@ public class ManageWaitingListActivity extends AppCompatActivity {
 //        myManageWaitingInfoRequest(((DataApplication) getApplication()).currentUser.getStudentCode());
         for (int i = 0; i < ((DataApplication) getApplication()).testDBList.size(); i++) {
             WaitingInfo tempInfo = ((DataApplication) getApplication()).testDBList.get(i);
-            if (tempInfo.getAdminId().equals(((DataApplication) getApplication()).currentUser.getName())) {
+            if (tempInfo.getAdminId().equals(((DataApplication) getApplication()).currentUser.getStudentCode())) {
                 String qName = tempInfo.getName();
                 for (int j = 0; j < ((DataApplication) getApplication()).testWaitingQueueDBList.size(); j++) {
                     WaitingQueue tempQ = ((DataApplication) getApplication()).testWaitingQueueDBList.get(j);
@@ -108,7 +108,6 @@ public class ManageWaitingListActivity extends AppCompatActivity {
         } else {
             txtResult.setText("개설한 웨이팅이 없습니다.");
         }
-
 
         mListAdapter.notifyDataSetChanged();
     }
@@ -177,7 +176,70 @@ public class ManageWaitingListActivity extends AppCompatActivity {
         ((DataApplication) getApplication()).requestQueue.add(request);
     }
 
-    public void imagesRequest(Long qId) {
-
-    }
+//    public void imagesRequest(Long qId) {
+////        avatar.setImageUrl("http://someurl.com/image.png", ((DataApplication) getApplication()).mImageLoader);
+//
+//        StringRequest request = new StringRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL,
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        try {
+//                            JSONObject jsonObject = new JSONObject(response);
+//                            boolean success = jsonObject.getBoolean("success");
+//                            if (success) {
+//                                JSONArray dataArray = jsonObject.getJSONArray("data");
+//                                mWaitingList = new ArrayList<>();
+//                                mWaitingQueueList = new ArrayList<>();
+//                                for (int i = 0; i < dataArray.length(); i++) {
+//                                    JSONObject dataObject = dataArray.getJSONObject(i);
+//                                    WaitingQueue tempQ = new WaitingQueue();
+//
+//                                    tempQ.setQId(dataObject.getLong("id"));
+//                                    tempQ.setQueueName(dataObject.getString("name"));
+//                                    tempQ.setMaxPerson(dataObject.getInt("maxPerson"));
+//                                    tempQ.setTime(dataObject.getString("time"));
+//
+//                                    JSONArray personArray = jsonObject.getJSONArray("personList");
+//                                    ArrayList<UserInfo> tempP = new ArrayList<>();
+//                                    for (int j = 0; j < personArray.length(); j++) {
+//                                        JSONObject personObject = personArray.getJSONObject(j);
+//                                        UserInfo tempUser = new UserInfo();
+//                                        tempUser.setStudentCode(personObject.getLong("sCode"));
+//                                        tempUser.setName(personObject.getString("name"));
+//                                        tempUser.setTel(personObject.getString("tel"));
+//
+//                                        tempP.add(tempUser);
+//                                    }
+//                                    tempQ.setWaitingPersonList(tempP);
+//
+//                                    mWaitingQueueList.add(tempQ);
+//                                }
+//                            } else {
+//                                Toast.makeText(getApplicationContext(), "로딩에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+//                                return;
+//                            }
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        Toast.makeText(getApplicationContext(), "로딩에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+//                    }
+//                }) {
+//            @Override
+//            protected Map<String, String> getParams() throws AuthFailureError {
+//                Map<String, String> params = new HashMap<String, String>();
+//                params.put("id", userId.toString());
+//
+//                return params;
+//            }
+//        };
+//
+//        request.setShouldCache(false);
+//        ((DataApplication) getApplication()).requestQueue.add(request);
+//
+//    }
 }

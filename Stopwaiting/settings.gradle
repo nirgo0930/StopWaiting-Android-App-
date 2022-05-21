@@ -17,3 +17,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Stopwaiting"
 include ':app'
+include ':wear'

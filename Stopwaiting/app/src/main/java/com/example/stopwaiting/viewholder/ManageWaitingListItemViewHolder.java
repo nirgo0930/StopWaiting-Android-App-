@@ -6,11 +6,11 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.stopwaiting.adapter.ManageWaitingListAdapter;
 import com.example.stopwaiting.R;
+import com.example.stopwaiting.adapter.ManageWaitingListAdapter;
 
 public class ManageWaitingListItemViewHolder extends RecyclerView.ViewHolder {
-    public ImageView imgItem;
+    public ImageView imgItem,imgTestItem;
     public TextView txtName, txtLocDetail, txtWaitCnt;
     public ManageWaitingListAdapter adapter;
 
