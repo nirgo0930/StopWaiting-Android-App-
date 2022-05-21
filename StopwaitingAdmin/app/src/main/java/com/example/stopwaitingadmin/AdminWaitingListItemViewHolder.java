@@ -4,7 +4,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,7 +18,7 @@ public class AdminWaitingListItemViewHolder extends RecyclerView.ViewHolder {
         imgItem = a_view.findViewById(R.id.imgItem);
         txtName = a_view.findViewById(R.id.txtId);
         txtUser = a_view.findViewById(R.id.txtUser);
-        txtLocation = a_view.findViewById(R.id.txtLocation);
+        txtLocation = a_view.findViewById(R.id.txtNum);
         btnAccept = a_view.findViewById(R.id.btnTrue);
         btnAccept.setOnClickListener(view -> {
             adapter.mItemList.remove(getAdapterPosition());
