@@ -21,9 +21,18 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
+
+import com.google.android.gms.wearable.DataClient;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.DataMapItem;
+import com.google.android.gms.wearable.Wearable;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,7 +42,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements DataClient.OnDataChangedListener {
 
     private TextView mTextView;
 //    private ActivityMainBinding binding;
@@ -71,6 +80,50 @@ public class MainActivity extends Activity {
 
     public static final String NOTIFICATION_CHANNEL_ID = "4665";
 
+    //블루투스를 통해 데이터 수신
+    private static final String COUNT_KEY = "com.example.key.count";
+    //private DataClient dataClient;
+    private int cnt=0;
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        Toast.makeText(this,"onResume1",Toast.LENGTH_SHORT).show();
+        Wearable.getDataClient(this).addListener((DataClient.OnDataChangedListener) this);
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        Wearable.getDataClient(this).removeListener((DataClient.OnDataChangedListener) this);
+    }
+
+    @Override
+    public void onDataChanged(DataEventBuffer dataEvents){
+        for(DataEvent event : dataEvents){
+            Toast.makeText(this, "onDataChanged typechange전1", Toast.LENGTH_SHORT).show();
+            if(event.getType() == DataEvent.TYPE_CHANGED){
+                //DataItem changed
+                DataItem item = event.getDataItem();
+                Toast.makeText(this, "onDataChanged typechange후1", Toast.LENGTH_SHORT).show();
+
+                if(item.getUri().getPath().compareTo("/count")==0){
+                    DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
+                    updateCount(dataMap.getInt(COUNT_KEY));
+
+                    Toast.makeText(this, "잘왔지롱1", Toast.LENGTH_SHORT).show();
+                }
+                else if(event.getType()==DataEvent.TYPE_DELETED){
+                    //DataItem deleted
+                }
+            }
+        }
+    }
+
+    private void updateCount(int c){
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +139,7 @@ public class MainActivity extends Activity {
 
             if (bluetoothAdapter.isEnabled()) { // 블루투스가 활성화 상태 (기기에 블루투스가 켜져있음)
 
-                selectBluetoothDevice(); // 블루투스 디바이스 선택 함수 호출
+                //selectBluetoothDevice(); // 블루투스 디바이스 선택 함수 호출
 
             } else { // 블루투스가 비 활성화 상태 (기기에 블루투스가 꺼져있음)
 
@@ -111,6 +164,8 @@ public class MainActivity extends Activity {
             }
 
         }
+
+
 
 
         listView = findViewById(R.id.listView);
@@ -232,130 +287,6 @@ public class MainActivity extends Activity {
         });
     }
 
-    public void selectBluetoothDevice() {
-        //이미 페어링 되어있는 블루투스 기기를 찾기
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        devices = bluetoothAdapter.getBondedDevices();
-
-        //페어링 된 디바이스의 크기를 저장
-        int pariedDeviceCount = devices.size();
-
-        if (pariedDeviceCount == 0) {
-            //페어링을 하기위한 함수 호출
-        } else {//페어링 되어있는 장치가 있는 경우
-            //디바이스를 선택하기 위한 다이얼로그 생성
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("페어링 되어있는 블루투스 디바이스 목록");
-            //페어링 된 각각의 디바이스의 이름과 주소를 저장
-            List<String> list = new ArrayList<>();
-            //모든 디바이스의 이름을 리스트에 추가
-            for (BluetoothDevice bluetoothDevice : devices) {
-                list.add(bluetoothDevice.getName());
-            }
-            list.add("취소");
-
-            //List를 CharSequence 배열로 변경
-            final CharSequence[] charSequences = list.toArray(new CharSequence[list.size()]);
-            list.toArray(new CharSequence[list.size()]);
-
-            // 해당 아이템을 눌렀을 때 호출 되는 이벤트 리스너
-
-            builder.setItems(charSequences, new DialogInterface.OnClickListener() {
-
-                @Override
-
-                public void onClick(DialogInterface dialog, int which) {
-
-                    // 해당 디바이스와 연결하는 함수 호출
-
-                    connectDevice(charSequences[which].toString());
-
-                }
-
-            });
-
-
-            // 뒤로가기 버튼 누를 때 창이 안닫히도록 설정
-
-            builder.setCancelable(false);
-
-            // 다이얼로그 생성
-
-            AlertDialog alertDialog = builder.create();
-
-            alertDialog.show();
-
-
-        }
-
-    }
-
-    public void connectDevice(String deviceName) {
-
-        // 페어링 된 디바이스들을 모두 탐색
-
-        for (BluetoothDevice tempDevice : devices) {
-
-            // 사용자가 선택한 이름과 같은 디바이스로 설정하고 반복문 종료
-
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
-            if (deviceName.equals(tempDevice.getName())) {
-
-                bluetoothDevice = tempDevice;
-
-                break;
-
-            }
-
-        }
-
-        // UUID 생성
-
-        UUID uuid = java.util.UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
-
-        // Rfcomm 채널을 통해 블루투스 디바이스와 통신하는 소켓 생성
-
-        try {
-
-            bluetoothSocket = bluetoothDevice.createRfcommSocketToServiceRecord(uuid);
-
-            bluetoothSocket.connect();
-
-            // 데이터 송,수신 스트림을 얻어옵니다.
-
-            outputStream = bluetoothSocket.getOutputStream();
-
-            inputStream = bluetoothSocket.getInputStream();
-
-            // 데이터 수신 함수 호출
-
-            receiveData();
-
-        } catch (IOException e) {
-
-            e.printStackTrace();
-
-        }
-
-    }
     public void receiveData() {
 
         final Handler handler = new Handler();
