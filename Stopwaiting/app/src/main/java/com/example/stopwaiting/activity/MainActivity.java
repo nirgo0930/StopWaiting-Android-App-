@@ -22,11 +22,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.stopwaiting.R;
 import com.example.stopwaiting.dto.WaitingInfo;
-import com.google.android.gms.tasks.Task;
 import com.google.android.gms.wearable.DataClient;
-import com.google.android.gms.wearable.DataItem;
-import com.google.android.gms.wearable.PutDataMapRequest;
-import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 import com.naver.maps.geometry.LatLng;
 import com.naver.maps.map.CameraAnimation;
@@ -110,7 +106,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                refresh();
+//                refresh();
+                ((DataApplication) getApplication()).talkClick();
             }
         });
     }
@@ -228,8 +225,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         getMarkerInfo();
 
         ActivityCompat.requestPermissions(mainActivity, PERMISSIONS, LOCATION_PERMISSION_REQUEST_CODE);
-
-        increaseCounter();
     }
 
     public void getMarkerInfo() {
@@ -305,22 +300,5 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         loginRequest.setShouldCache(false);
         ((DataApplication) getApplication()).requestQueue.add(loginRequest);
-    }
-
-    private void increaseCounter() {
-        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/count");
-        putDataMapReq.getDataMap().putInt(COUNT_KEY, count++);
-        PutDataRequest putDataReq = putDataMapReq.setUrgent().asPutDataRequest();
-        Toast.makeText(getApplicationContext(), "1", Toast.LENGTH_SHORT).show();
-
-        Task<DataItem> putDataTask = dataClient.putDataItem(putDataReq);
-        Toast.makeText(getApplicationContext(), "2", Toast.LENGTH_SHORT).show();
-
-//        try {
-//            DataItem item = Tasks.await(putDataTask);
-//            Log.d(TAG, "Data item set: " + item.getUri());
-//        } catch (ExecutionException | InterruptedException e) {
-//
-//        }
     }
 }
