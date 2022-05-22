@@ -15,7 +15,8 @@ public class DataApplication extends Application {
     static public ArrayList<ImgItem> testImageDBList = new ArrayList<>();
     static public ArrayList<WaitingQueue> testWaitingQueueDBList = new ArrayList<>();
     static public ArrayList<WaitingQueue> myWaiting = new ArrayList<>();
-    static Long qCnt;
+    static public Long qCnt;
+    static public boolean isTest = true;
 
     static public String serverURL = "http://dodam123.dothome.co.kr/Login.php";
     static public RequestQueue requestQueue;

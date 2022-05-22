@@ -3,6 +3,7 @@ package com.example.stopwaiting.activity;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -58,11 +59,25 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.login);
         login_Activity = LoginActivity.this;
 
+        SharedPreferences sharedPreferences = getSharedPreferences("sharedPreferences", Activity.MODE_PRIVATE);
+
         edt_id = findViewById(R.id.edtId);
         edt_password = findViewById(R.id.edtPw);
         btn_login = findViewById(R.id.btnLogin);
         btn_new = findViewById(R.id.btnNewSignIn);
 
+        String loginId = sharedPreferences.getString("inputId", null);
+        String loginPwd = sharedPreferences.getString("inputPwd", null);
+
+        if (loginId != null && loginPwd != null) {
+            Toast.makeText(getApplicationContext(), loginId + "님 자동로그인 입니다!", Toast.LENGTH_SHORT).show();
+            edt_id.setText(loginId);
+            edt_password.setText(loginPwd);
+
+            loginRequest();
+        } else if (loginId == null && loginPwd == null) {
+
+        }
         // 회원가입 버튼을 클릭 시 수행
         btn_new.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,23 +90,16 @@ public class LoginActivity extends AppCompatActivity {
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //loginRequest();
+                SharedPreferences sharedPreferences = getSharedPreferences("sharedPreferences", Activity.MODE_PRIVATE);
 
-                if (edt_id.getText().toString().equals("20170873") && edt_password.getText().toString().equals("test")) {
-                    Toast.makeText(getApplicationContext(), "로그인에 성공하였습니다.\n 잠시만 기다려주세요", Toast.LENGTH_SHORT).show();
+                SharedPreferences.Editor autoLogin = sharedPreferences.edit();
 
-                    ((DataApplication) getApplication()).currentUser = new UserInfo();
-                    UserInfo temp = new UserInfo("test", Long.valueOf(edt_id.getText().toString()), "01094536639");
-                    ((DataApplication) getApplication()).currentUser = temp;
+                autoLogin.putString("inputId", edt_id.getText().toString());
+                autoLogin.putString("inputPwd", edt_password.getText().toString());
 
-                    getTestInfo();
+                autoLogin.commit();
 
-                    Intent loginIntent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(loginIntent);
-                } else { // 로그인에 실패한 경우
-                    Toast.makeText(getApplicationContext(), "로그인에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+                loginRequest();
             }
         });
 
@@ -170,52 +178,71 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void loginRequest() {
-        StringRequest request = new StringRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            boolean success = jsonObject.getBoolean("success");
-                            if (success) {
-                                Toast.makeText(getApplicationContext(), "로그인에 성공하였습니다.\n 잠시만 기다려주세요", Toast.LENGTH_SHORT).show();
+        boolean test = DataApplication.isTest;
+        if (test) {
+            if (edt_id.getText().toString().equals("20170873") && edt_password.getText().toString().equals("test")) {
+                Toast.makeText(getApplicationContext(), "로그인에 성공하였습니다.\n 잠시만 기다려주세요", Toast.LENGTH_SHORT).show();
 
-                                UserInfo temp = new UserInfo();
-                                temp.setName(jsonObject.getString("name"));
-                                temp.setStudentCode(jsonObject.getLong("studentcode"));
-                                temp.setTel(jsonObject.getString("tel"));
+                ((DataApplication) getApplication()).currentUser = new UserInfo();
+                UserInfo temp = new UserInfo("test", Long.valueOf(edt_id.getText().toString()), "01094536639");
+                ((DataApplication) getApplication()).currentUser = temp;
 
-                                ((DataApplication) getApplication()).currentUser = temp;
+                getTestInfo();
 
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                startActivity(intent);
-                            } else {
-                                Toast.makeText(getApplicationContext(), "로그인에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-//                        textView.setText(error.getMessage());
-                    }
-                }) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("type", "login");
-                params.put("id", edt_id.getText().toString());
-                params.put("pw", edt_password.getText().toString());
-
-                return params;
+                Intent loginIntent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(loginIntent);
+            } else { // 로그인에 실패한 경우
+                Toast.makeText(getApplicationContext(), "로그인에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                return;
             }
-        };
+        } else {
+            StringRequest request = new StringRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            try {
+                                JSONObject jsonObject = new JSONObject(response);
+                                boolean success = jsonObject.getBoolean("success");
+                                if (success) {
+                                    Toast.makeText(getApplicationContext(), "로그인에 성공하였습니다.\n 잠시만 기다려주세요", Toast.LENGTH_SHORT).show();
 
-        request.setShouldCache(false);
-        ((DataApplication) getApplication()).requestQueue.add(request);
+                                    UserInfo temp = new UserInfo();
+                                    temp.setName(jsonObject.getString("name"));
+                                    temp.setStudentCode(jsonObject.getLong("studentcode"));
+                                    temp.setTel(jsonObject.getString("tel"));
+
+                                    ((DataApplication) getApplication()).currentUser = temp;
+
+                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                    startActivity(intent);
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "로그인에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+//                        textView.setText(error.getMessage());
+                        }
+                    }) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("type", "login");
+                    params.put("id", edt_id.getText().toString());
+                    params.put("pw", edt_password.getText().toString());
+
+                    return params;
+                }
+            };
+
+            request.setShouldCache(false);
+            ((DataApplication) getApplication()).requestQueue.add(request);
+        }
     }
 }
