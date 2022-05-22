@@ -3,10 +3,13 @@
     package="com.example.stopwaiting">
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-feature android:name="android.hardware.type.watch" />
 
     <application
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
@@ -21,7 +24,12 @@
         -->
         <meta-data
             android:name="com.google.android.wearable.standalone"
-            android:value="true" />
+            android:value="false" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBDF5cNp-fKMFlwHvMwB7bzapIKGDSUgkU" />
+
 
         <activity
             android:name=".MainActivity"
@@ -33,7 +41,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <activity
+            android:name=".WaitingDetailActivity">
+        </activity>
+        <activity
+            android:name=".MapsActivity">
+        </activity>
+        <activity
+            android:name=".QRActivity">
+        </activity>
         <service
             android:name=".MessageService"
             android:exported="true">

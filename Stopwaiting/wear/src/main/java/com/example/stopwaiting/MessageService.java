@@ -1,6 +1,7 @@
 package com.example.stopwaiting;
 
 import android.content.Intent;
+import android.widget.Toast;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -21,6 +22,8 @@ public class MessageService extends WearableListenerService {
             messageIntent.setAction(Intent.ACTION_SEND);
             messageIntent.putExtra("message", message);
             LocalBroadcastManager.getInstance(this).sendBroadcast(messageIntent);
+            Toast.makeText(getApplicationContext(),"받아왔지롱",Toast.LENGTH_SHORT).show();
+
         }
         else {
             super.onMessageReceived(messageEvent);
