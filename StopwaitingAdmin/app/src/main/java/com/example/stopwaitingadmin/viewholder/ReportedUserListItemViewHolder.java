@@ -22,18 +22,18 @@ public class ReportedUserListItemViewHolder extends RecyclerView.ViewHolder {
         txtUserNum = a_view.findViewById(R.id.txtUserNum);
         txtUserName = a_view.findViewById(R.id.txtUserName);
         txtReportedCount = a_view.findViewById(R.id.txtReportedCount);
-        btnAccept = a_view.findViewById(R.id.btnTrue);
-        btnAccept.setOnClickListener(view -> {
-            adapter.mItemList.remove(getAdapterPosition());
-            ReportedUserActivity.txtNotice.setText("신고된 회원이 " + String.valueOf(adapter.mItemList.size()) + "명 존재합니다.");
-            adapter.notifyItemRemoved(getAdapterPosition());
-        });
-        btnReject = a_view.findViewById(R.id.btnFalse);
-        btnReject.setOnClickListener(view -> {
-            adapter.mItemList.remove(getAdapterPosition());
-            ReportedUserActivity.txtNotice.setText("신고된 회원이 " + String.valueOf(adapter.mItemList.size()) + "명 존재합니다.");
-            adapter.notifyItemRemoved(getAdapterPosition());
-        });
+//        btnAccept = a_view.findViewById(R.id.btnTrue);
+//        btnAccept.setOnClickListener(view -> {
+//            adapter.mItemList.remove(getAdapterPosition());
+//            ReportedUserActivity.txtNotice.setText("신고된 회원이 " + String.valueOf(adapter.mItemList.size()) + "명 존재합니다.");
+//            adapter.notifyItemRemoved(getAdapterPosition());
+//        });
+//        btnReject = a_view.findViewById(R.id.btnFalse);
+//        btnReject.setOnClickListener(view -> {
+//            adapter.mItemList.remove(getAdapterPosition());
+//            ReportedUserActivity.txtNotice.setText("신고된 회원이 " + String.valueOf(adapter.mItemList.size()) + "명 존재합니다.");
+//            adapter.notifyItemRemoved(getAdapterPosition());
+//        });
     }
 
     public ReportedUserListItemViewHolder linkAdapter(ReportedUserListAdapter adapter) {

@@ -17,7 +17,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.AdminActivity" />
+        <activity android:name=".activity.WaitingListActivity" />
+        <activity android:name=".activity.ReportedUserActivity" />
+        <activity android:name=".activity.AdminMainActivity" />
     </application>
 
 </manifest>
