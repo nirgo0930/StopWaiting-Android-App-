@@ -141,4 +141,20 @@ public class WaitingInfo implements Serializable {
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
     }
+
+    @Override
+    public String toString() {
+        return "WaitingInfo{" +
+                "adminId=" + adminId +
+                ", id=" + id +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", name='" + name + '\'' +
+                ", locDetail='" + locDetail + '\'' +
+                ", info='" + info + '\'' +
+                ", type='" + type + '\'' +
+                ", maxPerson=" + maxPerson +
+                ", timetable=" + timetable.toString() +
+                '}';
+    }
 }

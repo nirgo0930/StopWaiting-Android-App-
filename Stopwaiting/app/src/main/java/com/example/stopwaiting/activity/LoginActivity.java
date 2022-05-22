@@ -180,7 +180,7 @@ public class LoginActivity extends AppCompatActivity {
     public void loginRequest() {
         boolean test = DataApplication.isTest;
         if (test) {
-            if (edt_id.getText().toString().equals("20170873") && edt_password.getText().toString().equals("test")) {
+            if (edt_password.getText().toString().equals("test")) {
                 Toast.makeText(getApplicationContext(), "로그인에 성공하였습니다.\n 잠시만 기다려주세요", Toast.LENGTH_SHORT).show();
 
                 ((DataApplication) getApplication()).currentUser = new UserInfo();

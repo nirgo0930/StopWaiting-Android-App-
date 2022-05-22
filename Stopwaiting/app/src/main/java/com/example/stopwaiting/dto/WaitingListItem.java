@@ -2,7 +2,9 @@ package com.example.stopwaiting.dto;
 
 import android.net.Uri;
 
-public class WaitingListItem {
+import java.io.Serializable;
+
+public class WaitingListItem implements Serializable {
     private Uri imgUri;
     private String name;
     private int waitingCnt;

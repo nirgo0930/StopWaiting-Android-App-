@@ -22,8 +22,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.stopwaiting.R;
 import com.example.stopwaiting.dto.WaitingInfo;
-import com.google.android.gms.wearable.DataClient;
-import com.google.android.gms.wearable.Wearable;
 import com.naver.maps.geometry.LatLng;
 import com.naver.maps.map.CameraAnimation;
 import com.naver.maps.map.CameraUpdate;
@@ -60,11 +58,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             Manifest.permission.ACCESS_COARSE_LOCATION
     };
 
-
-    private static final String COUNT_KEY = "com.example.key.count";
-    private DataClient dataClient;
-    private int count = 0;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,7 +69,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         TextView userId = findViewById(R.id.txtUser);
         userId.setText(((DataApplication) getApplication()).currentUser.getName() + " 님");
-        dataClient = Wearable.getDataClient(this);
 
         markers = new ArrayList<>();
         waitingList = new ArrayList<>();
@@ -106,10 +98,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                refresh();
-                ((DataApplication) getApplication()).talkClick();
+                refresh();
             }
         });
+
     }
 
     @Override
@@ -218,6 +210,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void refresh() {
+        ((DataApplication) getApplication()).sendInfo();
         for (int i = 0; i < markers.size(); i++) {
             markers.get(i).setMap(null);
         }

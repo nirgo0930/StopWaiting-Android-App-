@@ -2,9 +2,10 @@ package com.example.stopwaiting.dto;
 
 import com.example.stopwaiting.activity.DataApplication;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class WaitingQueue {
+public class WaitingQueue implements Serializable {
     private Long qId;
     private String queueName;
     private String time;

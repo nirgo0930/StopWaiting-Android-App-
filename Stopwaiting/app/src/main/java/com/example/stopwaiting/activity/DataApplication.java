@@ -16,10 +16,18 @@ import com.example.stopwaiting.dto.WaitingInfo;
 import com.example.stopwaiting.dto.WaitingQueue;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.android.gms.wearable.Asset;
+import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -79,6 +87,7 @@ public class DataApplication extends Application {
         public boolean handleMessage(Message msg) {
             Bundle stuff = msg.getData();
             stuff.getString("messageText");
+//            UserInfo temp = (UserInfo) stuff.get("test");
 
             return true;
         }
@@ -100,16 +109,18 @@ public class DataApplication extends Application {
             message = m;
         }
 
+
         public void run() {
             Task<List<Node>> wearableList = Wearable.getNodeClient(getApplicationContext()).getConnectedNodes();
             try {
                 List<Node> nodes = Tasks.await(wearableList);
                 for (Node node : nodes) {
-                    Task<Integer> sendMessageTask =
-                            Wearable.getMessageClient(getApplicationContext()).sendMessage(node.getId(), path, message.getBytes());
+                    Task<Integer> sendMessageTask = null;
+
+                    sendMessageTask = Wearable.getMessageClient(getApplicationContext()).sendMessage(node.getId(), path, message.getBytes());
+
                     try {
                         Integer result = Tasks.await(sendMessageTask);
-
                     } catch (ExecutionException exception) {
                         //TO DO: Handle the exception//
 
@@ -135,4 +146,31 @@ public class DataApplication extends Application {
         new NewThread("/my_path", message).start();
 
     }
+
+    public void sendInfo() {
+        Asset temp = createAssetFromUserInfo(currentUser);
+        PutDataMapRequest dataMap = PutDataMapRequest.create("/my_path");
+        dataMap.getDataMap().putAsset("profileImage", temp);
+        PutDataRequest request = dataMap.asPutDataRequest();
+        Task<DataItem> putTask = Wearable.getDataClient(getApplicationContext()).putDataItem(request);
+        Toast.makeText(getApplicationContext(), "송신", Toast.LENGTH_SHORT).show();
+    }
+
+    private static Asset createAssetFromUserInfo(UserInfo userInfo) {
+        UserInfo member = userInfo;
+        byte[] serializedMember = null;
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+                oos.writeObject(member);
+                serializedMember = baos.toByteArray();
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return Asset.createFromBytes(Base64.getEncoder().encodeToString(serializedMember).getBytes());
+    }
+
+
 }

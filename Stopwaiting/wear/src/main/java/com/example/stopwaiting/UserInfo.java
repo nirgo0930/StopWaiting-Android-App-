@@ -1,4 +1,6 @@
-package com.example.stopwaiting.dto;
+package com.example.stopwaiting;
+
+import android.util.Log;
 
 import java.io.Serializable;
 
@@ -43,6 +45,7 @@ public class UserInfo implements Serializable {
 
     @Override
     public String toString() {
+        Log.e("TETETETETETETETETETETE", String.format("UserInfo", name, studentCode, tel));
         return String.format("UserInfo", name, studentCode, tel);
     }
 }
