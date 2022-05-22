@@ -1,4 +1,4 @@
-package com.example.wear;
+package com.example.stopwaiting;
 
 import android.content.Intent;
 
