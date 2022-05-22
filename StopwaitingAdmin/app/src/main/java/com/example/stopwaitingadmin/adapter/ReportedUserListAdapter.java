@@ -32,9 +32,9 @@ public class ReportedUserListAdapter extends RecyclerView.Adapter<ReportedUserLi
     @Override
     public void onBindViewHolder(@NonNull ReportedUserListItemViewHolder holder, int position) {
         final ReportedUserListItem reportedUserItem = mItemList.get(position);
-        holder.txtName.setText("학번 : " + reportedUserItem.getReportedUserNum());
-        holder.txtUser.setText("이름 : " + reportedUserItem.getReportedUserName());
-        holder.txtLocation.setText("신고된 횟수 : " + reportedUserItem.getReportedCount());
+        holder.txtUserNum.setText("학번 : " + reportedUserItem.getReportedUserNum());
+        holder.txtUserName.setText("이름 : " + reportedUserItem.getReportedUserName());
+        holder.txtReportedCount.setText("신고된 횟수 : " + reportedUserItem.getReportedCount());
     }
 
     @Override

@@ -13,17 +13,15 @@ import com.example.stopwaitingadmin.activity.ReportedUserActivity;
 import com.example.stopwaitingadmin.adapter.ReportedUserListAdapter;
 
 public class ReportedUserListItemViewHolder extends RecyclerView.ViewHolder {
-    public ImageView imgItem;
-    public TextView txtName, txtUser, txtLocation;
+    public TextView txtUserNum, txtUserName, txtReportedCount;
     public Button btnAccept, btnReject;
     public ReportedUserListAdapter adapter;
 
     public ReportedUserListItemViewHolder(View a_view) {
         super(a_view);
-        imgItem = a_view.findViewById(R.id.imgItem);
-        txtName = a_view.findViewById(R.id.txtId);
-        txtUser = a_view.findViewById(R.id.txtUser);
-        txtLocation = a_view.findViewById(R.id.txtNum);
+        txtUserNum = a_view.findViewById(R.id.txtUserNum);
+        txtUserName = a_view.findViewById(R.id.txtUserName);
+        txtReportedCount = a_view.findViewById(R.id.txtReportedCount);
         btnAccept = a_view.findViewById(R.id.btnTrue);
         btnAccept.setOnClickListener(view -> {
             adapter.mItemList.remove(getAdapterPosition());
