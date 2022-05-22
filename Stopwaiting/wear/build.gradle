@@ -34,6 +34,9 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'androidx.wear:wear:1.1.0'
 
+    wearApp project(":wear")
+
+
 
 
 
