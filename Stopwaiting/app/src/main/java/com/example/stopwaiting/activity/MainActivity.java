@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         markers = new ArrayList<>();
         waitingList = new ArrayList<>();
 
-        getMarkerInfo();
+        waitingInfoAllRequest();
 
         FragmentManager fm = getSupportFragmentManager();
         MapFragment mapFragment = (MapFragment) fm.findFragmentById(R.id.map);
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         naverMap.setLocationSource(locationSource);  //현재위치 표시
         ActivityCompat.requestPermissions(this, PERMISSIONS, LOCATION_PERMISSION_REQUEST_CODE);
 
-        getMarkerInfo();
+        waitingInfoAllRequest();
     }
 
     @Override
@@ -216,23 +216,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             markers.get(i).setMap(null);
         }
         markers = new ArrayList<>();
-        getMarkerInfo();
+        waitingInfoAllRequest();
+        myWaitingQueueRequest();
 
         ActivityCompat.requestPermissions(mainActivity, PERMISSIONS, LOCATION_PERMISSION_REQUEST_CODE);
 
-        myWaitingQueueRequest();
+
         setWearOS();
     }
 
-    public void getMarkerInfo() {
-        waitingList = new ArrayList<>();
 
-        waitingInfoAllRequest();
-
-        for (int i = 0; i < waitingList.size(); i++) {
-            setInfo(waitingList.get(i));
-        }
-    }
 
     public void myWaitingQueueRequest() {
         ((DataApplication) getApplication()).myWaiting = new ArrayList<>();
@@ -251,6 +244,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void waitingInfoAllRequest() {
+        waitingList = new ArrayList<>();
         if (DataApplication.isTest) {
             waitingList = ((DataApplication) this.getApplication()).getTestDBList();
         } else {
@@ -315,6 +309,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             loginRequest.setShouldCache(false);
             ((DataApplication) getApplication()).requestQueue.add(loginRequest);
+        }
+        for (int i = 0; i < waitingList.size(); i++) {
+            setInfo(waitingList.get(i));
         }
     }
 
