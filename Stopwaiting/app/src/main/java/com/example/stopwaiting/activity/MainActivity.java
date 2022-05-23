@@ -22,6 +22,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.stopwaiting.R;
 import com.example.stopwaiting.dto.WaitingInfo;
+import com.example.stopwaiting.dto.WaitingQueue;
 import com.naver.maps.geometry.LatLng;
 import com.naver.maps.map.CameraAnimation;
 import com.naver.maps.map.CameraUpdate;
@@ -102,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
+        refresh();
     }
 
     @Override
@@ -210,7 +212,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void refresh() {
-        ((DataApplication) getApplication()).sendInfo();
         for (int i = 0; i < markers.size(); i++) {
             markers.get(i).setMap(null);
         }
@@ -218,80 +219,121 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         getMarkerInfo();
 
         ActivityCompat.requestPermissions(mainActivity, PERMISSIONS, LOCATION_PERMISSION_REQUEST_CODE);
+
+        myWaitingQueueRequest();
+        setWearOS();
     }
 
     public void getMarkerInfo() {
         waitingList = new ArrayList<>();
 
-//        waitingInfoAllRequest();
-        waitingList = ((DataApplication) this.getApplication()).getTestDBList();
+        waitingInfoAllRequest();
 
         for (int i = 0; i < waitingList.size(); i++) {
             setInfo(waitingList.get(i));
         }
     }
 
-    public void waitingInfoAllRequest() {
-        StringRequest loginRequest = new StringRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            boolean success = jsonObject.getBoolean("success");
-                            if (success) {
-                                JSONArray dataArray = jsonObject.getJSONArray("data");
-
-                                for (int i = 0; i < dataArray.length(); i++) {
-                                    JSONObject dataObject = dataArray.getJSONObject(i);
-
-                                    WaitingInfo data = new WaitingInfo();
-
-                                    data.setId(dataObject.getLong("id"));
-                                    data.setAdminId(dataObject.getLong("adminId"));
-                                    data.setName(dataObject.getString("name"));
-                                    data.setLatitude(dataObject.getDouble("lat"));
-                                    data.setLongitude(dataObject.getDouble("lon"));
-                                    data.setLocDetail(dataObject.getString("locDetail"));
-                                    data.setInfo(dataObject.getString("info"));
-                                    data.setType(dataObject.getString("type"));
-                                    data.setMaxPerson(dataObject.getInt("max"));
-                                    if (data.getType().equals("time")) {
-                                        ArrayList<String> timetable = new ArrayList();
-                                        JSONArray timeArray = dataObject.getJSONArray("timetable");
-                                        for (int j = 0; j < timeArray.length(); j++) {
-                                            timetable.add(timeArray.getString(j));
-                                        }
-                                        data.setTimetable(timetable);
-                                    }
-                                    waitingList.add(data);
-                                }
-
-                            } else {
-                                Toast.makeText(getApplicationContext(), "로딩에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getApplicationContext(), "로딩에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-                    }
-                }) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("type", "waitinginfo_all");
-
-                return params;
+    public void myWaitingQueueRequest() {
+        ((DataApplication) getApplication()).myWaiting = new ArrayList<>();
+        if (DataApplication.isTest) {
+            for (int i = 0; i < ((DataApplication) getApplication()).testWaitingQueueDBList.size(); i++) {
+                WaitingQueue tempDBQ = ((DataApplication) getApplication()).testWaitingQueueDBList.get(i);
+                if (tempDBQ.getWaitingPersonList().contains(((DataApplication) getApplication()).currentUser) &&
+                        !(((DataApplication) getApplication()).myWaiting.contains(tempDBQ))) {
+                    ((DataApplication) getApplication()).myWaiting.add(tempDBQ);
+                }
             }
-        };
+        } else {
 
-        loginRequest.setShouldCache(false);
-        ((DataApplication) getApplication()).requestQueue.add(loginRequest);
+        }
+
+    }
+
+    public void waitingInfoAllRequest() {
+        if (DataApplication.isTest) {
+            waitingList = ((DataApplication) this.getApplication()).getTestDBList();
+        } else {
+            StringRequest loginRequest = new StringRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            try {
+                                JSONObject jsonObject = new JSONObject(response);
+                                boolean success = jsonObject.getBoolean("success");
+                                if (success) {
+                                    JSONArray dataArray = jsonObject.getJSONArray("data");
+
+                                    for (int i = 0; i < dataArray.length(); i++) {
+                                        JSONObject dataObject = dataArray.getJSONObject(i);
+
+                                        WaitingInfo data = new WaitingInfo();
+
+                                        data.setId(dataObject.getLong("id"));
+                                        data.setAdminId(dataObject.getLong("adminId"));
+                                        data.setName(dataObject.getString("name"));
+                                        data.setLatitude(dataObject.getDouble("lat"));
+                                        data.setLongitude(dataObject.getDouble("lon"));
+                                        data.setLocDetail(dataObject.getString("locDetail"));
+                                        data.setInfo(dataObject.getString("info"));
+                                        data.setType(dataObject.getString("type"));
+                                        data.setMaxPerson(dataObject.getInt("max"));
+                                        if (data.getType().equals("time")) {
+                                            ArrayList<String> timetable = new ArrayList();
+                                            JSONArray timeArray = dataObject.getJSONArray("timetable");
+                                            for (int j = 0; j < timeArray.length(); j++) {
+                                                timetable.add(timeArray.getString(j));
+                                            }
+                                            data.setTimetable(timetable);
+                                        }
+                                        waitingList.add(data);
+                                    }
+
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "로딩에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(getApplicationContext(), "로딩에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                        }
+                    }) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("type", "waitinginfo_all");
+
+                    return params;
+                }
+            };
+
+            loginRequest.setShouldCache(false);
+            ((DataApplication) getApplication()).requestQueue.add(loginRequest);
+        }
+    }
+
+    public void setWearOS() {
+        ((DataApplication) getApplication()).sendUserInfo();
+        ((DataApplication) getApplication()).sendMyQueueInfo();
+        ArrayList<WaitingInfo> tempList = new ArrayList<>();
+        for (int i = 0; i < waitingList.size(); i++) {
+            for (int j = 0; j < ((DataApplication) getApplication()).myWaiting.size(); j++) {
+                WaitingInfo tempA = new WaitingInfo();
+                tempA.setName(((DataApplication) getApplication()).myWaiting.get(j).getQueueName());
+                if (waitingList.get(i).getName().equals(((DataApplication) getApplication()).myWaiting.get(j).getQueueName()) &&
+                        !tempList.contains(tempA.getName())) {
+                    tempList.add(waitingList.get(i));
+                    break;
+                }
+            }
+        }
+        ((DataApplication) getApplication()).sendWaitingInfo(tempList);
+
     }
 }

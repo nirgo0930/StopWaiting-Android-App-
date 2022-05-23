@@ -128,7 +128,9 @@ public class LoginActivity extends AppCompatActivity {
 
         ((DataApplication) this.getApplication()).testDBList.add(new WaitingInfo
                 (20170000L, 3L, 36.145123, 128.394244, "북카페", "학생회관 B218", "북카페입니다.", "normal", 10));
-        ((DataApplication) getApplication()).testWaitingQueueDBList.add(new WaitingQueue(((DataApplication) this.getApplication()).qCnt++, "북카페", "normal", 10));
+        WaitingQueue tempQ = new WaitingQueue(((DataApplication) this.getApplication()).qCnt++, "북카페", "normal", 10);
+        tempQ.addWPerson(((DataApplication) getApplication()).currentUser);
+        ((DataApplication) getApplication()).testWaitingQueueDBList.add(tempQ);
 
         String root = "android.resource://" + R.class.getPackage().getName() + "/";
         ((DataApplication) this.getApplication()).testImageDBList.add(new ImgItem("북카페", (long) 1, Uri.parse(root + R.drawable.haircut_cost)));
@@ -196,7 +198,7 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
         } else {
-            StringRequest request = new StringRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL,
+            StringRequest request = new StringRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL + "/login",
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {

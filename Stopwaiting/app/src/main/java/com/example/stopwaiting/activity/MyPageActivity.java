@@ -12,6 +12,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.stopwaiting.R;
 
+import java.util.ArrayList;
+
 public class MyPageActivity extends AppCompatActivity {
     public static Activity myPageActivity;
 
@@ -76,6 +78,8 @@ public class MyPageActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();
                 editor.commit();
+
+                DataApplication.myWaiting = new ArrayList<>();
 
                 MainActivity.mainActivity.finish();
                 finish();

@@ -1,5 +1,22 @@
-package com.example.stopwaiting;
+package com.example.stopwaiting.activity;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.os.Bundle;
+import android.view.View;
+import android.view.WindowInsets;
+import android.widget.FrameLayout;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.wear.widget.SwipeDismissFrameLayout;
+
+import com.example.stopwaiting.R;
+import com.example.stopwaiting.databinding.ActivityMapsBinding;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -9,33 +26,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import android.Manifest;
-import android.app.Activity;
-import android.app.Application;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationManager;
-import android.os.Build;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
-import android.view.WindowInsets;
-import android.widget.FrameLayout;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 //import androidx.test.core.app.ApplicationProvider;
-import androidx.core.content.ContextCompat;
-import androidx.wear.widget.SwipeDismissFrameLayout;
-
-import com.example.stopwaiting.databinding.ActivityMapsBinding;
-import com.google.android.gms.tasks.OnSuccessListener;
-
-import java.util.Map;
-import java.util.function.Consumer;
 
 public class MapsActivity extends Activity implements OnMapReadyCallback {
 

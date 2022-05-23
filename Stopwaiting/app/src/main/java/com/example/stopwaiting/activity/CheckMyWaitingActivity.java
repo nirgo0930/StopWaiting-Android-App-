@@ -71,7 +71,7 @@ public class CheckMyWaitingActivity extends AppCompatActivity {
         mListAdapter.notifyDataSetChanged();
     }
 
-    public void myWaitingRequest(){
+    public void myWaitingRequest() {
 
     }
 }

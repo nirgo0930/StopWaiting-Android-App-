@@ -5,7 +5,7 @@
     android:id="@+id/swipe_dismiss_root_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MapsActivity">
+    tools:context=".activity.MapsActivity">
 
     <FrameLayout
         android:id="@+id/map_container"

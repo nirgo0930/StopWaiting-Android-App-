@@ -61,27 +61,8 @@ public class WaitingQueue implements Serializable {
         this.waitingPersonList = waitingPersonList;
     }
 
-    public int addWPerson(UserInfo n) {
-        if (waitingPersonList.size() < maxPerson) {
-            if (!waitingPersonList.contains(n)) {
-                waitingPersonList.add(n);
-            } else {
-                return 1;
-            }
-            return 0;
-        } else {
-            return 2;
-        }
-
+    @Override
+    public String toString() {
+        return String.format("WaitingQueue", qId, queueName, time, maxPerson, waitingPersonList.toString());
     }
-
-    public int removeWPerson(String n) {
-        if (waitingPersonList.contains(n)) {
-            waitingPersonList.remove(waitingPersonList.indexOf(n));
-            return 0;
-        } else {
-            return 1;
-        }
-    }
-
 }

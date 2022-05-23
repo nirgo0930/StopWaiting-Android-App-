@@ -1,10 +1,11 @@
-package com.example.stopwaiting;
+package com.example.stopwaiting.activity;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.widget.ImageView;
 
+import com.example.stopwaiting.R;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.common.BitMatrix;
