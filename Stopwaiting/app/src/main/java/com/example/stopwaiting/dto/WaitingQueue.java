@@ -10,6 +10,13 @@ public class WaitingQueue implements Serializable {
     private int maxPerson;
     private ArrayList<UserInfo> waitingPersonList = new ArrayList<>();
 
+//    public class ArrayList<UserInfo> extends java.util.ArrayList {
+//        @Override
+//        public String toString() {
+//            return String.format("waitingPersonList", qId, queueName, time, maxPerson, waitingPersonList);
+//        }
+//    }
+
     public WaitingQueue() {
     }
 
@@ -86,6 +93,6 @@ public class WaitingQueue implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("WaitingQueue", qId, queueName, time, maxPerson, waitingPersonList);
+        return String.format("WaitingQueue", qId, queueName, time, maxPerson);
     }
 }
