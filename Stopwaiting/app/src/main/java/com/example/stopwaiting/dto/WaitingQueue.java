@@ -84,4 +84,8 @@ public class WaitingQueue implements Serializable {
         }
     }
 
+    @Override
+    public String toString() {
+        return String.format("WaitingQueue", qId, queueName, time, maxPerson, waitingPersonList);
+    }
 }
