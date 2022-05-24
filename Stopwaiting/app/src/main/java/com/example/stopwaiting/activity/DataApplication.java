@@ -30,7 +30,7 @@ public class DataApplication extends Application {
     static public ArrayList<WaitingQueue> testWaitingQueueDBList = new ArrayList<>();
 
     static public Long qCnt;
-    static public boolean isTest = false;
+    static public boolean isTest = true;
 
     static public String serverURL = "http://192.168.238.68:8080/api/v1";
     private String path = "/my_path";

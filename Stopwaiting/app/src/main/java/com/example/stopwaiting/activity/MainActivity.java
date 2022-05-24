@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         markers = new ArrayList<>();
         waitingList = new ArrayList<>();
 
-        refresh();
+        waitingInfoAllRequest();
 
         FragmentManager fm = getSupportFragmentManager();
         MapFragment mapFragment = (MapFragment) fm.findFragmentById(R.id.map);
@@ -232,10 +232,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (DataApplication.isTest) {
             for (int i = 0; i < ((DataApplication) getApplication()).testWaitingQueueDBList.size(); i++) {
                 WaitingQueue tempDBQ = ((DataApplication) getApplication()).testWaitingQueueDBList.get(i);
-                if (tempDBQ.getWaitingPersonList().contains(((DataApplication) getApplication()).currentUser) &&
-                        !(((DataApplication) getApplication()).myWaiting.contains(tempDBQ))) {
-                    ((DataApplication) getApplication()).myWaiting.add(tempDBQ);
+                for (int j = 0; j < tempDBQ.getWaitingPersonList().size(); j++) {
+                    if (tempDBQ.getWaitingPersonList().get(j).equals(((DataApplication) getApplication()).currentUser.getStudentCode()) &&
+                            !(((DataApplication) getApplication()).myWaiting.contains(tempDBQ))) {
+                        ((DataApplication) getApplication()).myWaiting.add(tempDBQ);
+                    }
                 }
+
+
             }
         } else {
 
