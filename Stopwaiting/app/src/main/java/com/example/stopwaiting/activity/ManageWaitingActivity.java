@@ -226,7 +226,7 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
                             if (success) {
                                 wInfo = new WaitingInfo();
 
-                                wInfo.setId(jsonObject.getLong("id"));
+                                wInfo.setWaitingId(jsonObject.getLong("id"));
                                 wInfo.setAdminId(jsonObject.getLong("adminId"));
                                 wInfo.setName(jsonObject.getString("name"));
                                 wInfo.setLatitude(jsonObject.getDouble("lat"));

@@ -30,9 +30,9 @@ public class DataApplication extends Application {
     static public ArrayList<WaitingQueue> testWaitingQueueDBList = new ArrayList<>();
 
     static public Long qCnt;
-    static public boolean isTest = true;
+    static public boolean isTest = false;
 
-    static public String serverURL = "localhost:8080/api/v1";
+    static public String serverURL = "http://192.168.238.68:8080/api/v1";
     private String path = "/my_path";
     static public RequestQueue requestQueue;
     static public UserInfo currentUser = new UserInfo();
@@ -95,7 +95,7 @@ public class DataApplication extends Application {
             e.printStackTrace();
         }
         Asset temp = Asset.createFromBytes(Base64.getEncoder().encodeToString(serializedMember).getBytes());
-        PutDataMapRequest dataMap = PutDataMapRequest.create(path+"/userInfo");
+        PutDataMapRequest dataMap = PutDataMapRequest.create(path + "/userInfo");
         dataMap.getDataMap().putAsset("currentUser", temp);
         PutDataRequest request = dataMap.asPutDataRequest();
         Task<DataItem> putTask = Wearable.getDataClient(getApplicationContext()).putDataItem(request);
@@ -112,7 +112,7 @@ public class DataApplication extends Application {
             e.printStackTrace();
         }
         Asset temp = Asset.createFromBytes(Base64.getEncoder().encodeToString(serializedMember).getBytes());
-        PutDataMapRequest dataMap = PutDataMapRequest.create(path+"/myWaiting");
+        PutDataMapRequest dataMap = PutDataMapRequest.create(path + "/myWaiting");
         dataMap.getDataMap().putAsset("myWaiting", temp);
         PutDataRequest request = dataMap.asPutDataRequest();
         Task<DataItem> putTask = Wearable.getDataClient(getApplicationContext()).putDataItem(request);
@@ -129,7 +129,7 @@ public class DataApplication extends Application {
             e.printStackTrace();
         }
         Asset temp = Asset.createFromBytes(Base64.getEncoder().encodeToString(serializedMember).getBytes());
-        PutDataMapRequest dataMap = PutDataMapRequest.create(path+"/waitingInfos");
+        PutDataMapRequest dataMap = PutDataMapRequest.create(path + "/waitingInfos");
         dataMap.getDataMap().putAsset("waitingInfos", temp);
         PutDataRequest request = dataMap.asPutDataRequest();
         Task<DataItem> putTask = Wearable.getDataClient(getApplicationContext()).putDataItem(request);

@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public class WaitingInfo implements Serializable {
     private Long adminId; //개설자
-    private Long id; //id
+    private Long waitingId; //id
     private Double latitude; //위도
     private Double longitude; //경도
     private String name; //웨이팅 명칭
@@ -19,9 +19,9 @@ public class WaitingInfo implements Serializable {
     public WaitingInfo() {
     }
 
-    public WaitingInfo(Long adm, Long id, Double latitude, Double longitude, String name, String locDetail, String info, String type, int maxPerson) {
+    public WaitingInfo(Long adm, Long waitingId, Double latitude, Double longitude, String name, String locDetail, String info, String type, int maxPerson) {
         this.adminId = adm;
-        this.id = id;
+        this.waitingId = waitingId;
         this.latitude = latitude;
         this.longitude = longitude;
         this.name = name;
@@ -32,9 +32,9 @@ public class WaitingInfo implements Serializable {
 
     }
 
-    public WaitingInfo(Long adm, Long id, Double latitude, Double longitude, String name, String locDetail, String info, String type, int maxPerson, ArrayList timetable) {
+    public WaitingInfo(Long adm, Long waitingId, Double latitude, Double longitude, String name, String locDetail, String info, String type, int maxPerson, ArrayList timetable) {
         this.adminId = adm;
-        this.id = id;
+        this.waitingId = waitingId;
         this.latitude = latitude;
         this.longitude = longitude;
         this.name = name;
@@ -53,12 +53,12 @@ public class WaitingInfo implements Serializable {
         this.adminId = adminId;
     }
 
-    public Long getId() {
-        return id;
+    public Long getWaitingId() {
+        return waitingId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setWaitingId(Long waitingId) {
+        this.waitingId = waitingId;
     }
 
     public Double getLatitude() {
@@ -132,18 +132,18 @@ public class WaitingInfo implements Serializable {
 
         WaitingInfo info = (WaitingInfo) o;
 
-        if (!Objects.equals(this.id, info.id)) return false;
+        if (!Objects.equals(this.waitingId, info.waitingId)) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return waitingId != null ? waitingId.hashCode() : 0;
     }
 
     @Override
     public String toString() {
-        return String.format("WaitingInfo", adminId, id, latitude, longitude, name, locDetail, info, type, maxPerson, timetable.toString());
+        return String.format("WaitingInfo", adminId, waitingId, latitude, longitude, name, locDetail, info, type, maxPerson, timetable.toString());
     }
 }

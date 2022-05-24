@@ -21,7 +21,7 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.stopwaiting.R;
 import com.example.stopwaiting.dto.ImgItem;
@@ -32,6 +32,7 @@ import com.example.stopwaiting.dto.WaitingQueue;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,6 +61,10 @@ public class LoginActivity extends AppCompatActivity {
         login_Activity = LoginActivity.this;
 
         SharedPreferences sharedPreferences = getSharedPreferences("sharedPreferences", Activity.MODE_PRIVATE);
+        checkPermissions(permission_list);
+
+        if (((DataApplication) getApplication()).requestQueue == null)
+            ((DataApplication) getApplication()).requestQueue = Volley.newRequestQueue(getApplicationContext());
 
         edt_id = findViewById(R.id.edtId);
         edt_password = findViewById(R.id.edtPw);
@@ -102,11 +107,6 @@ public class LoginActivity extends AppCompatActivity {
                 loginRequest();
             }
         });
-
-        checkPermissions(permission_list);
-        if (((DataApplication) getApplication()).requestQueue == null)
-            ((DataApplication) getApplication()).requestQueue = Volley.newRequestQueue(getApplicationContext());
-
     }
 
     public void getTestInfo() {
@@ -198,29 +198,33 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
         } else {
-            StringRequest request = new StringRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL + "/login",
-                    new Response.Listener<String>() {
+            JSONObject jsonBodyObj = new JSONObject();
+            try {
+                jsonBodyObj.put("id", Long.valueOf(edt_id.getText().toString()));
+                jsonBodyObj.put("password", edt_password.getText().toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            final String requestBody = String.valueOf(jsonBodyObj.toString());
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL + "/login", null,
+                    new Response.Listener<JSONObject>() {
                         @Override
-                        public void onResponse(String response) {
+                        public void onResponse(JSONObject jsonObject) {
                             try {
-                                JSONObject jsonObject = new JSONObject(response);
-                                boolean success = jsonObject.getBoolean("success");
-                                if (success) {
-                                    Toast.makeText(getApplicationContext(), "로그인에 성공하였습니다.\n 잠시만 기다려주세요", Toast.LENGTH_SHORT).show();
 
-                                    UserInfo temp = new UserInfo();
-                                    temp.setName(jsonObject.getString("name"));
-                                    temp.setStudentCode(jsonObject.getLong("studentcode"));
-                                    temp.setTel(jsonObject.getString("tel"));
+                                Toast.makeText(getApplicationContext(), "로그인에 성공하였습니다.\n 잠시만 기다려주세요", Toast.LENGTH_SHORT).show();
 
-                                    ((DataApplication) getApplication()).currentUser = temp;
+                                UserInfo temp = new UserInfo();
+                                temp.setStudentCode(jsonObject.getLong("id"));
+                                temp.setName(jsonObject.getString("name"));
+                                temp.setTel(jsonObject.getString("phoneNumber"));
 
-                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                    startActivity(intent);
-                                } else {
-                                    Toast.makeText(getApplicationContext(), "로그인에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
+                                ((DataApplication) getApplication()).currentUser = temp;
+
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                startActivity(intent);
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -229,17 +233,27 @@ public class LoginActivity extends AppCompatActivity {
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-//                        textView.setText(error.getMessage());
+                            Toast.makeText(getApplicationContext(), "로그인에 실패하였습니다.", Toast.LENGTH_SHORT).show();
                         }
                     }) {
                 @Override
-                protected Map<String, String> getParams() throws AuthFailureError {
-                    Map<String, String> params = new HashMap<String, String>();
-                    params.put("type", "login");
-                    params.put("id", edt_id.getText().toString());
-                    params.put("pw", edt_password.getText().toString());
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json");
+                    return headers;
+                }
 
-                    return params;
+                @Override
+                public byte[] getBody() {
+                    try {
+                        if (requestBody != null && requestBody.length() > 0 && !requestBody.equals("")) {
+                            return requestBody.getBytes("utf-8");
+                        } else {
+                            return null;
+                        }
+                    } catch (UnsupportedEncodingException uee) {
+                        return null;
+                    }
                 }
             };
 

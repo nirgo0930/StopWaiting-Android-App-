@@ -12,12 +12,13 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.stopwaiting.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,42 +64,51 @@ public class SignInActivity extends AppCompatActivity {
             return;
         }
 
-        StringRequest request = new StringRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL,
-                new Response.Listener<String>() {
+        JSONObject jsonBodyObj = new JSONObject();
+        try {
+            jsonBodyObj.put("id", Long.valueOf(edtSCode.getText().toString()));
+            jsonBodyObj.put("password", edtPw.getText().toString());
+            jsonBodyObj.put("name", edtName.getText().toString());
+            jsonBodyObj.put("phoneNumber", edtTelNum.getText().toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        final String requestBody = String.valueOf(jsonBodyObj.toString());
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL + "/signup", null,
+                new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            boolean success = jsonObject.getBoolean("success");
-                            if (success) {
-                                Toast.makeText(getApplicationContext(), "회원가입에 성공하였습니다.", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(SignInActivity.this, LoginActivity.class);
-                                startActivity(intent);
-                            } else {
-                                Toast.makeText(getApplicationContext(), "회원가입에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                    public void onResponse(JSONObject jsonObject) {
+                        Toast.makeText(getApplicationContext(), "회원가입에 성공하였습니다.", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(SignInActivity.this, LoginActivity.class);
+                        startActivity(intent);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-//                        textView.setText(error.getMessage());
+                        Toast.makeText(getApplicationContext(), "회원가입에 실패하였습니다.", Toast.LENGTH_SHORT).show();
                     }
                 }) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("type", "signin");
-                params.put("id", edtSCode.getText().toString());
-                params.put("pw", edtPw.getText().toString());
-                params.put("name", edtName.getText().toString());
-                params.put("tel", edtTelNum.getText().toString());
 
-                return params;
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json");
+                return headers;
+            }
+
+            @Override
+            public byte[] getBody() {
+                try {
+                    if (requestBody != null && requestBody.length() > 0 && !requestBody.equals("")) {
+                        return requestBody.getBytes("utf-8");
+                    } else {
+                        return null;
+                    }
+                } catch (UnsupportedEncodingException uee) {
+                    return null;
+                }
             }
         };
 
@@ -107,41 +117,51 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     public void dupCheckRequest(String sCode) {
-        StringRequest request = new StringRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL,
-                new Response.Listener<String>() {
+        JSONObject jsonBodyObj = new JSONObject();
+        try {
+            jsonBodyObj.put("id", Long.valueOf(edtSCode.getText().toString()));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        final String requestBody = String.valueOf(jsonBodyObj.toString());
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL, null,
+                new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            boolean success = jsonObject.getBoolean("success");
-                            if (success) {
-                                Toast.makeText(getApplicationContext(), "사용가능한 학번입니다.", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(getApplicationContext(), "사용할 수 없는 학번입니다.", Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                    public void onResponse(JSONObject jsonObject) {
+                        Toast.makeText(getApplicationContext(), "사용가능한 학번입니다.", Toast.LENGTH_SHORT).show();
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-//                        textView.setText(error.getMessage());
+                        Toast.makeText(getApplicationContext(), "사용할 수 없는 학번입니다.", Toast.LENGTH_SHORT).show();
                     }
                 }) {
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("type", "dupcheck");
-                params.put("id", sCode);
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json");
+                return headers;
+            }
 
-                return params;
+            @Override
+            public byte[] getBody() {
+                try {
+                    if (requestBody != null && requestBody.length() > 0 && !requestBody.equals("")) {
+                        return requestBody.getBytes("utf-8");
+                    } else {
+                        return null;
+                    }
+                } catch (UnsupportedEncodingException uee) {
+                    return null;
+                }
             }
         };
 
         request.setShouldCache(false);
-        ((DataApplication) getApplication()).requestQueue.add(request);
+        ((DataApplication)
+
+                getApplication()).requestQueue.add(request);
     }
 }

@@ -19,7 +19,7 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.stopwaiting.R;
 import com.example.stopwaiting.dto.WaitingInfo;
 import com.example.stopwaiting.dto.WaitingQueue;
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         markers = new ArrayList<>();
         waitingList = new ArrayList<>();
 
-        waitingInfoAllRequest();
+        refresh();
 
         FragmentManager fm = getSupportFragmentManager();
         MapFragment mapFragment = (MapFragment) fm.findFragmentById(R.id.map);
@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             if (infoWindow.getAdapter() != null) {
                 Intent infoIntent;
                 WaitingInfo temp = new WaitingInfo();
-                temp.setId(Long.valueOf(infoWindow.getMarker().getTag().toString()));
+                temp.setWaitingId(Long.valueOf(infoWindow.getMarker().getTag().toString()));
                 temp = waitingList.get(waitingList.indexOf(temp));
 
                 if (temp.getType() == "time") {
@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         marker.setWidth(1);
         marker.setHeight(1);
 
-        marker.setTag(String.valueOf(waitingInfo.getId()));
+        marker.setTag(String.valueOf(waitingInfo.getWaitingId()));
 
         markers.add(marker);
 
@@ -216,6 +216,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             markers.get(i).setMap(null);
         }
         markers = new ArrayList<>();
+        waitingList = new ArrayList<>();
         waitingInfoAllRequest();
         myWaitingQueueRequest();
 
@@ -224,7 +225,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         setWearOS();
     }
-
 
 
     public void myWaitingQueueRequest() {
@@ -248,44 +248,36 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (DataApplication.isTest) {
             waitingList = ((DataApplication) this.getApplication()).getTestDBList();
         } else {
-            StringRequest loginRequest = new StringRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL,
-                    new Response.Listener<String>() {
+            JsonObjectRequest loginRequest = new JsonObjectRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL, null,
+                    new Response.Listener<JSONObject>() {
                         @Override
-                        public void onResponse(String response) {
+                        public void onResponse(JSONObject jsonObject) {
                             try {
-                                JSONObject jsonObject = new JSONObject(response);
-                                boolean success = jsonObject.getBoolean("success");
-                                if (success) {
-                                    JSONArray dataArray = jsonObject.getJSONArray("data");
+                                JSONArray dataArray = jsonObject.getJSONArray("data");
 
-                                    for (int i = 0; i < dataArray.length(); i++) {
-                                        JSONObject dataObject = dataArray.getJSONObject(i);
+                                for (int i = 0; i < dataArray.length(); i++) {
+                                    JSONObject dataObject = dataArray.getJSONObject(i);
 
-                                        WaitingInfo data = new WaitingInfo();
+                                    WaitingInfo data = new WaitingInfo();
 
-                                        data.setId(dataObject.getLong("id"));
-                                        data.setAdminId(dataObject.getLong("adminId"));
-                                        data.setName(dataObject.getString("name"));
-                                        data.setLatitude(dataObject.getDouble("lat"));
-                                        data.setLongitude(dataObject.getDouble("lon"));
-                                        data.setLocDetail(dataObject.getString("locDetail"));
-                                        data.setInfo(dataObject.getString("info"));
-                                        data.setType(dataObject.getString("type"));
-                                        data.setMaxPerson(dataObject.getInt("max"));
-                                        if (data.getType().equals("time")) {
-                                            ArrayList<String> timetable = new ArrayList();
-                                            JSONArray timeArray = dataObject.getJSONArray("timetable");
-                                            for (int j = 0; j < timeArray.length(); j++) {
-                                                timetable.add(timeArray.getString(j));
-                                            }
-                                            data.setTimetable(timetable);
+                                    data.setWaitingId(dataObject.getLong("id"));
+                                    data.setAdminId(dataObject.getLong("adminId"));
+                                    data.setName(dataObject.getString("name"));
+                                    data.setLatitude(dataObject.getDouble("latitude"));
+                                    data.setLongitude(dataObject.getDouble("longitude"));
+                                    data.setLocDetail(dataObject.getString("locDetail"));
+                                    data.setInfo(dataObject.getString("information"));
+                                    data.setType(dataObject.getString("type"));
+                                    data.setMaxPerson(dataObject.getInt("maxPerson"));
+                                    if (data.getType().equals("time")) {
+                                        ArrayList<String> timetable = new ArrayList();
+                                        JSONArray timeArray = dataObject.getJSONArray("timetable");
+                                        for (int j = 0; j < timeArray.length(); j++) {
+                                            timetable.add(timeArray.getString(j));
                                         }
-                                        waitingList.add(data);
+                                        data.setTimetable(timetable);
                                     }
-
-                                } else {
-                                    Toast.makeText(getApplicationContext(), "로딩에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-                                    return;
+                                    waitingList.add(data);
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
