@@ -38,22 +38,32 @@ public class MessageService extends WearableListenerService {
                 DataMapItem dataMapItem = DataMapItem.fromDataItem(event.getDataItem());
                 switch (path) {
                     case "/my_path/userInfo":
-                        DataApplication.currentUserInfo = loadUserInfoFromAsset(dataMapItem.getDataMap().getAsset("currentUser"));
+                        if (loadUserInfoFromAsset(dataMapItem.getDataMap().getAsset("currentUser")) != null) {
+                            DataApplication.currentUserInfo = loadUserInfoFromAsset(dataMapItem.getDataMap().getAsset("currentUser"));
+                        }
                         Log.e("test", "1");
                         break;
                     case "/my_path/myWaiting":
-                        DataApplication.myWaiting = loadQueueInfoFromAsset(dataMapItem.getDataMap().getAsset("myWaiting"));
+                        if (loadQueueInfoFromAsset(dataMapItem.getDataMap().getAsset("myWaiting")) != null) {
+                            DataApplication.myWaiting = loadQueueInfoFromAsset(dataMapItem.getDataMap().getAsset("myWaiting"));
+                        }
                         Log.e("test", "2");
                         break;
                     case "/my_path/waitingInfos":
-                        DataApplication.waitingInfos = loadWaitingInfoFromAsset(dataMapItem.getDataMap().getAsset("waitingInfos"));
+                        if (loadWaitingInfoFromAsset(dataMapItem.getDataMap().getAsset("waitingInfos")) != null) {
+                            DataApplication.waitingInfos = loadWaitingInfoFromAsset(dataMapItem.getDataMap().getAsset("waitingInfos"));
+                        }
                         Log.e("test", "3");
                         break;
                 }
             }
         }
+        String temp = "";
+        for (int i = 0; i < DataApplication.waitingInfos.size(); i++) {
+            temp += DataApplication.waitingInfos.get(i).getName() + "/";
+        }
         Log.e("data_changed", DataApplication.currentUserInfo.getStudentCode() + "/"
-                + DataApplication.myWaiting.size() + "/" + DataApplication.waitingInfos.size());
+                + DataApplication.myWaiting.size() + "/" + DataApplication.waitingInfos.size() + temp);
     }
 
     public static UserInfo loadUserInfoFromAsset(Asset asset) {

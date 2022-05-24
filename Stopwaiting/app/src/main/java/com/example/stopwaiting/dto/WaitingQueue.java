@@ -27,7 +27,6 @@ public class WaitingQueue implements Serializable {
         this.maxPerson = maxPerson;
     }
 
-
     public Long getQId() {
         return qId;
     }
