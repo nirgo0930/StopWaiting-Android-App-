@@ -3,6 +3,7 @@ package com.example.stopwaiting.activity;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -35,6 +36,9 @@ public class MainActivity extends Activity {
 
     public static Application mainApp;
 
+    public static SharedPreferences sharedPreferences;
+    public static SharedPreferences.Editor autoEdit;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,13 +51,6 @@ public class MainActivity extends Activity {
         listView = findViewById(R.id.listView);
         waitingList = new ArrayList<>();
         screenList = new ArrayList<>();
-
-        //값 받아오면 저장하는 부분
-//        SharedPreferences sharedPreferences = getSharedPreferences("sharedPreferences", Activity.MODE_PRIVATE);
-//
-//        SharedPreferences.Editor autoEdit = sharedPreferences.edit();
-//
-//        autoEdit.putString("inputId", )
 
         //이부분 서버에서 받아오는 리스트 부분
         str = "time/11:00/미용실";

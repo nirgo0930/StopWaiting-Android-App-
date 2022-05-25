@@ -2,10 +2,11 @@ package com.example.stopwaiting.service;
 
 import static android.content.ContentValues.TAG;
 
+import android.app.Application;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.example.stopwaiting.activity.DataApplication;
-import com.example.stopwaiting.activity.MainActivity;
 import com.example.stopwaiting.dto.UserInfo;
 import com.example.stopwaiting.dto.WearQueueDTO;
 import com.google.android.gms.tasks.Tasks;
@@ -29,9 +30,15 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class MessageService extends WearableListenerService {
+    public static SharedPreferences sharedPreferences;
+    public static SharedPreferences.Editor autoEdit;
+
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
         for (DataEvent event : dataEvents) {
+            sharedPreferences = getSharedPreferences("sharedPreferences", Application.MODE_PRIVATE);
+            autoEdit = sharedPreferences.edit();
+
             if (event.getType() == DataEvent.TYPE_CHANGED) {
                 String path = event.getDataItem().getUri().getPath();
                 DataMapItem dataMapItem = DataMapItem.fromDataItem(event.getDataItem());
@@ -39,6 +46,7 @@ public class MessageService extends WearableListenerService {
                     case "/my_path/userInfo":
                         if (loadUserInfoFromAsset(dataMapItem.getDataMap().getAsset("currentUser")) != null) {
                             DataApplication.currentUserInfo = loadUserInfoFromAsset(dataMapItem.getDataMap().getAsset("currentUser"));
+                            DataApplication.saveId();
                             Log.e("test", "1++");
                         }
                         Log.e("test", "1");
@@ -56,15 +64,19 @@ public class MessageService extends WearableListenerService {
                 }
             }
         }
+
+
         String temp = "";
         for (int i = 0; i < DataApplication.myWaiting.size(); i++) {
             temp += DataApplication.myWaiting.get(i).getQueueName() + "/";
         }
         Log.e("data_changed", DataApplication.currentUserInfo.getStudentCode() + "/"
                 + DataApplication.myWaiting.size() + "/" + temp);
+
+
     }
 
-    public static UserInfo loadUserInfoFromAsset(Asset asset) {
+    public UserInfo loadUserInfoFromAsset(Asset asset) {
         UserInfo data = null;
         if (asset == null) {
             return null;
@@ -72,7 +84,7 @@ public class MessageService extends WearableListenerService {
         // convert asset into a file descriptor and block until it's ready
         InputStream assetInputStream = null;
         try {
-            assetInputStream = Tasks.await(Wearable.getDataClient(MainActivity.mainApp.getApplicationContext()).getFdForAsset(asset)).getInputStream();
+            assetInputStream = Tasks.await(Wearable.getDataClient(getApplicationContext()).getFdForAsset(asset)).getInputStream();
 
             InputStreamReader inputStreamReader = new InputStreamReader(assetInputStream);
             Stream<String> streamOfString = new BufferedReader(inputStreamReader).lines();

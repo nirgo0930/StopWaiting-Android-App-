@@ -75,7 +75,7 @@ public class SignInActivity extends AppCompatActivity {
         }
         final String requestBody = String.valueOf(jsonBodyObj.toString());
 
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL + "/signup", null,
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, DataApplication.serverURL + "/signup", null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject jsonObject) {
@@ -113,7 +113,7 @@ public class SignInActivity extends AppCompatActivity {
         };
 
         request.setShouldCache(false);
-        ((DataApplication) getApplication()).requestQueue.add(request);
+        DataApplication.requestQueue.add(request);
     }
 
     public void dupCheckRequest(String sCode) {
@@ -125,7 +125,7 @@ public class SignInActivity extends AppCompatActivity {
         }
         final String requestBody = String.valueOf(jsonBodyObj.toString());
 
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL, null,
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, DataApplication.serverURL, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject jsonObject) {
@@ -160,8 +160,6 @@ public class SignInActivity extends AppCompatActivity {
         };
 
         request.setShouldCache(false);
-        ((DataApplication)
-
-                getApplication()).requestQueue.add(request);
+        DataApplication.requestQueue.add(request);
     }
 }

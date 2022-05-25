@@ -41,6 +41,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText edt_id, edt_password;
     private Button btn_login, btn_new;
     public static Activity login_Activity;
+    private String sharedID = "Login";
 
     String[] permission_list = {
             Manifest.permission.INTERNET,
@@ -60,7 +61,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.login);
         login_Activity = LoginActivity.this;
 
-        SharedPreferences sharedPreferences = getSharedPreferences("sharedPreferences", Activity.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(sharedID, Activity.MODE_PRIVATE);
         checkPermissions(permission_list);
 
         if (((DataApplication) getApplication()).requestQueue == null)
@@ -95,7 +96,7 @@ public class LoginActivity extends AppCompatActivity {
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferences sharedPreferences = getSharedPreferences("sharedPreferences", Activity.MODE_PRIVATE);
+                SharedPreferences sharedPreferences = getSharedPreferences(sharedID, Activity.MODE_PRIVATE);
 
                 SharedPreferences.Editor autoLogin = sharedPreferences.edit();
 

@@ -312,6 +312,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void setWearOS() {
+        ((DataApplication) getApplication()).sendRefresh();
         ((DataApplication) getApplication()).sendUserInfo();
 
         ArrayList<WaitingInfo> tempList = new ArrayList<>();
