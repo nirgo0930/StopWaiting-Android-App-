@@ -103,22 +103,29 @@ public class DataApplication extends Application {
 
     public void sendMyQueueInfo() {
         byte[] serializedMember = null;
+        for (int i = 0; i < myWaiting.size(); i++) {
+            WaitingQueue selectItem = myWaiting.get(i);
 
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
-                oos.writeObject(myWaiting);
-                serializedMember = baos.toByteArray();
+            try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+                    oos.writeObject(selectItem);
+                    serializedMember = baos.toByteArray();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+            Asset temp = Asset.createFromBytes(Base64.getEncoder().encode(serializedMember));
+            PutDataMapRequest dataMap;
+            if (i == 0) {
+                dataMap = PutDataMapRequest.create(path + "/myWaiting_first");
+            } else {
+                dataMap = PutDataMapRequest.create(path + "/myWaiting");
+            }
+            dataMap.getDataMap().putAsset("myWaiting", temp);
+
+            PutDataRequest request = dataMap.asPutDataRequest();
+            Task<DataItem> putTask = Wearable.getDataClient(getApplicationContext()).putDataItem(request);
         }
-        Asset temp = Asset.createFromBytes(Base64.getEncoder().encode(serializedMember));
-        PutDataMapRequest dataMap = PutDataMapRequest.create(path + "/myWaiting");
-        dataMap.getDataMap().putAsset("myWaiting", temp);
-
-        PutDataRequest request = dataMap.asPutDataRequest();
-        Task<DataItem> putTask = Wearable.getDataClient(getApplicationContext()).putDataItem(request);
-
     }
 
     public void sendWaitingInfo(ArrayList<WaitingInfo> data) {

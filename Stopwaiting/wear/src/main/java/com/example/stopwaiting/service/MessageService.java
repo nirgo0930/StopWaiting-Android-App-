@@ -44,9 +44,11 @@ public class MessageService extends WearableListenerService {
                         }
                         Log.e("test", "1");
                         break;
+                    case "/my_path/myWaiting_first":
+                        DataApplication.myWaiting = new ArrayList<>();
                     case "/my_path/myWaiting":
                         if (loadQueueInfoFromAsset(dataMapItem.getDataMap().getAsset("myWaiting")) != null) {
-                            DataApplication.myWaiting = loadQueueInfoFromAsset(dataMapItem.getDataMap().getAsset("myWaiting"));
+                            DataApplication.myWaiting.add(loadQueueInfoFromAsset(dataMapItem.getDataMap().getAsset("myWaiting")));
                             Log.e("test", "2++");
                         }
                         Log.e("test", "2");
@@ -105,8 +107,8 @@ public class MessageService extends WearableListenerService {
         return data;
     }
 
-    public ArrayList<WaitingQueue> loadQueueInfoFromAsset(Asset asset) {
-        ArrayList<WaitingQueue> data = null;
+    public WaitingQueue loadQueueInfoFromAsset(Asset asset) {
+        WaitingQueue data = null;
         if (asset == null) {
             return null;
         }
@@ -121,7 +123,7 @@ public class MessageService extends WearableListenerService {
             byte[] serializedMember = Base64.getDecoder().decode(streamToString);
             try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(serializedMember))) {
                 Object temp = ois.readObject();
-                data = (ArrayList<WaitingQueue>) temp;
+                data = (WaitingQueue) temp;
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
