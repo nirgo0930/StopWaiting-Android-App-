@@ -33,12 +33,12 @@ public class CheckMyWaitingActivity extends AppCompatActivity {
         mWaitingList = new ArrayList<>();
         mWaitingQueue = new ArrayList<>();
 
-        mWaitingQueue = ((DataApplication) getApplication()).myWaiting;
+        mWaitingQueue = DataApplication.myWaiting;
         if (mWaitingQueue.size() > 0) {
             for (int i = 0; i < mWaitingQueue.size(); i++) {
                 WaitingInfo tempInfo = new WaitingInfo();
-                for (int j = 0; j < ((DataApplication) getApplication()).testDBList.size(); j++) {
-                    WaitingInfo temp = ((DataApplication) getApplication()).testDBList.get(j);
+                for (int j = 0; j < DataApplication.testDBList.size(); j++) {
+                    WaitingInfo temp = DataApplication.testDBList.get(j);
                     if (temp.getName().equals(mWaitingQueue.get(i).getQueueName())) {
                         tempInfo = temp;
                         break;
@@ -46,19 +46,19 @@ public class CheckMyWaitingActivity extends AppCompatActivity {
                 }
 
                 ImgItem tempImg = new ImgItem();
-                for (int k = 0; k < ((DataApplication) getApplication()).testImageDBList.size(); k++) {
-                    tempImg = ((DataApplication) getApplication()).testImageDBList.get(k);
+                for (int k = 0; k < DataApplication.testImageDBList.size(); k++) {
+                    tempImg = DataApplication.testImageDBList.get(k);
                     if (tempImg.getName().equals(mWaitingQueue.get(i).getQueueName())) {
                         break;
                     }
                 }
 
                 mWaitingList.add(new WaitingListItem(tempImg.getUri(), mWaitingQueue.get(i).getQueueName(),
-                        mWaitingQueue.get(i).getWaitingPersonList().indexOf(((DataApplication) getApplication()).currentUser),
+                        mWaitingQueue.get(i).getWaitingPersonList().indexOf(DataApplication.currentUser),
                         tempInfo.getLocDetail()));
 
             }
-            txtNotice.setText("신청한 웨이팅은 총 " + mWaitingList.size() + "건 입니다.");
+            txtNotice.setText("취소하시려면 길게 눌러주세요.\n신청한 웨이팅은 총 " + mWaitingList.size() + "건 입니다.");
         } else {
             txtNotice.setText("신청한 웨이팅이 없습니다.");
         }

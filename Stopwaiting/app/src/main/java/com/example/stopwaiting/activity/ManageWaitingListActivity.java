@@ -57,7 +57,6 @@ public class ManageWaitingListActivity extends AppCompatActivity {
 
         txtTitle.setText("개설한 웨이팅");
 
-//        myManageWaitingInfoRequest(((DataApplication) getApplication()).currentUser.getStudentCode());
         for (int i = 0; i < ((DataApplication) getApplication()).testDBList.size(); i++) {
             WaitingInfo tempInfo = ((DataApplication) getApplication()).testDBList.get(i);
             if (tempInfo.getAdminId().equals(((DataApplication) getApplication()).currentUser.getStudentCode())) {
@@ -99,8 +98,7 @@ public class ManageWaitingListActivity extends AppCompatActivity {
                 }
                 if (!check) {
                     mWaitingList.add(new WaitingListItem(tempImg.getUri(), mWaitingQueueList.get(i).getQueueName(),
-                            mWaitingQueueList.get(i).getWaitingPersonList().size(),
-                            tempInfo.getLocDetail()));
+                            mWaitingQueueList.get(i).getWaitingPersonList().size(), tempInfo.getLocDetail()));
                 }
 
             }
