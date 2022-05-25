@@ -3,7 +3,6 @@ package com.example.stopwaiting.activity;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -43,7 +42,7 @@ public class MainActivity extends Activity {
         mainApp = getApplication();
         setContentView(R.layout.activity_main);
         Log.e("boot", DataApplication.currentUserInfo.getStudentCode() + "/"
-                + DataApplication.myWaiting.size() + "/" + DataApplication.waitingInfos.size());
+                + DataApplication.myWaiting.size());
 
         listView = findViewById(R.id.listView);
         waitingList = new ArrayList<>();

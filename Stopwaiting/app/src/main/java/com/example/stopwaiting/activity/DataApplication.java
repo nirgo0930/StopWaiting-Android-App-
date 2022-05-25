@@ -11,6 +11,7 @@ import com.example.stopwaiting.dto.ImgItem;
 import com.example.stopwaiting.dto.UserInfo;
 import com.example.stopwaiting.dto.WaitingInfo;
 import com.example.stopwaiting.dto.WaitingQueue;
+import com.example.stopwaiting.dto.WearQueueDTO;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.wearable.Asset;
 import com.google.android.gms.wearable.DataItem;
@@ -84,6 +85,24 @@ public class DataApplication extends Application {
         }
     }
 
+    public void sendRefresh() {
+        PutDataMapRequest dataMap = PutDataMapRequest.create(path + "/userInfo");
+        dataMap.getDataMap().putAsset("currentUser", null);
+        PutDataRequest request = dataMap.asPutDataRequest();
+        Task<DataItem> putTask = Wearable.getDataClient(getApplicationContext()).putDataItem(request);
+
+
+        dataMap = PutDataMapRequest.create(path + "/myWaiting_first");
+        dataMap.getDataMap().putAsset("myWaiting", null);
+        request = dataMap.asPutDataRequest();
+        putTask = Wearable.getDataClient(getApplicationContext()).putDataItem(request);
+
+        dataMap = PutDataMapRequest.create(path + "/myWaiting");
+        dataMap.getDataMap().putAsset("myWaiting", null);
+        request = dataMap.asPutDataRequest();
+        putTask = Wearable.getDataClient(getApplicationContext()).putDataItem(request);
+    }
+
     public void sendUserInfo() {
         byte[] serializedMember = null;
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
@@ -101,10 +120,19 @@ public class DataApplication extends Application {
         Task<DataItem> putTask = Wearable.getDataClient(getApplicationContext()).putDataItem(request);
     }
 
-    public void sendMyQueueInfo() {
+    public void sendMyQueueInfo(ArrayList<WaitingInfo> waitingList) {
         byte[] serializedMember = null;
+
+        WaitingInfo selectInfo = null;
         for (int i = 0; i < myWaiting.size(); i++) {
-            WaitingQueue selectItem = myWaiting.get(i);
+            for (int j = 0; j < waitingList.size(); j++) {
+                if (waitingList.get(j).getName().equals(myWaiting.get(i).getQueueName())) {
+                    selectInfo = waitingList.get(j);
+                    break;
+                }
+            }
+
+            WearQueueDTO selectItem = new WearQueueDTO(currentUser, myWaiting.get(i), selectInfo);
 
             try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
                 try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
@@ -126,22 +154,5 @@ public class DataApplication extends Application {
             PutDataRequest request = dataMap.asPutDataRequest();
             Task<DataItem> putTask = Wearable.getDataClient(getApplicationContext()).putDataItem(request);
         }
-    }
-
-    public void sendWaitingInfo(ArrayList<WaitingInfo> data) {
-        byte[] serializedMember = null;
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
-                oos.writeObject(data);
-                serializedMember = baos.toByteArray();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Asset temp = Asset.createFromBytes(Base64.getEncoder().encode(serializedMember));
-        PutDataMapRequest dataMap = PutDataMapRequest.create(path + "/waitingInfos");
-        dataMap.getDataMap().putAsset("waitingInfos", temp);
-        PutDataRequest request = dataMap.asPutDataRequest();
-        Task<DataItem> putTask = Wearable.getDataClient(getApplicationContext()).putDataItem(request);
     }
 }

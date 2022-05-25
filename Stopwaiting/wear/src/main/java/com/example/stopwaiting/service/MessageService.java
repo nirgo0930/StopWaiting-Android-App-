@@ -7,8 +7,7 @@ import android.util.Log;
 import com.example.stopwaiting.activity.DataApplication;
 import com.example.stopwaiting.activity.MainActivity;
 import com.example.stopwaiting.dto.UserInfo;
-import com.example.stopwaiting.dto.WaitingInfo;
-import com.example.stopwaiting.dto.WaitingQueue;
+import com.example.stopwaiting.dto.WearQueueDTO;
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.gms.wearable.Asset;
 import com.google.android.gms.wearable.DataEvent;
@@ -46,29 +45,23 @@ public class MessageService extends WearableListenerService {
                         break;
                     case "/my_path/myWaiting_first":
                         DataApplication.myWaiting = new ArrayList<>();
+                        Log.e("test", "2--");
                     case "/my_path/myWaiting":
                         if (loadQueueInfoFromAsset(dataMapItem.getDataMap().getAsset("myWaiting")) != null) {
                             DataApplication.myWaiting.add(loadQueueInfoFromAsset(dataMapItem.getDataMap().getAsset("myWaiting")));
-                            Log.e("test", "2++");
+                            Log.e("test", "2++/" + loadQueueInfoFromAsset(dataMapItem.getDataMap().getAsset("myWaiting")).getQueueName());
                         }
                         Log.e("test", "2");
-                        break;
-                    case "/my_path/waitingInfos":
-                        if (loadWaitingInfoFromAsset(dataMapItem.getDataMap().getAsset("waitingInfos")) != null) {
-                            DataApplication.waitingInfos = loadWaitingInfoFromAsset(dataMapItem.getDataMap().getAsset("waitingInfos"));
-                            Log.e("test", "3++");
-                        }
-                        Log.e("test", "3");
                         break;
                 }
             }
         }
         String temp = "";
-        for (int i = 0; i < DataApplication.waitingInfos.size(); i++) {
-            temp += DataApplication.waitingInfos.get(i).getName() + "/";
+        for (int i = 0; i < DataApplication.myWaiting.size(); i++) {
+            temp += DataApplication.myWaiting.get(i).getQueueName() + "/";
         }
         Log.e("data_changed", DataApplication.currentUserInfo.getStudentCode() + "/"
-                + DataApplication.myWaiting.size() + "/" + DataApplication.waitingInfos.size() + temp + "/");
+                + DataApplication.myWaiting.size() + "/" + temp);
     }
 
     public static UserInfo loadUserInfoFromAsset(Asset asset) {
@@ -107,8 +100,8 @@ public class MessageService extends WearableListenerService {
         return data;
     }
 
-    public WaitingQueue loadQueueInfoFromAsset(Asset asset) {
-        WaitingQueue data = null;
+    public WearQueueDTO loadQueueInfoFromAsset(Asset asset) {
+        WearQueueDTO data = null;
         if (asset == null) {
             return null;
         }
@@ -123,43 +116,7 @@ public class MessageService extends WearableListenerService {
             byte[] serializedMember = Base64.getDecoder().decode(streamToString);
             try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(serializedMember))) {
                 Object temp = ois.readObject();
-                data = (WaitingQueue) temp;
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        if (assetInputStream == null) {
-            Log.w(TAG, "Requested an unknown Asset.");
-            return null;
-        }
-        // decode the stream into a bitmap
-        return data;
-    }
-
-    public ArrayList<WaitingInfo> loadWaitingInfoFromAsset(Asset asset) {
-        ArrayList<WaitingInfo> data = null;
-        if (asset == null) {
-            return null;
-        }
-        // convert asset into a file descriptor and block until it's ready
-        InputStream assetInputStream = null;
-        try {
-            assetInputStream = Tasks.await(Wearable.getDataClient(getApplicationContext()).getFdForAsset(asset)).getInputStream();
-
-            InputStreamReader inputStreamReader = new InputStreamReader(assetInputStream);
-            Stream<String> streamOfString = new BufferedReader(inputStreamReader).lines();
-            String streamToString = streamOfString.collect(Collectors.joining());
-            byte[] serializedMember = Base64.getDecoder().decode(streamToString);
-            try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(serializedMember))) {
-                Object temp = ois.readObject();
-                data = (ArrayList<WaitingInfo>) temp;
+                data = (WearQueueDTO) temp;
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
