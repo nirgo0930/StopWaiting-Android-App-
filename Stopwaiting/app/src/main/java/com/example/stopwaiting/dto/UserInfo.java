@@ -41,8 +41,8 @@ public class UserInfo implements Serializable {
         this.tel = tel;
     }
 
-    @Override
-    public String toString() {
-        return String.format("UserInfo", name, studentCode, tel);
-    }
+//    @Override
+//    public String toString() {
+//        return String.format("UserInfo", name, studentCode, tel);
+//    }
 }

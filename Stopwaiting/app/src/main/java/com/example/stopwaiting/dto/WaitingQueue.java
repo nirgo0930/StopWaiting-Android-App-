@@ -10,13 +10,6 @@ public class WaitingQueue implements Serializable {
     private int maxPerson;
     private ArrayList<UserInfo> waitingPersonList = new ArrayList<>();
 
-//    public class ArrayList<UserInfo> extends java.util.ArrayList {
-//        @Override
-//        public String toString() {
-//            return String.format("waitingPersonList", qId, queueName, time, maxPerson, waitingPersonList);
-//        }
-//    }
-
     public WaitingQueue() {
     }
 
@@ -25,6 +18,14 @@ public class WaitingQueue implements Serializable {
         this.queueName = queueName;
         this.time = time;
         this.maxPerson = maxPerson;
+    }
+
+    public WaitingQueue(Long qId, String queueName, String time, int maxPerson, ArrayList<UserInfo> waitingPersonList) {
+        this.qId = qId;
+        this.queueName = queueName;
+        this.time = time;
+        this.maxPerson = maxPerson;
+        this.waitingPersonList = waitingPersonList;
     }
 
     public Long getQId() {
@@ -90,8 +91,4 @@ public class WaitingQueue implements Serializable {
         }
     }
 
-    @Override
-    public String toString() {
-        return String.format("WaitingQueue", qId, queueName, time, maxPerson);
-    }
 }

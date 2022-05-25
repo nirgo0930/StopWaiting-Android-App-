@@ -20,6 +20,13 @@ public class WaitingQueue implements Serializable {
         this.maxPerson = maxPerson;
     }
 
+    public WaitingQueue(Long qId, String queueName, String time, int maxPerson, ArrayList<UserInfo> waitingPersonList) {
+        this.qId = qId;
+        this.queueName = queueName;
+        this.time = time;
+        this.maxPerson = maxPerson;
+        this.waitingPersonList = waitingPersonList;
+    }
 
     public Long getQId() {
         return qId;
@@ -61,8 +68,8 @@ public class WaitingQueue implements Serializable {
         this.waitingPersonList = waitingPersonList;
     }
 
-    @Override
-    public String toString() {
-        return String.format("WaitingQueue", qId, queueName, time, maxPerson, waitingPersonList.toString());
-    }
+//    @Override
+//    public String toString() {
+//        return String.format("WaitingQueue", qId, queueName, time, maxPerson, waitingPersonList.toString());
+//    }
 }

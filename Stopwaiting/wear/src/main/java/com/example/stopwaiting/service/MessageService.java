@@ -40,18 +40,21 @@ public class MessageService extends WearableListenerService {
                     case "/my_path/userInfo":
                         if (loadUserInfoFromAsset(dataMapItem.getDataMap().getAsset("currentUser")) != null) {
                             DataApplication.currentUserInfo = loadUserInfoFromAsset(dataMapItem.getDataMap().getAsset("currentUser"));
+                            Log.e("test", "1++");
                         }
                         Log.e("test", "1");
                         break;
                     case "/my_path/myWaiting":
                         if (loadQueueInfoFromAsset(dataMapItem.getDataMap().getAsset("myWaiting")) != null) {
                             DataApplication.myWaiting = loadQueueInfoFromAsset(dataMapItem.getDataMap().getAsset("myWaiting"));
+                            Log.e("test", "2++");
                         }
                         Log.e("test", "2");
                         break;
                     case "/my_path/waitingInfos":
                         if (loadWaitingInfoFromAsset(dataMapItem.getDataMap().getAsset("waitingInfos")) != null) {
                             DataApplication.waitingInfos = loadWaitingInfoFromAsset(dataMapItem.getDataMap().getAsset("waitingInfos"));
+                            Log.e("test", "3++");
                         }
                         Log.e("test", "3");
                         break;
@@ -63,7 +66,7 @@ public class MessageService extends WearableListenerService {
             temp += DataApplication.waitingInfos.get(i).getName() + "/";
         }
         Log.e("data_changed", DataApplication.currentUserInfo.getStudentCode() + "/"
-                + DataApplication.myWaiting.size() + "/" + DataApplication.waitingInfos.size() + temp);
+                + DataApplication.myWaiting.size() + "/" + DataApplication.waitingInfos.size() + temp + "/");
     }
 
     public static UserInfo loadUserInfoFromAsset(Asset asset) {

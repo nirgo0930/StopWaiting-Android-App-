@@ -94,7 +94,7 @@ public class DataApplication extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Asset temp = Asset.createFromBytes(Base64.getEncoder().encodeToString(serializedMember).getBytes());
+        Asset temp = Asset.createFromBytes(Base64.getEncoder().encode(serializedMember));
         PutDataMapRequest dataMap = PutDataMapRequest.create(path + "/userInfo");
         dataMap.getDataMap().putAsset("currentUser", temp);
         PutDataRequest request = dataMap.asPutDataRequest();
@@ -103,6 +103,7 @@ public class DataApplication extends Application {
 
     public void sendMyQueueInfo() {
         byte[] serializedMember = null;
+
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
                 oos.writeObject(myWaiting);
@@ -111,11 +112,13 @@ public class DataApplication extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Asset temp = Asset.createFromBytes(Base64.getEncoder().encodeToString(serializedMember).getBytes());
+        Asset temp = Asset.createFromBytes(Base64.getEncoder().encode(serializedMember));
         PutDataMapRequest dataMap = PutDataMapRequest.create(path + "/myWaiting");
         dataMap.getDataMap().putAsset("myWaiting", temp);
+
         PutDataRequest request = dataMap.asPutDataRequest();
         Task<DataItem> putTask = Wearable.getDataClient(getApplicationContext()).putDataItem(request);
+
     }
 
     public void sendWaitingInfo(ArrayList<WaitingInfo> data) {
@@ -128,7 +131,7 @@ public class DataApplication extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Asset temp = Asset.createFromBytes(Base64.getEncoder().encodeToString(serializedMember).getBytes());
+        Asset temp = Asset.createFromBytes(Base64.getEncoder().encode(serializedMember));
         PutDataMapRequest dataMap = PutDataMapRequest.create(path + "/waitingInfos");
         dataMap.getDataMap().putAsset("waitingInfos", temp);
         PutDataRequest request = dataMap.asPutDataRequest();
