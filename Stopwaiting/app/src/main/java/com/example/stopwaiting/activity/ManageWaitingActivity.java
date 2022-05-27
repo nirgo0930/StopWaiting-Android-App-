@@ -125,7 +125,6 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
                             return;
                         }
                     }
-
                 } else {
                     Toast.makeText(getApplicationContext(), "대기 중인 사람이 없습니다.", Toast.LENGTH_SHORT).show();
                 }

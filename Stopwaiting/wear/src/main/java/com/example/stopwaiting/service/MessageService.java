@@ -2,7 +2,7 @@ package com.example.stopwaiting.service;
 
 import static android.content.ContentValues.TAG;
 
-import android.app.Application;
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.util.Log;
 
@@ -32,13 +32,14 @@ import java.util.stream.Stream;
 public class MessageService extends WearableListenerService {
     public static SharedPreferences sharedPreferences;
     public static SharedPreferences.Editor autoEdit;
+    private String sharedID = "edit";
 
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
-        for (DataEvent event : dataEvents) {
-            sharedPreferences = getSharedPreferences("sharedPreferences", Application.MODE_PRIVATE);
-            autoEdit = sharedPreferences.edit();
+        sharedPreferences = getSharedPreferences(sharedID, Activity.MODE_PRIVATE);
+        autoEdit = sharedPreferences.edit();
 
+        for (DataEvent event : dataEvents) {
             if (event.getType() == DataEvent.TYPE_CHANGED) {
                 String path = event.getDataItem().getUri().getPath();
                 DataMapItem dataMapItem = DataMapItem.fromDataItem(event.getDataItem());
@@ -46,7 +47,6 @@ public class MessageService extends WearableListenerService {
                     case "/my_path/userInfo":
                         if (loadUserInfoFromAsset(dataMapItem.getDataMap().getAsset("currentUser")) != null) {
                             DataApplication.currentUserInfo = loadUserInfoFromAsset(dataMapItem.getDataMap().getAsset("currentUser"));
-                            DataApplication.saveId();
                             Log.e("test", "1++");
                         }
                         Log.e("test", "1");
@@ -73,7 +73,7 @@ public class MessageService extends WearableListenerService {
         Log.e("data_changed", DataApplication.currentUserInfo.getStudentCode() + "/"
                 + DataApplication.myWaiting.size() + "/" + temp);
 
-
+        autoEdit.commit();
     }
 
     public UserInfo loadUserInfoFromAsset(Asset asset) {

@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 import com.example.stopwaiting.dto.UserInfo;
 import com.example.stopwaiting.dto.WearQueueDTO;
+import com.example.stopwaiting.service.MessageService;
 
 import java.util.ArrayList;
 
@@ -20,13 +21,8 @@ public class DataApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        sharedPreferences = getSharedPreferences("sharedPreferences", Application.MODE_PRIVATE);
-        autoEdit = sharedPreferences.edit();
+        sharedPreferences = MessageService.sharedPreferences;
+        autoEdit = MessageService.sharedPreferences.edit();
 
-        currentUserInfo.setStudentCode(sharedPreferences.getLong("inputId", 0L));
-    }
-
-    public static void saveId() {
-        autoEdit.putString("inputId", currentUserInfo.getStudentCode().toString());
     }
 }

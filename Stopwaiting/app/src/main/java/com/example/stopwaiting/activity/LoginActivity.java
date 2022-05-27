@@ -181,8 +181,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void loginRequest() {
-        boolean test = DataApplication.isTest;
-        if (test) {
+        if (DataApplication.isTest) {
             if (edt_password.getText().toString().equals("test")) {
                 Toast.makeText(getApplicationContext(), "로그인에 성공하였습니다.\n 잠시만 기다려주세요", Toast.LENGTH_SHORT).show();
 
@@ -213,7 +212,6 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
                             try {
-
                                 Toast.makeText(getApplicationContext(), "로그인에 성공하였습니다.\n 잠시만 기다려주세요", Toast.LENGTH_SHORT).show();
 
                                 UserInfo temp = new UserInfo();

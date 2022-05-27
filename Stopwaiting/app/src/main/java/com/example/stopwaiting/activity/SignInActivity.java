@@ -24,6 +24,14 @@ import java.util.Map;
 
 public class SignInActivity extends AppCompatActivity {
     private EditText edtName, edtPw, edtPwCk, edtSCode, edtTelNum;
+    private boolean dupCheck = false;
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        this.finish();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +69,10 @@ public class SignInActivity extends AppCompatActivity {
     public void signInRequest() {
         if (!edtPw.getText().toString().equals(edtPwCk.getText().toString())) {
             Toast.makeText(getApplicationContext(), "비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (!dupCheck) {
+            Toast.makeText(getApplicationContext(), "중복된 학번입니다.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -130,12 +142,14 @@ public class SignInActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject jsonObject) {
                         Toast.makeText(getApplicationContext(), "사용가능한 학번입니다.", Toast.LENGTH_SHORT).show();
+                        dupCheck = true;
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Toast.makeText(getApplicationContext(), "사용할 수 없는 학번입니다.", Toast.LENGTH_SHORT).show();
+                        dupCheck = false;
                     }
                 }) {
             @Override
