@@ -12,7 +12,9 @@ import com.example.stopwaiting.R;
 public class WaitingDetailActivity extends Activity {
 
     private TextView mTextView;
-//private ActivityMain2Binding binding;
+    private double latitude;
+    private double longitude;
+    private String location;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,26 +22,24 @@ public class WaitingDetailActivity extends Activity {
         setContentView(R.layout.activity_detail);
 
 
-        //binding = ActivityMain2Binding.inflate(getLayoutInflater());
-        //setContentView(binding.getRoot());
-
         Intent intent = getIntent();
-//        String time = intent.getStringExtra("time");
-//        String location = intent.getStringExtra("location");
-
 
         String text = intent.getStringExtra("text");
         String[] textList = text.split("/");
 
+        location = textList[2];
+        latitude=Long.parseLong(textList[3]);
+        longitude = Long.parseLong(textList[4]);
         TextView textLoc = findViewById(R.id.textLoc);
         TextView textTime = findViewById(R.id.textTime);
+
         if(textList[0].equals("normal")){
             textTime.setText(textList[1]+"명 남음");
         }
         else{
             textTime.setText(textList[1]);
         }
-        textLoc.setText(textList[2]);
+        textLoc.setText(location);
 
         //취소하기
         Button btnCancel = (Button) findViewById(R.id.btnCancel);
@@ -67,6 +67,9 @@ public class WaitingDetailActivity extends Activity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+                intent.putExtra("latitude", latitude);
+                intent.putExtra("longitude", longitude);
+                intent.putExtra("location",location);
                 startActivity(intent);
             }
         });

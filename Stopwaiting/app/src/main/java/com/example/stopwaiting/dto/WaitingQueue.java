@@ -11,6 +11,7 @@ public class WaitingQueue implements Serializable {
     private ArrayList<UserInfo> waitingPersonList = new ArrayList<>();
 
     public WaitingQueue() {
+
     }
 
     public WaitingQueue(Long qId, String queueName, String time, int maxPerson) {

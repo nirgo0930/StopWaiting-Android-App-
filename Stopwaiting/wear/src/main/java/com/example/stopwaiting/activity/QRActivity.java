@@ -21,7 +21,7 @@ public class QRActivity extends Activity {
         setContentView(R.layout.activity_qr);
 
         iv = (ImageView)findViewById(R.id.qrcode);
-        text = "https://www.naver.com";
+        text = String.valueOf(DataApplication.currentUserInfo.getStudentCode());
 
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
         try{
