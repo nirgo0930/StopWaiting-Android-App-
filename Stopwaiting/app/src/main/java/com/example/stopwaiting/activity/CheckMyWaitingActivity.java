@@ -17,6 +17,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.stopwaiting.dto.ImgItem;
 import com.example.stopwaiting.adapter.MyWaitingListAdapter;
 import com.example.stopwaiting.R;
+import com.example.stopwaiting.dto.UserInfo;
 import com.example.stopwaiting.dto.WaitingInfo;
 import com.example.stopwaiting.dto.WaitingListItem;
 import com.example.stopwaiting.dto.WaitingQueue;
@@ -107,30 +108,28 @@ public class CheckMyWaitingActivity extends AppCompatActivity {
 
                                 for (int i = 0; i < dataArray.length(); i++) {
                                     JSONObject dataObject = dataArray.getJSONObject(i);
-
                                     WaitingQueue data = new WaitingQueue();
 
-//                                    data.setQId(dataObject.getLong("qId"));
-//                                    data.set
-//
-//                                    data.setWaitingId(dataObject.getLong("id"));
-//                                    data.setAdminId(dataObject.getLong("adminId"));
-//                                    data.setName(dataObject.getString("name"));
-//                                    data.setLatitude(dataObject.getDouble("latitude"));
-//                                    data.setLongitude(dataObject.getDouble("longitude"));
-//                                    data.setLocDetail(dataObject.getString("locDetail"));
-//                                    data.setInfo(dataObject.getString("information"));
-//                                    data.setType(dataObject.getString("type"));
-//                                    data.setMaxPerson(dataObject.getInt("maxPerson"));
-//                                    if (data.getType().equals("time")) {
-//                                        ArrayList<String> timetable = new ArrayList();
-//                                        JSONArray timeArray = dataObject.getJSONArray("timetable");
-//                                        for (int j = 0; j < timeArray.length(); j++) {
-//                                            timetable.add(timeArray.getString(j));
-//                                        }
-//                                        data.setTimetable(timetable);
-//                                    }
-//                                    mWaitingList.add(data);
+                                    data.setQId(dataObject.getLong("qId"));
+                                    data.setQueueName(dataObject.getString("qName"));
+                                    data.setTime(dataObject.getString("time"));
+                                    data.setMaxPerson(dataObject.getInt("maxPerson"));
+
+                                    ArrayList<UserInfo> tempList = new ArrayList<>();
+                                    JSONArray personArray = jsonObject.getJSONArray("personList");
+                                    for (int j = 0; j < personArray.length(); j++) {
+                                        JSONObject personObject = personArray.getJSONObject(j);
+                                        UserInfo personData = new UserInfo();
+
+                                        personData.setName(personObject.getString("name"));
+                                        personData.setStudentCode(personObject.getLong("studentCode"));
+                                        personData.setTel(personObject.getString("telephone"));
+
+                                        tempList.add(personData);
+                                    }
+                                    data.setWaitingPersonList(tempList);
+
+                                    mWaitingQueue.add(data);
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -140,7 +139,7 @@ public class CheckMyWaitingActivity extends AppCompatActivity {
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(getApplicationContext(), "회원가입에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "내 웨이팅 조회에 실패하였습니다.", Toast.LENGTH_SHORT).show();
                         }
                     }) {
 

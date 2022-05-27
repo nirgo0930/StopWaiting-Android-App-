@@ -13,7 +13,7 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.stopwaiting.R;
 import com.example.stopwaiting.adapter.ManageWaitingListAdapter;
 import com.example.stopwaiting.dto.ImgItem;
@@ -26,6 +26,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +37,8 @@ public class ManageWaitingListActivity extends AppCompatActivity {
     private ArrayList<WaitingQueue> mWaitingQueueList;
     private ArrayList<WaitingListItem> mWaitingList;
     private ManageWaitingListAdapter mListAdapter;
+    private WaitingInfo tempWaitingInfo;
+    private ImgItem tempImgInfo;
     public static Activity manageWaitingActivity;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,37 +60,15 @@ public class ManageWaitingListActivity extends AppCompatActivity {
 
         txtTitle.setText("개설한 웨이팅");
 
-        for (int i = 0; i < ((DataApplication) getApplication()).testDBList.size(); i++) {
-            WaitingInfo tempInfo = ((DataApplication) getApplication()).testDBList.get(i);
-            if (tempInfo.getAdminId().equals(((DataApplication) getApplication()).currentUser.getStudentCode())) {
-                String qName = tempInfo.getName();
-                for (int j = 0; j < ((DataApplication) getApplication()).testWaitingQueueDBList.size(); j++) {
-                    WaitingQueue tempQ = ((DataApplication) getApplication()).testWaitingQueueDBList.get(j);
-                    if (tempQ.getQueueName().equals(qName)) {
-                        mWaitingQueueList.add(tempQ);
-                    }
-                }
-            }
-        }
+        myManageWaitingInfoRequest(); //set mWaitingQueueList
 
         if (mWaitingQueueList.size() > 0) {
             for (int i = 0; i < mWaitingQueueList.size(); i++) {
-                WaitingInfo tempInfo = new WaitingInfo();
-                for (int j = 0; j < ((DataApplication) getApplication()).testDBList.size(); j++) {
-                    WaitingInfo temp = ((DataApplication) getApplication()).testDBList.get(j);
-                    if (temp.getName().equals(mWaitingQueueList.get(i).getQueueName())) {
-                        tempInfo = temp;
-                        break;
-                    }
-                }
+                waitingInfoRequest(mWaitingQueueList.get(i).getQueueName());
+                WaitingInfo tempInfo = tempWaitingInfo;
 
-                ImgItem tempImg = new ImgItem();
-                for (int k = 0; k < ((DataApplication) getApplication()).testImageDBList.size(); k++) {
-                    tempImg = ((DataApplication) getApplication()).testImageDBList.get(k);
-                    if (tempImg.getName().equals(mWaitingQueueList.get(i).getQueueName())) {
-                        break;
-                    }
-                }
+                imgRequest(mWaitingQueueList.get(i).getQueueName());
+                ImgItem tempImg = tempImgInfo;
 
                 boolean check = false;
                 for (int j = 0; j < mWaitingList.size(); j++) {
@@ -110,134 +91,247 @@ public class ManageWaitingListActivity extends AppCompatActivity {
         mListAdapter.notifyDataSetChanged();
     }
 
-    public void myManageWaitingInfoRequest(Long userId) {
-        StringRequest request = new StringRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            boolean success = jsonObject.getBoolean("success");
-                            if (success) {
-                                JSONArray dataArray = jsonObject.getJSONArray("data");
-                                mWaitingList = new ArrayList<>();
-                                mWaitingQueueList = new ArrayList<>();
-                                for (int i = 0; i < dataArray.length(); i++) {
-                                    JSONObject dataObject = dataArray.getJSONObject(i);
-                                    WaitingQueue tempQ = new WaitingQueue();
-
-                                    tempQ.setQId(dataObject.getLong("id"));
-                                    tempQ.setQueueName(dataObject.getString("name"));
-                                    tempQ.setMaxPerson(dataObject.getInt("maxPerson"));
-                                    tempQ.setTime(dataObject.getString("time"));
-
-                                    JSONArray personArray = jsonObject.getJSONArray("personList");
-                                    ArrayList<UserInfo> tempP = new ArrayList<>();
-                                    for (int j = 0; j < personArray.length(); j++) {
-                                        JSONObject personObject = personArray.getJSONObject(j);
-                                        UserInfo tempUser = new UserInfo();
-                                        tempUser.setStudentCode(personObject.getLong("sCode"));
-                                        tempUser.setName(personObject.getString("name"));
-                                        tempUser.setTel(personObject.getString("tel"));
-
-                                        tempP.add(tempUser);
-                                    }
-                                    tempQ.setWaitingPersonList(tempP);
-
-                                    mWaitingQueueList.add(tempQ);
-                                }
-                            } else {
-                                Toast.makeText(getApplicationContext(), "로딩에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+    public void myManageWaitingInfoRequest() {
+        if (DataApplication.isTest) {
+            for (int i = 0; i < ((DataApplication) getApplication()).testDBList.size(); i++) {
+                WaitingInfo tempInfo = ((DataApplication) getApplication()).testDBList.get(i);
+                if (tempInfo.getAdminId().equals(((DataApplication) getApplication()).currentUser.getStudentCode())) {
+                    String qName = tempInfo.getName();
+                    for (int j = 0; j < ((DataApplication) getApplication()).testWaitingQueueDBList.size(); j++) {
+                        WaitingQueue tempQ = ((DataApplication) getApplication()).testWaitingQueueDBList.get(j);
+                        if (tempQ.getQueueName().equals(qName)) {
+                            mWaitingQueueList.add(tempQ);
                         }
                     }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getApplicationContext(), "로딩에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-                    }
-                }) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("id", userId.toString());
-
-                return params;
+                }
             }
-        };
+        } else {
+            JSONObject jsonBodyObj = new JSONObject();
+            try {
+                jsonBodyObj.put("id", DataApplication.currentUser.getStudentCode());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            final String requestBody = String.valueOf(jsonBodyObj.toString());
 
-        request.setShouldCache(false);
-        ((DataApplication) getApplication()).requestQueue.add(request);
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL + "/manageWaitingList",
+                    null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject jsonObject) {
+                    try {
+                        JSONArray dataArray = jsonObject.getJSONArray("data");
+                        mWaitingList = new ArrayList<>();
+                        mWaitingQueueList = new ArrayList<>();
+                        for (int i = 0; i < dataArray.length(); i++) {
+                            JSONObject dataObject = dataArray.getJSONObject(i);
+                            WaitingQueue tempQ = new WaitingQueue();
+
+                            tempQ.setQId(dataObject.getLong("id"));
+                            tempQ.setQueueName(dataObject.getString("name"));
+                            tempQ.setMaxPerson(dataObject.getInt("maxPerson"));
+                            tempQ.setTime(dataObject.getString("time"));
+
+                            JSONArray personArray = jsonObject.getJSONArray("personList");
+                            ArrayList<UserInfo> tempP = new ArrayList<>();
+                            for (int j = 0; j < personArray.length(); j++) {
+                                JSONObject personObject = personArray.getJSONObject(j);
+                                UserInfo tempUser = new UserInfo();
+                                tempUser.setStudentCode(personObject.getLong("sCode"));
+                                tempUser.setName(personObject.getString("name"));
+                                tempUser.setTel(personObject.getString("tel"));
+
+                                tempP.add(tempUser);
+                            }
+                            tempQ.setWaitingPersonList(tempP);
+
+                            mWaitingQueueList.add(tempQ);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(getApplicationContext(), "로딩에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json");
+                    return headers;
+                }
+
+                @Override
+                public byte[] getBody() {
+                    try {
+                        if (requestBody != null && requestBody.length() > 0 && !requestBody.equals("")) {
+                            return requestBody.getBytes("utf-8");
+                        } else {
+                            return null;
+                        }
+                    } catch (UnsupportedEncodingException uee) {
+                        return null;
+                    }
+                }
+            };
+
+            request.setShouldCache(false);
+            ((DataApplication) getApplication()).requestQueue.add(request);
+        }
     }
 
-//    public void imagesRequest(Long qId) {
-////        avatar.setImageUrl("http://someurl.com/image.png", ((DataApplication) getApplication()).mImageLoader);
-//
-//        StringRequest request = new StringRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL,
-//                new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String response) {
-//                        try {
-//                            JSONObject jsonObject = new JSONObject(response);
-//                            boolean success = jsonObject.getBoolean("success");
-//                            if (success) {
-//                                JSONArray dataArray = jsonObject.getJSONArray("data");
-//                                mWaitingList = new ArrayList<>();
-//                                mWaitingQueueList = new ArrayList<>();
-//                                for (int i = 0; i < dataArray.length(); i++) {
-//                                    JSONObject dataObject = dataArray.getJSONObject(i);
-//                                    WaitingQueue tempQ = new WaitingQueue();
-//
-//                                    tempQ.setQId(dataObject.getLong("id"));
-//                                    tempQ.setQueueName(dataObject.getString("name"));
-//                                    tempQ.setMaxPerson(dataObject.getInt("maxPerson"));
-//                                    tempQ.setTime(dataObject.getString("time"));
-//
-//                                    JSONArray personArray = jsonObject.getJSONArray("personList");
-//                                    ArrayList<UserInfo> tempP = new ArrayList<>();
-//                                    for (int j = 0; j < personArray.length(); j++) {
-//                                        JSONObject personObject = personArray.getJSONObject(j);
-//                                        UserInfo tempUser = new UserInfo();
-//                                        tempUser.setStudentCode(personObject.getLong("sCode"));
-//                                        tempUser.setName(personObject.getString("name"));
-//                                        tempUser.setTel(personObject.getString("tel"));
-//
-//                                        tempP.add(tempUser);
-//                                    }
-//                                    tempQ.setWaitingPersonList(tempP);
-//
-//                                    mWaitingQueueList.add(tempQ);
-//                                }
-//                            } else {
-//                                Toast.makeText(getApplicationContext(), "로딩에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-//                                return;
-//                            }
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        Toast.makeText(getApplicationContext(), "로딩에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-//                    }
-//                }) {
-//            @Override
-//            protected Map<String, String> getParams() throws AuthFailureError {
-//                Map<String, String> params = new HashMap<String, String>();
-//                params.put("id", userId.toString());
-//
-//                return params;
-//            }
-//        };
-//
-//        request.setShouldCache(false);
-//        ((DataApplication) getApplication()).requestQueue.add(request);
-//
-//    }
+    public void waitingInfoRequest(String waitingName) {
+        if (DataApplication.isTest) {
+            for (int j = 0; j < ((DataApplication) getApplication()).testDBList.size(); j++) {
+                WaitingInfo temp = ((DataApplication) getApplication()).testDBList.get(j);
+                if (temp.getName().equals(waitingName)) {
+                    tempWaitingInfo = temp;
+                }
+            }
+        } else {
+            WaitingInfo tempInfo = new WaitingInfo();
+            JSONObject jsonBodyObj = new JSONObject();
+            try {
+                jsonBodyObj.put("name", waitingName);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            final String requestBody = String.valueOf(jsonBodyObj.toString());
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL + "/waitingInfo",
+                    null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject jsonObject) {
+                    try {
+                        JSONArray dataArray = jsonObject.getJSONArray("data");
+
+                        for (int i = 0; i < dataArray.length(); i++) {
+                            JSONObject dataObject = dataArray.getJSONObject(i);
+
+                            tempInfo.setWaitingId(dataObject.getLong("id"));
+                            tempInfo.setAdminId(dataObject.getLong("adminId"));
+                            tempInfo.setName(dataObject.getString("name"));
+                            tempInfo.setLatitude(dataObject.getDouble("latitude"));
+                            tempInfo.setLongitude(dataObject.getDouble("longitude"));
+                            tempInfo.setLocDetail(dataObject.getString("locDetail"));
+                            tempInfo.setInfo(dataObject.getString("information"));
+                            tempInfo.setType(dataObject.getString("type"));
+                            tempInfo.setMaxPerson(dataObject.getInt("maxPerson"));
+                            if (tempInfo.getType().equals("time")) {
+                                ArrayList<String> timetable = new ArrayList();
+                                JSONArray timeArray = dataObject.getJSONArray("timetable");
+                                for (int j = 0; j < timeArray.length(); j++) {
+                                    timetable.add(timeArray.getString(j));
+                                }
+                                tempInfo.setTimetable(timetable);
+                            }
+
+                            tempWaitingInfo = tempInfo;
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(getApplicationContext(), "로딩에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json");
+                    return headers;
+                }
+
+                @Override
+                public byte[] getBody() {
+                    try {
+                        if (requestBody != null && requestBody.length() > 0 && !requestBody.equals("")) {
+                            return requestBody.getBytes("utf-8");
+                        } else {
+                            return null;
+                        }
+                    } catch (UnsupportedEncodingException uee) {
+                        return null;
+                    }
+                }
+            };
+
+            request.setShouldCache(false);
+            ((DataApplication) getApplication()).requestQueue.add(request);
+        }
+    }
+
+    public void imgRequest(String waitingName) {
+        if (DataApplication.isTest) {
+            for (int i = 0; i < ((DataApplication) getApplication()).testImageDBList.size(); i++) {
+                tempImgInfo = ((DataApplication) getApplication()).testImageDBList.get(i);
+                if (tempImgInfo.getName().equals(waitingName)) {
+                    break;
+                }
+            }
+        } else {
+            ImgItem tempInfo = new ImgItem();
+            JSONObject jsonBodyObj = new JSONObject();
+            try {
+                jsonBodyObj.put("name", waitingName);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            final String requestBody = String.valueOf(jsonBodyObj.toString());
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL + "/waitingInfo",
+                    null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject jsonObject) {
+                    try {
+                        JSONArray dataArray = jsonObject.getJSONArray("data");
+
+                        for (int i = 0; i < dataArray.length(); i++) {
+                            JSONObject dataObject = dataArray.getJSONObject(i);
+
+                            tempInfo.setId(dataObject.getLong("id"));
+                            tempInfo.setName(dataObject.getString("name"));
+
+                            tempImgInfo = tempInfo;
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(getApplicationContext(), "로딩에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json");
+                    return headers;
+                }
+
+                @Override
+                public byte[] getBody() {
+                    try {
+                        if (requestBody != null && requestBody.length() > 0 && !requestBody.equals("")) {
+                            return requestBody.getBytes("utf-8");
+                        } else {
+                            return null;
+                        }
+                    } catch (UnsupportedEncodingException uee) {
+                        return null;
+                    }
+                }
+            };
+
+            request.setShouldCache(false);
+            ((DataApplication) getApplication()).requestQueue.add(request);
+        }
+    }
 }

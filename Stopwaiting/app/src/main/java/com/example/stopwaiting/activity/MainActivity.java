@@ -232,7 +232,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         setWearOS();
     }
 
-
     public void myWaitingRequest() {
         ((DataApplication) getApplication()).myWaiting = new ArrayList<>();
         if (DataApplication.isTest) {
@@ -255,7 +254,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
             final String requestBody = String.valueOf(jsonBodyObj.toString());
 
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL + "/waitingQueue", null,
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL + "/myWaitingQueue", null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
@@ -455,7 +454,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
     }
-
 
     public void setWearOS() {
         ((DataApplication) getApplication()).sendRefresh();

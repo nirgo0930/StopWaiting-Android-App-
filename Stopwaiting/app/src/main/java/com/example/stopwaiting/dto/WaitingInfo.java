@@ -15,6 +15,7 @@ public class WaitingInfo implements Serializable {
     private String type; //normal time
     private int maxPerson; //최대인원
     private ArrayList<String> timetable = new ArrayList(); //운영 타임 ex)12:00 13:00
+    private ArrayList<String> urlList = new ArrayList<>();
 
     public WaitingInfo() {
     }
