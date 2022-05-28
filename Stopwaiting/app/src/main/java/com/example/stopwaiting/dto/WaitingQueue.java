@@ -83,13 +83,13 @@ public class WaitingQueue implements Serializable {
 
     }
 
-    public int removeWPerson(UserInfo n) {
-        if (waitingPersonList.contains(n)) {
-            waitingPersonList.remove(waitingPersonList.indexOf(n));
-            return 0;
-        } else {
-            return 1;
+    public boolean removeWPerson(Long n) {
+        for (int i = 0; i < waitingPersonList.size(); i++) {
+            if (waitingPersonList.get(i).getStudentCode().equals(n)) {
+                waitingPersonList.remove(i);
+                return true;
+            }
         }
+        return false;
     }
-
 }

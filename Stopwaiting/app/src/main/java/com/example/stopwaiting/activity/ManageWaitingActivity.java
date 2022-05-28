@@ -328,18 +328,13 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
                 for (int i = 0; i < selectQ.getWaitingPersonList().size(); i++) {
                     if (selectQ.getWaitingPersonList().get(i).getStudentCode().equals(qr)) {
                         temp = selectQ.getWaitingPersonList().get(i);
-                        Log.e("selectUser", temp.getStudentCode().toString());
-                        switch (selectQ.removeWPerson(temp)) {
-                            case 0:
-                                DataApplication.testWaitingQueueDBList
-                                        .set(DataApplication.testWaitingQueueDBList.indexOf(selectQ), selectQ);
-                                Toast.makeText(getApplicationContext(), temp.getName() + " 님 어서오세요.", Toast.LENGTH_SHORT).show();
-                                break;
-                            case 1:
-                                Toast.makeText(getApplicationContext(), "등록된 웨이팅이 아닙니다.", Toast.LENGTH_SHORT).show();
-                                break;
+                        if (selectQ.removeWPerson(temp.getStudentCode())) {
+                            DataApplication.testWaitingQueueDBList.set(DataApplication.testWaitingQueueDBList.indexOf(selectQ), selectQ);
+                            Toast.makeText(getApplicationContext(), temp.getName() + " 님 어서오세요.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "등록된 웨이팅이 아닙니다.", Toast.LENGTH_SHORT).show();
                         }
-                        return;
+                        break;
                     }
                 }
             } else {
@@ -357,7 +352,6 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
                                     String userName = jsonObject.getString("name");
                                     Toast.makeText(getApplicationContext(), userName + " 님 어서오세요.", Toast.LENGTH_SHORT).show();
                                 } else {
-                                    String errorType = jsonObject.getString("errorType");
 
                                     Toast.makeText(getApplicationContext(), "등록된 웨이팅이 아닙니다.", Toast.LENGTH_SHORT).show();
                                     return;

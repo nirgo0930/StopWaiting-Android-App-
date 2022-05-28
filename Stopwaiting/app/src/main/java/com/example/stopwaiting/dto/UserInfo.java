@@ -6,6 +6,7 @@ public class UserInfo implements Serializable {
     private String name;
     private Long studentCode;
     private String tel;
+    private String token;
 
     public UserInfo() {
     }

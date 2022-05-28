@@ -28,6 +28,8 @@ import com.example.stopwaiting.dto.ImgItem;
 import com.example.stopwaiting.dto.UserInfo;
 import com.example.stopwaiting.dto.WaitingInfo;
 import com.example.stopwaiting.dto.WaitingQueue;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,6 +44,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button btn_login, btn_new;
     public static Activity login_Activity;
     private String sharedID = "Login";
+    private String token;
 
     String[] permission_list = {
             Manifest.permission.INTERNET,
@@ -60,6 +63,13 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
         login_Activity = LoginActivity.this;
+
+        FirebaseMessaging.getInstance().getToken().addOnSuccessListener(new OnSuccessListener<String>() {
+            @Override
+            public void onSuccess(String data) {
+                token = data;
+            }
+        });
 
         SharedPreferences sharedPreferences = getSharedPreferences(sharedID, Activity.MODE_PRIVATE);
         checkPermissions(permission_list);
@@ -202,6 +212,7 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 jsonBodyObj.put("id", Long.valueOf(edt_id.getText().toString()));
                 jsonBodyObj.put("password", edt_password.getText().toString());
+                jsonBodyObj.put("token", token);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

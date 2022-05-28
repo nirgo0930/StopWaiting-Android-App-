@@ -78,7 +78,7 @@ public class ManageWaitingListActivity extends AppCompatActivity {
                     }
                 }
                 if (!check) {
-                    mWaitingList.add(new WaitingListItem(tempImg.getUri(), mWaitingQueueList.get(i).getQueueName(),
+                    mWaitingList.add(new WaitingListItem(tempImg.getUri(), mWaitingQueueList.get(i).getQueueName(), mWaitingQueueList.get(i).getQId(),
                             mWaitingQueueList.get(i).getWaitingPersonList().size(), tempInfo.getLocDetail()));
                 }
 

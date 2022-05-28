@@ -10,6 +10,11 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.stopwaiting.activity.DataApplication;
 import com.example.stopwaiting.activity.ManageWaitingPersonActivity;
 import com.example.stopwaiting.dto.UserInfo;
@@ -17,7 +22,13 @@ import com.example.stopwaiting.dto.WaitingQueue;
 import com.example.stopwaiting.R;
 import com.example.stopwaiting.viewholder.ManageWaitingPersonViewHolder;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ManageWaitingPersonAdapter extends RecyclerView.Adapter<ManageWaitingPersonViewHolder> {
     private Context mContext;
@@ -45,19 +56,8 @@ public class ManageWaitingPersonAdapter extends RecyclerView.Adapter<ManageWaiti
                             UserInfo userInfo = mItemList.get(pos);
                             mItemList.remove(pos);
 
-                            if (DataApplication.isTest) { //server 요청
-                                for (int i = 0; i < DataApplication.testWaitingQueueDBList.size(); i++) {
-                                    if (DataApplication.testWaitingQueueDBList.get(i).getQId().equals(ManageWaitingPersonActivity.qId)) {
-                                        WaitingQueue temp = DataApplication.testWaitingQueueDBList.get(i);
-                                        temp.removeWPerson(userInfo);
+                            cancelWaitingRequest(ManageWaitingPersonActivity.qId, userInfo.getStudentCode());
 
-                                        DataApplication.testWaitingQueueDBList.set(i, temp);
-                                        break;
-                                    }
-                                }
-                            } else {
-                                
-                            }
                             notifyDataSetChanged();
                         }
                     })
@@ -90,5 +90,65 @@ public class ManageWaitingPersonAdapter extends RecyclerView.Adapter<ManageWaiti
     @Override
     public int getItemCount() {
         return mItemList.size();
+    }
+
+    public void cancelWaitingRequest(Long qId, Long sId) {
+        if (DataApplication.isTest) {
+            for (int i = 0; i < DataApplication.testWaitingQueueDBList.size(); i++) {
+                if (DataApplication.testWaitingQueueDBList.get(i).getQId().equals(qId)) {
+                    WaitingQueue temp = DataApplication.testWaitingQueueDBList.get(i);
+
+                    temp.removeWPerson(DataApplication.currentUser.getStudentCode());
+                    DataApplication.testWaitingQueueDBList.set(i, temp);
+                    break;
+                }
+            }
+        } else {
+            JSONObject jsonBodyObj = new JSONObject();
+            try {
+                jsonBodyObj.put("id", sId);
+                jsonBodyObj.put("waitingQueueId", qId);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            final String requestBody = String.valueOf(jsonBodyObj.toString());
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, DataApplication.serverURL + "/cancelWaiting", null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject jsonObject) {
+//                            Toast.makeText(getApplicationContext(), "로그인에 성공하였습니다.\n 잠시만 기다려주세요", Toast.LENGTH_SHORT).show();
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+//                            Toast.makeText(getApplicationContext(), "로그인에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                        }
+                    }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json");
+                    return headers;
+                }
+
+                @Override
+                public byte[] getBody() {
+                    try {
+                        if (requestBody != null && requestBody.length() > 0 && !requestBody.equals("")) {
+                            return requestBody.getBytes("utf-8");
+                        } else {
+                            return null;
+                        }
+                    } catch (UnsupportedEncodingException uee) {
+                        return null;
+                    }
+                }
+            };
+
+            request.setShouldCache(false);
+            DataApplication.requestQueue.add(request);
+        }
     }
 }
