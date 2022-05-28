@@ -45,16 +45,19 @@ public class ManageWaitingPersonAdapter extends RecyclerView.Adapter<ManageWaiti
                             UserInfo userInfo = mItemList.get(pos);
                             mItemList.remove(pos);
 
-                            for (int i = 0; i < DataApplication.testWaitingQueueDBList.size(); i++) {
-                                if (DataApplication.testWaitingQueueDBList.get(i).getQId().equals(ManageWaitingPersonActivity.qId)) {
-                                    WaitingQueue temp = DataApplication.testWaitingQueueDBList.get(i);
-                                    temp.removeWPerson(userInfo.getName());
+                            if (DataApplication.isTest) { //server 요청
+                                for (int i = 0; i < DataApplication.testWaitingQueueDBList.size(); i++) {
+                                    if (DataApplication.testWaitingQueueDBList.get(i).getQId().equals(ManageWaitingPersonActivity.qId)) {
+                                        WaitingQueue temp = DataApplication.testWaitingQueueDBList.get(i);
+                                        temp.removeWPerson(userInfo);
 
-                                    DataApplication.testWaitingQueueDBList.set(i, temp);
-                                    break;
+                                        DataApplication.testWaitingQueueDBList.set(i, temp);
+                                        break;
+                                    }
                                 }
+                            } else {
+                                
                             }
-
                             notifyDataSetChanged();
                         }
                     })

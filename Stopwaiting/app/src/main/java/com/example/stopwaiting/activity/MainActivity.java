@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -101,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ActivityCompat.requestPermissions(mainActivity, PERMISSIONS, LOCATION_PERMISSION_REQUEST_CODE);
                 refresh();
             }
         });
@@ -226,8 +228,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         waitingList = new ArrayList<>();
         waitingInfoAllRequest();
         myWaitingRequest();
-
-        ActivityCompat.requestPermissions(mainActivity, PERMISSIONS, LOCATION_PERMISSION_REQUEST_CODE);
 
         setWearOS();
     }

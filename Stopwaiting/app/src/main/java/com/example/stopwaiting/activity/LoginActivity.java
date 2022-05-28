@@ -128,7 +128,7 @@ public class LoginActivity extends AppCompatActivity {
         ((DataApplication) getApplication()).testWaitingQueueDBList.add(new WaitingQueue(((DataApplication) this.getApplication()).qCnt++, "특식배부", "normal", 3));
 
         ((DataApplication) this.getApplication()).testDBList.add(new WaitingInfo
-                (20170000L, 3L, 36.145123, 128.394244, "북카페", "학생회관 B218", "북카페입니다.", "normal", 10));
+                (20170526L, 3L, 36.145123, 128.394244, "북카페", "학생회관 B218", "북카페입니다.", "normal", 10));
         WaitingQueue tempQ = new WaitingQueue(((DataApplication) this.getApplication()).qCnt++, "북카페", "normal", 10);
         tempQ.addWPerson(((DataApplication) getApplication()).currentUser);
         ((DataApplication) getApplication()).testWaitingQueueDBList.add(tempQ);

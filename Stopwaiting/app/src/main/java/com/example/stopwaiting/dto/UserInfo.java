@@ -8,7 +8,6 @@ public class UserInfo implements Serializable {
     private String tel;
 
     public UserInfo() {
-
     }
 
     public UserInfo(String name, Long studentCode, String tel) {
@@ -40,9 +39,4 @@ public class UserInfo implements Serializable {
     public void setTel(String tel) {
         this.tel = tel;
     }
-
-//    @Override
-//    public String toString() {
-//        return String.format("UserInfo", name, studentCode, tel);
-//    }
 }

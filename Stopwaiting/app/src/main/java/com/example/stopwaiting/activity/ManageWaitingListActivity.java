@@ -93,12 +93,12 @@ public class ManageWaitingListActivity extends AppCompatActivity {
 
     public void myManageWaitingInfoRequest() {
         if (DataApplication.isTest) {
-            for (int i = 0; i < ((DataApplication) getApplication()).testDBList.size(); i++) {
-                WaitingInfo tempInfo = ((DataApplication) getApplication()).testDBList.get(i);
-                if (tempInfo.getAdminId().equals(((DataApplication) getApplication()).currentUser.getStudentCode())) {
+            for (int i = 0; i < DataApplication.testDBList.size(); i++) {
+                WaitingInfo tempInfo = DataApplication.testDBList.get(i);
+                if (tempInfo.getAdminId().equals(DataApplication.currentUser.getStudentCode())) {
                     String qName = tempInfo.getName();
-                    for (int j = 0; j < ((DataApplication) getApplication()).testWaitingQueueDBList.size(); j++) {
-                        WaitingQueue tempQ = ((DataApplication) getApplication()).testWaitingQueueDBList.get(j);
+                    for (int j = 0; j < DataApplication.testWaitingQueueDBList.size(); j++) {
+                        WaitingQueue tempQ = DataApplication.testWaitingQueueDBList.get(j);
                         if (tempQ.getQueueName().equals(qName)) {
                             mWaitingQueueList.add(tempQ);
                         }
@@ -114,7 +114,7 @@ public class ManageWaitingListActivity extends AppCompatActivity {
             }
             final String requestBody = String.valueOf(jsonBodyObj.toString());
 
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL + "/manageWaitingList",
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, DataApplication.serverURL + "/manageWaitingList",
                     null, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject jsonObject) {
@@ -178,14 +178,14 @@ public class ManageWaitingListActivity extends AppCompatActivity {
             };
 
             request.setShouldCache(false);
-            ((DataApplication) getApplication()).requestQueue.add(request);
+            DataApplication.requestQueue.add(request);
         }
     }
 
     public void waitingInfoRequest(String waitingName) {
         if (DataApplication.isTest) {
-            for (int j = 0; j < ((DataApplication) getApplication()).testDBList.size(); j++) {
-                WaitingInfo temp = ((DataApplication) getApplication()).testDBList.get(j);
+            for (int j = 0; j < DataApplication.testDBList.size(); j++) {
+                WaitingInfo temp = DataApplication.testDBList.get(j);
                 if (temp.getName().equals(waitingName)) {
                     tempWaitingInfo = temp;
                 }
@@ -200,7 +200,7 @@ public class ManageWaitingListActivity extends AppCompatActivity {
             }
             final String requestBody = String.valueOf(jsonBodyObj.toString());
 
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL + "/waitingInfo",
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, DataApplication.serverURL + "/waitingInfo",
                     null, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject jsonObject) {
@@ -262,14 +262,14 @@ public class ManageWaitingListActivity extends AppCompatActivity {
             };
 
             request.setShouldCache(false);
-            ((DataApplication) getApplication()).requestQueue.add(request);
+            DataApplication.requestQueue.add(request);
         }
     }
 
     public void imgRequest(String waitingName) {
         if (DataApplication.isTest) {
-            for (int i = 0; i < ((DataApplication) getApplication()).testImageDBList.size(); i++) {
-                tempImgInfo = ((DataApplication) getApplication()).testImageDBList.get(i);
+            for (int i = 0; i < DataApplication.testImageDBList.size(); i++) {
+                tempImgInfo = DataApplication.testImageDBList.get(i);
                 if (tempImgInfo.getName().equals(waitingName)) {
                     break;
                 }
@@ -284,7 +284,7 @@ public class ManageWaitingListActivity extends AppCompatActivity {
             }
             final String requestBody = String.valueOf(jsonBodyObj.toString());
 
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL + "/waitingInfo",
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, DataApplication.serverURL + "/waitingInfo",
                     null, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject jsonObject) {
@@ -331,7 +331,7 @@ public class ManageWaitingListActivity extends AppCompatActivity {
             };
 
             request.setShouldCache(false);
-            ((DataApplication) getApplication()).requestQueue.add(request);
+            DataApplication.requestQueue.add(request);
         }
     }
 }

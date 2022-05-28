@@ -13,13 +13,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.stopwaiting.R;
 import com.example.stopwaiting.activity.CheckMyWaitingActivity;
 import com.example.stopwaiting.activity.DataApplication;
 import com.example.stopwaiting.activity.MyPageActivity;
-import com.example.stopwaiting.dto.WaitingQueue;
-import com.example.stopwaiting.viewholder.MyWaitingListItemViewHolder;
-import com.example.stopwaiting.R;
 import com.example.stopwaiting.dto.WaitingListItem;
+import com.example.stopwaiting.viewholder.MyWaitingListItemViewHolder;
 
 import java.util.List;
 
@@ -63,18 +62,23 @@ public class MyWaitingListAdapter extends RecyclerView.Adapter<MyWaitingListItem
                     .setIcon(android.R.drawable.ic_menu_save)
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            // 확인시 처리 로직
-                            String name = mItemList.get(pos).getName();
-                            mItemList.remove(pos);
+                            if (DataApplication.isTest) { //server 요청
 
-                            Intent data = new Intent();
-                            data.putExtra("name", name);
-                            data.putExtra("case", 2);
-                            MyPageActivity.myPageActivity.setResult(Activity.RESULT_OK, data);
-                            MyPageActivity.myPageActivity.finish();
-                            CheckMyWaitingActivity.myWaitingActivity.finish();
+                                // 확인시 처리 로직
+                                String name = mItemList.get(pos).getName();
+                                mItemList.remove(pos);
 
-                            notifyDataSetChanged();
+                                Intent data = new Intent();
+                                data.putExtra("name", name);
+                                data.putExtra("case", 2);
+                                MyPageActivity.myPageActivity.setResult(Activity.RESULT_OK, data);
+                                MyPageActivity.myPageActivity.finish();
+                                CheckMyWaitingActivity.myWaitingActivity.finish();
+
+                                notifyDataSetChanged();
+                            } else {
+
+                            }
                         }
                     })
                     .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {

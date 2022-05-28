@@ -3,6 +3,7 @@ package com.example.stopwaiting.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -71,6 +72,7 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
         spinner.setAdapter(mAdapter);
 
         btnCheckIn.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ManageWaitingActivity.this, ScanQRActivity.class);
                 startActivityForResult(intent, 4000);
@@ -103,6 +105,8 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
 
         if (requestCode == 4000) {
             if (resultCode == RESULT_OK) {
+//                Toast.makeText(this, "test4000", Toast.LENGTH_LONG).show();
+                Log.e("-------------------//////////////", data.getStringExtra("qr"));
                 Long qr = Long.valueOf(data.getStringExtra("qr"));
                 checkInRequest(qr, selectQ.getQueueName());
 
@@ -156,11 +160,12 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
                         next = "-";
                     }
 
-                    selectQ = temp;
                     break;
                 }
             }
         }
+        selectQ = temp;
+
 
         txtWaitingCnt.setText(wCnt);
         txtNextName.setText(next);
@@ -323,10 +328,11 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
                 for (int i = 0; i < selectQ.getWaitingPersonList().size(); i++) {
                     if (selectQ.getWaitingPersonList().get(i).getStudentCode().equals(qr)) {
                         temp = selectQ.getWaitingPersonList().get(i);
-                        switch (selectQ.removeWPerson(temp.getName())) {
+                        Log.e("selectUser", temp.getStudentCode().toString());
+                        switch (selectQ.removeWPerson(temp)) {
                             case 0:
-                                ((DataApplication) getApplication()).testWaitingQueueDBList
-                                        .set(((DataApplication) getApplication()).testWaitingQueueDBList.indexOf(selectQ), selectQ);
+                                DataApplication.testWaitingQueueDBList
+                                        .set(DataApplication.testWaitingQueueDBList.indexOf(selectQ), selectQ);
                                 Toast.makeText(getApplicationContext(), temp.getName() + " 님 어서오세요.", Toast.LENGTH_SHORT).show();
                                 break;
                             case 1:
@@ -340,7 +346,7 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
                 Toast.makeText(getApplicationContext(), "대기 중인 사람이 없습니다.", Toast.LENGTH_SHORT).show();
             }
         } else {
-            StringRequest request = new StringRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL,
+            StringRequest request = new StringRequest(Request.Method.POST, DataApplication.serverURL,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {

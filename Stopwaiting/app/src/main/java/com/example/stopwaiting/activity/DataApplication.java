@@ -26,18 +26,20 @@ import java.util.ArrayList;
 import java.util.Base64;
 
 public class DataApplication extends Application {
-    static public ArrayList<WaitingInfo> testDBList = new ArrayList<>();
-    static public ArrayList<ImgItem> testImageDBList = new ArrayList<>();
-    static public ArrayList<WaitingQueue> testWaitingQueueDBList = new ArrayList<>();
-
-    static public Long qCnt;
     static public boolean isTest = true;
+
+    static public ArrayList<WaitingInfo> testDBList;
+    static public ArrayList<ImgItem> testImageDBList;
+    static public ArrayList<WaitingQueue> testWaitingQueueDBList;
+    static public Long qCnt;
+
+    static public UserInfo currentUser;
+    static public ArrayList<WaitingQueue> myWaiting;
+    static public RequestQueue requestQueue;
 
     static public String serverURL = "http://192.168.238.68:8080/api/v1";
     private String path = "/my_path";
-    static public RequestQueue requestQueue;
-    static public UserInfo currentUser = new UserInfo();
-    static public ArrayList<WaitingQueue> myWaiting = new ArrayList<>();
+
 
     public ArrayList<WaitingInfo> getTestDBList() {
         return testDBList;
@@ -61,6 +63,17 @@ public class DataApplication extends Application {
 
     public static void setTestWaitingQueueDBList(ArrayList<WaitingQueue> testWaitingQueueDBList) {
         DataApplication.testWaitingQueueDBList = testWaitingQueueDBList;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        testDBList = new ArrayList<>();
+        testImageDBList = new ArrayList<>();
+        testWaitingQueueDBList = new ArrayList<>();
+        currentUser = new UserInfo();
+        myWaiting = new ArrayList<>();
     }
 
     public boolean firstIsLater(String a, String b) {

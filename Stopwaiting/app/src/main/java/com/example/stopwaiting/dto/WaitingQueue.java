@@ -83,7 +83,7 @@ public class WaitingQueue implements Serializable {
 
     }
 
-    public int removeWPerson(String n) {
+    public int removeWPerson(UserInfo n) {
         if (waitingPersonList.contains(n)) {
             waitingPersonList.remove(waitingPersonList.indexOf(n));
             return 0;
