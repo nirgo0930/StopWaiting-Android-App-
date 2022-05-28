@@ -77,20 +77,31 @@ public class MainActivity extends Activity {
                 screenList.add("\t" + strList[1] + "\t\t" + strList[2]);
             }
         }
-        textWaitingAdapter = new ArrayAdapter<String>(this, R.layout.listview_item, screenList);
+        if(strs.size()==0){
+            screenList.add("신청한 웨이팅이 없어요!");
 
-        listView.setAdapter(textWaitingAdapter);
+            textWaitingAdapter = new ArrayAdapter<String>(this, R.layout.listview_item, screenList);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            listView.setAdapter(textWaitingAdapter);
+        }
+        else{
+            textWaitingAdapter = new ArrayAdapter<String>(this, R.layout.listview_item, screenList);
 
-                type = strList[0];
-                Intent intent = new Intent(getApplicationContext(), WaitingDetailActivity.class);
+            listView.setAdapter(textWaitingAdapter);
+
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                    type = strList[0];
+                    Intent intent = new Intent(getApplicationContext(), WaitingDetailActivity.class);
                     intent.putExtra("text", strs.get(i));
                     startActivity(intent);
-            }
-        });
+                }
+            });
+        }
+
+
 
     }
 

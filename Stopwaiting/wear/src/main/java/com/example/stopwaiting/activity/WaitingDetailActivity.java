@@ -3,6 +3,7 @@ package com.example.stopwaiting.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -28,8 +29,8 @@ public class WaitingDetailActivity extends Activity {
         String[] textList = text.split("/");
 
         location = textList[2];
-        latitude=Long.parseLong(textList[3]);
-        longitude = Long.parseLong(textList[4]);
+        latitude = Double.parseDouble(textList[3]);
+        longitude = Double.parseDouble(textList[4]);
         TextView textLoc = findViewById(R.id.textLoc);
         TextView textTime = findViewById(R.id.textTime);
 

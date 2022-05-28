@@ -120,7 +120,6 @@ public class MapsActivity extends Activity implements OnMapReadyCallback {
             }
             return;
         }
-
     }
 
     // 권한 체크 이후로직
