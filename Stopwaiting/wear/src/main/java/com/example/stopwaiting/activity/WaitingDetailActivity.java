@@ -35,7 +35,12 @@ public class WaitingDetailActivity extends Activity {
         TextView textTime = findViewById(R.id.textTime);
 
         if(textList[0].equals("normal")){
-            textTime.setText(textList[1]+"명 남음");
+            if(textList[1].equals("0")){
+                textTime.setText(DataApplication.currentUserInfo.getName()+"님이 체크인하실 차례에용");
+            }
+            else{
+                textTime.setText(textList[1]+"명 남았어용");
+            }
         }
         else{
             textTime.setText(textList[1]);
