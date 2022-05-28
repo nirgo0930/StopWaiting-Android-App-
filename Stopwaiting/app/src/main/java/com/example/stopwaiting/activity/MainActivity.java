@@ -458,8 +458,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         for (int i = 0; i < waitingList.size(); i++) {
             for (int j = 0; j < ((DataApplication) getApplication()).myWaiting.size(); j++) {
                 WaitingInfo tempA = new WaitingInfo();
-                tempA.setName(((DataApplication) getApplication()).myWaiting.get(j).getQueueName());
-                if (waitingList.get(i).getName().equals(((DataApplication) getApplication()).myWaiting.get(j).getQueueName()) &&
+                tempA.setName(DataApplication.myWaiting.get(j).getQueueName());
+                if (waitingList.get(i).getName().equals(DataApplication.myWaiting.get(j).getQueueName()) &&
                         !tempList.contains(tempA.getName())) {
                     tempList.add(waitingList.get(i));
                     break;
