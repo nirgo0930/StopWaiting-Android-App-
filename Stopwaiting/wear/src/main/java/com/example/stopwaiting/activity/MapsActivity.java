@@ -104,11 +104,12 @@ public class MapsActivity extends Activity implements OnMapReadyCallback {
 
 
         // 권한ID를 가져옵니다
-        int permission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
-        int permission2 = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
+//        int permission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+//        int permission2 = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
        // int permission,permission2;
         // 권한이 열려있는지 확인
-        if (permission == PackageManager.PERMISSION_DENIED || permission2 == PackageManager.PERMISSION_DENIED) {
+       // if (permission == PackageManager.PERMISSION_DENIED || permission2 == PackageManager.PERMISSION_DENIED) {
             // 마쉬멜로우 이상버전부터 권한을 물어본다
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 // 권한 체크(READ_PHONE_STATE의 requestCode를 1000으로 세팅
@@ -119,7 +120,7 @@ public class MapsActivity extends Activity implements OnMapReadyCallback {
                         1000);
             }
             return;
-        }
+        //}
     }
 
     // 권한 체크 이후로직
