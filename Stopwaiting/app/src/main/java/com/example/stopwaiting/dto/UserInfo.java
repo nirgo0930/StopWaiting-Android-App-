@@ -6,7 +6,7 @@ public class UserInfo implements Serializable {
     private String name;
     private Long studentCode;
     private String tel;
-    private String token;
+    private String token = "temp";
 
     public UserInfo() {
     }
@@ -15,6 +15,13 @@ public class UserInfo implements Serializable {
         this.name = name;
         this.studentCode = studentCode;
         this.tel = tel;
+    }
+
+    public UserInfo(String name, Long studentCode, String tel, String token) {
+        this.name = name;
+        this.studentCode = studentCode;
+        this.tel = tel;
+        this.token = token;
     }
 
     public String getName() {
@@ -39,5 +46,13 @@ public class UserInfo implements Serializable {
 
     public void setTel(String tel) {
         this.tel = tel;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }
