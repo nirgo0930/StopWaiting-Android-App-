@@ -99,32 +99,6 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    public void getTestInfo() {
-        DataApplication.qCnt = (long) 1;
-        //test data
-        ArrayList<String> temp = new ArrayList<>();
-        temp.add("13:00");
-        temp.add("14:00");
-        temp.add("15:00");
-        DataApplication.testAdminDBList.add(new AdminWaitingListItem
-                ( 1, "미용실", "한유현","학생회관 B208"));
-        for (int i = 0; i < temp.size(); i++) {
-//            ((DataApplication) getApplication()).testWaitingQueueDBList.add(new WaitingQueue(((DataApplication) this.getApplication()).qCnt++, "미용실", temp.get(i), 5));
-        }
-
-        DataApplication.testAdminDBList.add(new AdminWaitingListItem
-                ( 2, "특식배부", "한유현","디지털관 330"));
-//        ((DataApplication) getApplication()).testWaitingQueueDBList.add(new WaitingQueue(((DataApplication) this.getApplication()).qCnt++, "특식배부", "normal", 3));
-
-        DataApplication.testAdminDBList.add(new AdminWaitingListItem
-                ( 2, "북카페", "한유현","학생회관 B218"));
-//        WaitingQueue tempQ = new WaitingQueue(((DataApplication) this.getApplication()).qCnt++, "북카페", "normal", 10);
-//        tempQ.addWPerson(((DataApplication) getApplication()).currentUser);
-//        ((DataApplication) getApplication()).testWaitingQueueDBList.add(tempQ);
-
-        String root = "android.resource://" + R.class.getPackage().getName() + "/";
-    }
-
     public void checkPermissions(String[] permissions) {
         ArrayList<String> targetList = new ArrayList<String>();
 
@@ -154,11 +128,10 @@ public class LoginActivity extends AppCompatActivity {
 
     public void loginRequest() {
         if (DataApplication.isTest) {
-            if (edt_password.getText().toString().equals("test")) {
+            //로그인 정보 확인
+            if (edt_id.getText().toString().equals("test") && edt_password.getText().toString().equals("test")) {
+                // 로그인에 성공한 경우
                 Toast.makeText(getApplicationContext(), "로그인에 성공하였습니다.\n 잠시만 기다려주세요", Toast.LENGTH_SHORT).show();
-
-
-                getTestInfo();
 
                 Intent loginIntent = new Intent(LoginActivity.this, AdminMainActivity.class);
                 startActivity(loginIntent);
