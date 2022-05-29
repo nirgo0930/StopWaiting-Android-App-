@@ -271,6 +271,6 @@ public class LoginActivity extends AppCompatActivity {
             request.setShouldCache(false);
             ((DataApplication) getApplication()).requestQueue.add(request);
         }
-        ((DataApplication) getApplication()).sendRefresh();
+//        ((DataApplication) getApplication()).sendRefresh();
     }
 }

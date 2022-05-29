@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
@@ -100,8 +101,8 @@ public class DataApplication extends Application {
     }
 
     public void sendRefresh() {
-        PutDataMapRequest dataMap = PutDataMapRequest.create(path + "/userInfo");
-        dataMap.getDataMap().putAsset("currentUser", null);
+        PutDataMapRequest dataMap = PutDataMapRequest.create(path + "/userData");
+        dataMap.getDataMap().putAsset("userData", null);
         PutDataRequest request = dataMap.asPutDataRequest();
         Task<DataItem> putTask = Wearable.getDataClient(getApplicationContext()).putDataItem(request);
 
@@ -117,18 +118,23 @@ public class DataApplication extends Application {
     }
 
     public void sendUserInfo() {
+        UserInfo tempUser = currentUser;
+        Log.e("userCode---------------------------------------", String.valueOf(tempUser.getStudentCode()));
         byte[] serializedMember = null;
+
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
-                oos.writeObject(currentUser);
+                oos.writeObject(tempUser);
                 serializedMember = baos.toByteArray();
+                Log.e("userCode 안에", String.valueOf(tempUser.getStudentCode()));
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
         Asset temp = Asset.createFromBytes(Base64.getEncoder().encode(serializedMember));
-        PutDataMapRequest dataMap = PutDataMapRequest.create(path + "/userInfo");
-        dataMap.getDataMap().putAsset("currentUser", temp);
+        PutDataMapRequest dataMap = PutDataMapRequest.create(path + "/userData");
+        dataMap.getDataMap().putAsset("userData", temp);
+
         PutDataRequest request = dataMap.asPutDataRequest();
         Task<DataItem> putTask = Wearable.getDataClient(getApplicationContext()).putDataItem(request);
     }

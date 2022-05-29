@@ -6,8 +6,6 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.example.stopwaiting.activity.DataApplication;
 import com.example.stopwaiting.dto.UserInfo;
 import com.example.stopwaiting.dto.WearQueueDTO;
@@ -16,7 +14,6 @@ import com.google.android.gms.wearable.Asset;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataMapItem;
-import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Wearable;
 import com.google.android.gms.wearable.WearableListenerService;
 
@@ -38,11 +35,6 @@ public class MessageService extends WearableListenerService {
     private String sharedID = "edit";
 
     @Override
-    public void onMessageReceived(@NonNull MessageEvent messageEvent) {
-        super.onMessageReceived(messageEvent);
-    }
-
-    @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
         sharedPreferences = getSharedPreferences(sharedID, Activity.MODE_PRIVATE);
         autoEdit = sharedPreferences.edit();
@@ -52,9 +44,9 @@ public class MessageService extends WearableListenerService {
                 String path = event.getDataItem().getUri().getPath();
                 DataMapItem dataMapItem = DataMapItem.fromDataItem(event.getDataItem());
                 switch (path) {
-                    case "/my_path/userInfo":
-                        if (loadUserInfoFromAsset(dataMapItem.getDataMap().getAsset("currentUser")) != null) {
-                            DataApplication.currentUserInfo = loadUserInfoFromAsset(dataMapItem.getDataMap().getAsset("currentUser"));
+                    case "/my_path/userData":
+                        if (loadUserInfoFromAsset(dataMapItem.getDataMap().getAsset("userData")) != null) {
+                            DataApplication.currentUserInfo = loadUserInfoFromAsset(dataMapItem.getDataMap().getAsset("userData"));
                             Log.e("test", "1++");
                         }
                         Log.e("test", "1");
