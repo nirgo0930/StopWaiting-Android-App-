@@ -16,9 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReportedUserActivity extends AppCompatActivity {
-    private List<ReportedUserListItem> mItemList;
-    private RecyclerView mListView;
-    private ReportedUserListAdapter mListAdapter;
+    private List<ReportedUserListItem> mReportedUserList;
+    private RecyclerView mReportedUserListView;
+    private ReportedUserListAdapter mReportedUserListAdapter;
     public static TextView txtNotice;
 
 
@@ -30,28 +30,28 @@ public class ReportedUserActivity extends AppCompatActivity {
         LoginActivity.login_Activity.finish();
         txtNotice = findViewById(R.id.txtNotice);
 
-        mItemList = new ArrayList<>();
-        mListView = (RecyclerView) findViewById(R.id.recyclerView);
-        mListAdapter = new ReportedUserListAdapter(this, mItemList);
+        mReportedUserList = new ArrayList<>();
+        mReportedUserListView = (RecyclerView) findViewById(R.id.recyclerView);
+        mReportedUserListAdapter = new ReportedUserListAdapter(this, mReportedUserList);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-        mListView.setLayoutManager(layoutManager);
-        mListView.setAdapter(mListAdapter);
+        mReportedUserListView.setLayoutManager(layoutManager);
+        mReportedUserListView.setAdapter(mReportedUserListAdapter);
 
         // List 설정
         bindList();
 
-        mListAdapter.notifyDataSetChanged();
+        mReportedUserListAdapter.notifyDataSetChanged();
 
-        txtNotice.setText("신고된 회원이 " + String.valueOf(mItemList.size()) + "명 존재합니다.");
+        txtNotice.setText("신고된 회원이 " + String.valueOf(mReportedUserList.size()) + "명 존재합니다.");
 
     }
 
 
     private void bindList() {
-        mItemList.add(new ReportedUserListItem(20171250, "한유현", 1));
-        mItemList.add(new ReportedUserListItem(12345678, "방진성", 1));
-        mItemList.add(new ReportedUserListItem(135792468, "이윤석", 2));
+        mReportedUserList.add(new ReportedUserListItem(20171250, "한유현", 1));
+        mReportedUserList.add(new ReportedUserListItem(12345678, "방진성", 1));
+        mReportedUserList.add(new ReportedUserListItem(135792468, "이윤석", 2));
     }
 
 }

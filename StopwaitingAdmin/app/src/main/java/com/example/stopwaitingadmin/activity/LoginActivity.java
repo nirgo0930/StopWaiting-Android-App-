@@ -57,7 +57,6 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.login);
         login_Activity = LoginActivity.this;
 
-        SharedPreferences sharedPreferences = getSharedPreferences(sharedID, Activity.MODE_PRIVATE);
         checkPermissions(permission_list);
 
         if (DataApplication.requestQueue == null)
