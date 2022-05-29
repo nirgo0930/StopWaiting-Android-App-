@@ -65,13 +65,26 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             refreshMyNum(qId, myNum);
         }
 
+        //Wear OS requires a hint to display the reply action inline.
+//        NotificationCompat.WearableExtender actionExtender1 =
+//                new NotificationCompat.WearableExtender()
+//                        .setHintContentIntentLaunchesActivity(true);
+
+//        //Wear OS requires a hint to display the reply action inline.
+//        NotificationCompat.Action.WearableExtender actionExtender =
+//                new NotificationCompat.Action.WearableExtender()
+//                        .setHintLaunchesActivity(true)
+//                        .setHintDisplayActionInline(true);
+
+
         builder.setContentTitle(title)
                 .setContentText(body)
-                .setSmallIcon(R.drawable.ic_launcher_background)
-                .setAutoCancel(true);
+//                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setAutoCancel(true)
+                .extend(new NotificationCompat.WearableExtender()
+                        .setHintContentIntentLaunchesActivity(true));
 
-        Notification notification = builder.build();
-        notificationManager.notify(1, notification);
+        notificationManager.notify(1, builder.build());
 
 
 //        String token = FirebaseMessaging.getInstance().getToken().getResult();
