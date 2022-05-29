@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         myPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                refresh();
                 Intent intent = mainIntent;
                 intent.setClass(MainActivity.this, MyPageActivity.class);
 

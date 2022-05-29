@@ -218,7 +218,8 @@ public class LoginActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             final String requestBody = String.valueOf(jsonBodyObj.toString());
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL + "/login", null,
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, DataApplication.serverURL + "/login", null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
@@ -230,7 +231,7 @@ public class LoginActivity extends AppCompatActivity {
                                 temp.setName(jsonObject.getString("name"));
                                 temp.setTel(jsonObject.getString("phoneNumber"));
 
-                                ((DataApplication) getApplication()).currentUser = temp;
+                                DataApplication.currentUser = temp;
 
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent);
@@ -268,7 +269,7 @@ public class LoginActivity extends AppCompatActivity {
             };
 
             request.setShouldCache(false);
-            ((DataApplication) getApplication()).requestQueue.add(request);
+            DataApplication.requestQueue.add(request);
         }
 //        ((DataApplication) getApplication()).sendRefresh();
     }

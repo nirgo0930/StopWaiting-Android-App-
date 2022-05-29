@@ -76,9 +76,7 @@ public class MyPageActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();
                 editor.commit();
-
-//                DataApplication.myWaiting.clear();
-
+                
                 MainActivity.mainActivity.finish();
                 finish();
             }

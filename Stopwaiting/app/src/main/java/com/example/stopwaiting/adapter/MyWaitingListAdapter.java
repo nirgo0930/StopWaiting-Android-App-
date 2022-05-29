@@ -114,7 +114,7 @@ public class MyWaitingListAdapter extends RecyclerView.Adapter<MyWaitingListItem
 
         holder.txtName.setText(waitingItem.getName());
         holder.txtLocDetail.setText(waitingItem.getLocDetail());
-        holder.txtWaitCnt.setText("대기중인 인원 :  " + waitingItem.getWaitingCnt() + " 명");
+        holder.txtWaitCnt.setText("대기중인 인원 :  " + String.valueOf(waitingItem.getWaitingCnt()) + " 명");
     }
 
     @Override

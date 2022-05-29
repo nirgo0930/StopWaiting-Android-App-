@@ -11,6 +11,8 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.example.stopwaiting.R;
+import com.example.stopwaiting.activity.DataApplication;
+import com.example.stopwaiting.dto.WaitingQueue;
 import com.example.stopwaiting.dto.WearQueueDTO;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.wearable.Asset;
@@ -65,24 +67,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             refreshMyNum(qId, myNum);
         }
 
-        //Wear OS requires a hint to display the reply action inline.
-//        NotificationCompat.WearableExtender actionExtender1 =
-//                new NotificationCompat.WearableExtender()
-//                        .setHintContentIntentLaunchesActivity(true);
-
-//        //Wear OS requires a hint to display the reply action inline.
-//        NotificationCompat.Action.WearableExtender actionExtender =
-//                new NotificationCompat.Action.WearableExtender()
-//                        .setHintLaunchesActivity(true)
-//                        .setHintDisplayActionInline(true);
-
-
         builder.setContentTitle(title)
                 .setContentText(body)
-//                .setSmallIcon(R.drawable.ic_launcher_background)
-                .setAutoCancel(true)
-                .extend(new NotificationCompat.WearableExtender()
-                        .setHintContentIntentLaunchesActivity(true));
+                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setAutoCancel(true);
 
         notificationManager.notify(1, builder.build());
 
@@ -114,5 +102,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         PutDataRequest request = dataMap.asPutDataRequest();
         Task<DataItem> putTask = Wearable.getDataClient(getApplicationContext()).putDataItem(request);
+
+        if (DataApplication.isTest && myNum == -1) {
+            for (int i = 0; i < DataApplication.testWaitingQueueDBList.size(); i++) {
+                if (DataApplication.testWaitingQueueDBList.get(i).getQId().equals(qId)) {
+                    WaitingQueue tempQu = DataApplication.testWaitingQueueDBList.get(i);
+                    tempQu.removeWPerson(DataApplication.currentUser.getStudentCode());
+                    DataApplication.testWaitingQueueDBList.set(i, tempQu);
+                    break;
+                }
+            }
+
+        }
     }
 }
