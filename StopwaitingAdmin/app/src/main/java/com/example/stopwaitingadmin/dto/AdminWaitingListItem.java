@@ -9,10 +9,10 @@ public class AdminWaitingListItem {
         mTxtLocation = txtLocation;
     }
 
-    private int mImgId;
-    private String mTxtName;
-    private String mTxtUser;
-    private String mTxtLocation;
+    private int mImgId;             //이미지
+    private String mTxtName;        //웨이팅이름
+    private String mTxtUser;        //개설자이름
+    private String mTxtLocation;    //장소이름
 
     public int getImgId() {
         return mImgId;

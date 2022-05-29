@@ -218,7 +218,6 @@ public class LoginActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             final String requestBody = String.valueOf(jsonBodyObj.toString());
-
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL + "/login", null,
                     new Response.Listener<JSONObject>() {
                         @Override
