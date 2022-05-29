@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -68,6 +69,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String data) {
                 token = data;
+                Log.e("-----------------toekn", token);
             }
         });
 
