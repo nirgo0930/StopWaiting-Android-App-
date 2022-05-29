@@ -11,10 +11,20 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.example.stopwaiting.R;
+import com.example.stopwaiting.dto.WearQueueDTO;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.wearable.Asset;
+import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
+import com.google.android.gms.wearable.Wearable;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import java.util.Map;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.Base64;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
@@ -51,18 +61,15 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         if (!remoteMessage.getData().isEmpty()) {
             Log.e("-------------------------isEmpty", "NO");
             Long qId = Long.valueOf(remoteMessage.getData().get("qId"));
-            int myNum = Integer.valueOf( remoteMessage.getData().get("myNum"));
+            int myNum = Integer.valueOf(remoteMessage.getData().get("myNum"));
 
-            if (myNum == -1) {
-
-
-            }
+            refreshMyNum(qId, myNum);
         }
 
         builder.setContentTitle(title)
                 .setContentText(body)
                 .setSmallIcon(R.drawable.ic_launcher_background)
-                .setLocalOnly(true);
+                .setAutoCancel(true);
 
         Notification notification = builder.build();
         notificationManager.notify(1, notification);
@@ -70,5 +77,30 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 //        String token = FirebaseMessaging.getInstance().getToken().getResult();
 //        Toast.makeText(this, "token", Toast.LENGTH_SHORT).show();
+    }
+
+    public void refreshMyNum(Long qId, int myNum) {
+        byte[] serializedMember = null;
+
+        WearQueueDTO tempQ = new WearQueueDTO();
+        tempQ.setqId(qId);
+        tempQ.setMyNum(myNum);
+
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+                oos.writeObject(tempQ);
+                serializedMember = baos.toByteArray();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Asset temp = Asset.createFromBytes(Base64.getEncoder().encode(serializedMember));
+        PutDataMapRequest dataMap;
+
+        dataMap = PutDataMapRequest.create("/my_path/refresh");
+        dataMap.getDataMap().putAsset("refreshData", temp);
+
+        PutDataRequest request = dataMap.asPutDataRequest();
+        Task<DataItem> putTask = Wearable.getDataClient(getApplicationContext()).putDataItem(request);
     }
 }

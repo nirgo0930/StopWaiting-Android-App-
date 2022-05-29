@@ -6,6 +6,8 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.example.stopwaiting.activity.DataApplication;
 import com.example.stopwaiting.dto.UserInfo;
 import com.example.stopwaiting.dto.WearQueueDTO;
@@ -14,6 +16,7 @@ import com.google.android.gms.wearable.Asset;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataMapItem;
+import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Wearable;
 import com.google.android.gms.wearable.WearableListenerService;
 
@@ -33,6 +36,11 @@ public class MessageService extends WearableListenerService {
     public static SharedPreferences sharedPreferences;
     public static SharedPreferences.Editor autoEdit;
     private String sharedID = "edit";
+
+    @Override
+    public void onMessageReceived(@NonNull MessageEvent messageEvent) {
+        super.onMessageReceived(messageEvent);
+    }
 
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
@@ -61,6 +69,17 @@ public class MessageService extends WearableListenerService {
                         }
                         Log.e("test", "2");
                         break;
+                    case "/my_path/refresh":
+                        for (int i = 0; i < DataApplication.myWaiting.size(); i++) {
+                            if (DataApplication.myWaiting.get(i).getqId().equals(loadQueueInfoFromAsset(dataMapItem.getDataMap().getAsset("refreshData")).getqId())) {
+                                if (loadQueueInfoFromAsset(dataMapItem.getDataMap().getAsset("refreshData")).getMyNum() == -1) {
+                                    DataApplication.myWaiting.remove(i);
+                                } else {
+                                    DataApplication.myWaiting.get(i).setMyNum(loadQueueInfoFromAsset(dataMapItem.getDataMap().getAsset("refreshData")).getMyNum());
+                                }
+                            }
+                        }
+
                 }
             }
         }
