@@ -27,6 +27,7 @@ import java.util.Base64;
 
 public class DataApplication extends Application {
     static public boolean isTest = true;
+    static public boolean isFirstBoot = true;
 
     static public ArrayList<WaitingInfo> testDBList;
     static public ArrayList<ImgItem> testImageDBList;
@@ -103,7 +104,6 @@ public class DataApplication extends Application {
         dataMap.getDataMap().putAsset("currentUser", null);
         PutDataRequest request = dataMap.asPutDataRequest();
         Task<DataItem> putTask = Wearable.getDataClient(getApplicationContext()).putDataItem(request);
-
 
         dataMap = PutDataMapRequest.create(path + "/myWaiting_first");
         dataMap.getDataMap().putAsset("myWaiting", null);

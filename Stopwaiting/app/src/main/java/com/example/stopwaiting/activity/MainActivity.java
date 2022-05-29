@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         context_main = this;
 
         TextView userId = findViewById(R.id.txtUser);
-        userId.setText(((DataApplication) getApplication()).currentUser.getName() + " 님");
+        userId.setText(DataApplication.currentUser.getName() + " 님(" + String.valueOf(DataApplication.currentUser.getStudentCode()) + ")");
 
         markers = new ArrayList<>();
         waitingList = new ArrayList<>();

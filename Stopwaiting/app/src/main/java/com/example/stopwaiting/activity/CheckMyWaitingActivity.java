@@ -37,6 +37,12 @@ public class CheckMyWaitingActivity extends AppCompatActivity {
     private TextView txtNotice;
     public static Activity myWaitingActivity;
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        finish();
+    }
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.waiting_list);

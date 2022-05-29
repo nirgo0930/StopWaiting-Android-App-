@@ -93,8 +93,6 @@ public class LoginActivity extends AppCompatActivity {
             edt_password.setText(loginPwd);
 
             loginRequest();
-        } else if (loginId == null && loginPwd == null) {
-
         }
         // 회원가입 버튼을 클릭 시 수행
         btn_new.setOnClickListener(new View.OnClickListener() {
@@ -197,11 +195,12 @@ public class LoginActivity extends AppCompatActivity {
             if (edt_password.getText().toString().equals("test")) {
                 Toast.makeText(getApplicationContext(), "로그인에 성공하였습니다.\n 잠시만 기다려주세요", Toast.LENGTH_SHORT).show();
 
-                ((DataApplication) getApplication()).currentUser = new UserInfo();
-                UserInfo temp = new UserInfo("test", Long.valueOf(edt_id.getText().toString()), "01094536639");
-                ((DataApplication) getApplication()).currentUser = temp;
+                DataApplication.currentUser = new UserInfo("test", Long.valueOf(edt_id.getText().toString()), "01094536639");
 
-                getTestInfo();
+                if (DataApplication.isFirstBoot) {
+                    getTestInfo();
+                    DataApplication.isFirstBoot = false;
+                }
 
                 Intent loginIntent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(loginIntent);

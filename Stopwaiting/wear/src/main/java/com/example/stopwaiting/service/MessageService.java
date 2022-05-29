@@ -77,9 +77,11 @@ public class MessageService extends WearableListenerService {
                                 } else {
                                     DataApplication.myWaiting.get(i).setMyNum(loadQueueInfoFromAsset(dataMapItem.getDataMap().getAsset("refreshData")).getMyNum());
                                 }
+                                Log.e("test", "3");
+                                break;
                             }
                         }
-
+                        break;
                 }
             }
         }
