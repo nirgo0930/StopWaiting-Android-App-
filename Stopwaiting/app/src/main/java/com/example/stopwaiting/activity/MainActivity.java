@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -76,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         markers = new ArrayList<>();
         waitingList = new ArrayList<>();
 
-        waitingInfoAllRequest();
+//        waitingInfoAllRequest();
 
         FragmentManager fm = getSupportFragmentManager();
         MapFragment mapFragment = (MapFragment) fm.findFragmentById(R.id.map);
@@ -147,6 +148,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 } else {
                     infoIntent = new Intent(MainActivity.this, WaitingNormalActivity.class);
                 }
+                Log.e("wsize", String.valueOf(waitingList.size()));
                 infoIntent.putExtra("name", temp.getName());
 
                 startActivity(infoIntent);
@@ -161,6 +163,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Marker marker = new Marker();
 
         marker.setPosition(new LatLng(waitingInfo.getLatitude(), waitingInfo.getLongitude()));
+        Log.e("loc-----------", waitingInfo.getLatitude() + "/" + waitingInfo.getLongitude());
         marker.setMap(naverMap);
         marker.setWidth(1);
         marker.setHeight(1);
@@ -221,15 +224,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             markers.get(i).setMap(null);
         }
         markers = new ArrayList<>();
-        waitingList = new ArrayList<>();
         waitingInfoAllRequest();
-        myWaitingRequest();
+
+//        myWaitingRequest();
 
         setWearOS();
     }
 
     public void myWaitingRequest() {
-        ((DataApplication) getApplication()).myWaiting = new ArrayList<>();
+        DataApplication.myWaiting = new ArrayList<>();
         if (DataApplication.isTest) {
             for (int i = 0; i < ((DataApplication) getApplication()).testWaitingQueueDBList.size(); i++) {
                 WaitingQueue tempDBQ = ((DataApplication) getApplication()).testWaitingQueueDBList.get(i);
@@ -250,7 +253,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
             final String requestBody = String.valueOf(jsonBodyObj.toString());
 
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL + "/myWaitingQueue", null,
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, ((DataApplication) getApplication()).serverURL + "/myWaitingQueue", null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
@@ -291,7 +294,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(getApplicationContext(), "로그인에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "신청한 웨이팅 조회 실패.", Toast.LENGTH_SHORT).show();
                         }
                     }) {
                 @Override
@@ -322,11 +325,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void waitingInfoAllRequest() {
-        waitingList = new ArrayList<>();
+        waitingList.clear();
         if (DataApplication.isTest) {
-            waitingList = ((DataApplication) this.getApplication()).getTestDBList();
+            waitingList = ((DataApplication) getApplication()).getTestDBList();
         } else {
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL + "/waitingInfo", null,
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, ((DataApplication) getApplication()).serverURL + "/waitinginfo", null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
@@ -337,25 +340,26 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     JSONObject dataObject = dataArray.getJSONObject(i);
 
                                     WaitingInfo data = new WaitingInfo();
-
                                     data.setWaitingId(dataObject.getLong("id"));
                                     data.setAdminId(dataObject.getLong("adminId"));
                                     data.setName(dataObject.getString("name"));
                                     data.setLatitude(dataObject.getDouble("latitude"));
                                     data.setLongitude(dataObject.getDouble("longitude"));
-                                    data.setLocDetail(dataObject.getString("locDetail"));
+                                    data.setLocDetail(dataObject.getString("locationDetail"));
                                     data.setInfo(dataObject.getString("information"));
                                     data.setType(dataObject.getString("type"));
                                     data.setMaxPerson(dataObject.getInt("maxPerson"));
                                     if (data.getType().equals("time")) {
                                         ArrayList<String> timetable = new ArrayList();
-                                        JSONArray timeArray = dataObject.getJSONArray("timetable");
+                                        JSONArray timeArray = dataObject.getJSONArray("timetables");
                                         for (int j = 0; j < timeArray.length(); j++) {
                                             timetable.add(timeArray.getString(j));
                                         }
                                         data.setTimetable(timetable);
                                     }
+
                                     waitingList.add(data);
+                                    setInfo(data);
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -378,77 +382,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             };
 
             request.setShouldCache(false);
-            ((DataApplication) getApplication()).requestQueue.add(request);
+            DataApplication.requestQueue.add(request);
         }
-        for (int i = 0; i < waitingList.size(); i++) {
-            setInfo(waitingList.get(i));
-        }
-    }
-
-    public void cancelWaitingRequest(String name) {
-        if (DataApplication.isTest) {
-            for (int i = 0; i < DataApplication.testWaitingQueueDBList.size(); i++) {
-                WaitingQueue tempDBQ = DataApplication.testWaitingQueueDBList.get(i);
-                if (tempDBQ.getQueueName().equals(name)) {
-                    for (int j = 0; j < tempDBQ.getWaitingPersonList().size(); j++) {
-                        if (tempDBQ.getWaitingPersonList().get(j).getStudentCode().equals(DataApplication.currentUser.getStudentCode()) &&
-                                (DataApplication.myWaiting.contains(tempDBQ))) {
-                            DataApplication.myWaiting.remove(tempDBQ);
-                        }
-                    }
-                }
-            }
-        } else {
-            JSONObject jsonBodyObj = new JSONObject();
-            try {
-                jsonBodyObj.put("id", DataApplication.currentUser.getStudentCode());
-                jsonBodyObj.put("name", name);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            final String requestBody = String.valueOf(jsonBodyObj.toString());
-
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL + "/cancelWaiting", null,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject jsonObject) {
-//                            Toast.makeText(getApplicationContext(), "로그인에 성공하였습니다.\n 잠시만 기다려주세요", Toast.LENGTH_SHORT).show();
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-//                            Toast.makeText(getApplicationContext(), "로그인에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-                        }
-                    }) {
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    HashMap<String, String> headers = new HashMap<String, String>();
-                    headers.put("Content-Type", "application/json");
-                    return headers;
-                }
-
-                @Override
-                public byte[] getBody() {
-                    try {
-                        if (requestBody != null && requestBody.length() > 0 && !requestBody.equals("")) {
-                            return requestBody.getBytes("utf-8");
-                        } else {
-                            return null;
-                        }
-                    } catch (UnsupportedEncodingException uee) {
-                        return null;
-                    }
-                }
-            };
-
-            request.setShouldCache(false);
-            ((DataApplication) getApplication()).requestQueue.add(request);
-        }
-        for (int i = 0; i < waitingList.size(); i++) {
-            setInfo(waitingList.get(i));
-        }
-
     }
 
     public void setWearOS() {

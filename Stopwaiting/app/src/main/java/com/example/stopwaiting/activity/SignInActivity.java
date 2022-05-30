@@ -12,7 +12,7 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.example.stopwaiting.R;
 
 import org.json.JSONException;
@@ -61,7 +61,7 @@ public class SignInActivity extends AppCompatActivity {
         findViewById(R.id.btnCheckDuplicate).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dupCheckRequest(edtSCode.getText().toString());
+                dupCheckRequest();
             }
         });
     }
@@ -87,10 +87,10 @@ public class SignInActivity extends AppCompatActivity {
         }
         final String requestBody = String.valueOf(jsonBodyObj.toString());
 
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, DataApplication.serverURL + "/signup", null,
-                new Response.Listener<JSONObject>() {
+        StringRequest request = new StringRequest(Request.Method.POST, DataApplication.serverURL + "/signup",
+                new Response.Listener<String>() {
                     @Override
-                    public void onResponse(JSONObject jsonObject) {
+                    public void onResponse(String jsonObject) {
                         Toast.makeText(getApplicationContext(), "회원가입에 성공하였습니다.", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(SignInActivity.this, LoginActivity.class);
                         startActivity(intent);
@@ -128,19 +128,19 @@ public class SignInActivity extends AppCompatActivity {
         DataApplication.requestQueue.add(request);
     }
 
-    public void dupCheckRequest(String sCode) {
+    public void dupCheckRequest() {
         JSONObject jsonBodyObj = new JSONObject();
         try {
-            jsonBodyObj.put("id", Long.valueOf(edtSCode.getText().toString()));
+            jsonBodyObj.put("id", Long.parseLong(edtSCode.getText().toString()));
         } catch (JSONException e) {
             e.printStackTrace();
         }
         final String requestBody = String.valueOf(jsonBodyObj.toString());
 
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, DataApplication.serverURL, null,
-                new Response.Listener<JSONObject>() {
+        StringRequest request = new StringRequest(Request.Method.POST, DataApplication.serverURL + "/checkid",
+                new Response.Listener<String>() {
                     @Override
-                    public void onResponse(JSONObject jsonObject) {
+                    public void onResponse(String jsonObject) {
                         Toast.makeText(getApplicationContext(), "사용가능한 학번입니다.", Toast.LENGTH_SHORT).show();
                         dupCheck = true;
                     }

@@ -105,6 +105,10 @@ public class ManageWaitingListActivity extends AppCompatActivity {
                     }
                 }
             }
+
+
+
+
         } else {
             JSONObject jsonBodyObj = new JSONObject();
             try {

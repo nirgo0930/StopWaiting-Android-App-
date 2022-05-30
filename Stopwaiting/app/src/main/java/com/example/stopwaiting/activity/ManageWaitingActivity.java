@@ -424,7 +424,7 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
             };
 
             request.setShouldCache(false);
-            ((DataApplication) getApplication()).requestQueue.add(request);
+            DataApplication.requestQueue.add(request);
         }
     }
 }

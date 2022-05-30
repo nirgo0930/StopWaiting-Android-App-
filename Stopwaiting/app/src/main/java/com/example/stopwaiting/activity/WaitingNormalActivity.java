@@ -147,16 +147,20 @@ public class WaitingNormalActivity extends AppCompatActivity {
     }
 
     public void setImg() {
-        String content = imgCnt.getText().toString();
-        SpannableString spannableString = new SpannableString(content);
+        if (DataApplication.isTest) {
+            String content = imgCnt.getText().toString();
+            SpannableString spannableString = new SpannableString(content);
 
-        spannableString.setSpan(new ForegroundColorSpan(Color.parseColor("#FF6702")), pivot, pivot + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        spannableString.setSpan(new StyleSpan(Typeface.BOLD), pivot, pivot + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spannableString.setSpan(new ForegroundColorSpan(Color.parseColor("#FF6702")), pivot, pivot + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spannableString.setSpan(new StyleSpan(Typeface.BOLD), pivot, pivot + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-        imgCnt.setText(spannableString);
+            imgCnt.setText(spannableString);
 
-        Glide.with(getApplicationContext())
-                .load(imgItems.get(pivot).getUri())
-                .into(imageView);
+            Glide.with(getApplicationContext())
+                    .load(imgItems.get(pivot).getUri())
+                    .into(imageView);
+        } else {
+
+        }
     }
 }

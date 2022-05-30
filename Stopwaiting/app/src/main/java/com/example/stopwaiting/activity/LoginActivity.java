@@ -197,7 +197,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 DataApplication.currentUser = new UserInfo("test", Long.valueOf(edt_id.getText().toString()), "01094536639");
 
-                if (DataApplication.isFirstBoot) {
+                if (DataApplication.isFirstBoot && DataApplication.isTest) {
                     getTestInfo();
                     DataApplication.isFirstBoot = false;
                 }

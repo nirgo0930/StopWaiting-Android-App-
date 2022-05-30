@@ -76,8 +76,8 @@ public class CheckMyWaitingActivity extends AppCompatActivity {
                     }
 
                     ImgItem tempImg = new ImgItem();
-                    for (int k = 0; k < ((DataApplication) getApplication()).testImageDBList.size(); k++) {
-                        tempImg = ((DataApplication) getApplication()).testImageDBList.get(k);
+                    for (int k = 0; k < DataApplication.testImageDBList.size(); k++) {
+                        tempImg = DataApplication.testImageDBList.get(k);
                         if (tempImg.getName().equals(DataApplication.myWaiting.get(i).getQueueName())) {
                             break;
                         }

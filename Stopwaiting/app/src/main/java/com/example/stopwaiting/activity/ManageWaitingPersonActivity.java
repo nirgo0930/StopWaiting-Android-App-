@@ -41,9 +41,9 @@ public class ManageWaitingPersonActivity extends AppCompatActivity {
         wQueue = new WaitingQueue();
         userList = new ArrayList<>();
 
-        for (int i = 0; i < ((DataApplication) getApplication()).testWaitingQueueDBList.size(); i++) {
-            if (((DataApplication) getApplication()).testWaitingQueueDBList.get(i).getQId().equals(qId)) {
-                wQueue = (((DataApplication) getApplication()).testWaitingQueueDBList.get(i));
+        for (int i = 0; i < DataApplication.testWaitingQueueDBList.size(); i++) {
+            if (DataApplication.testWaitingQueueDBList.get(i).getQId().equals(qId)) {
+                wQueue = (DataApplication.testWaitingQueueDBList.get(i));
                 userList = wQueue.getWaitingPersonList();
                 break;
             }
