@@ -28,10 +28,10 @@ public class ReportedUserActivity extends AppCompatActivity {
         setContentView(R.layout.reported_user_list);
         Intent intent = getIntent();
         LoginActivity.login_Activity.finish();
-        txtNotice = findViewById(R.id.txtNotice);
+        txtNotice = findViewById(R.id.txtReportedUserNotice);
 
         mReportedUserList = new ArrayList<>();
-        mReportedUserListView = (RecyclerView) findViewById(R.id.recyclerView);
+        mReportedUserListView = (RecyclerView) findViewById(R.id.ReportedUserRecyclerView);
         mReportedUserListAdapter = new ReportedUserListAdapter(this, mReportedUserList);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());

@@ -8,8 +8,12 @@ import androidx.annotation.NonNull;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.stopwaitingadmin.activity.DataApplication;
 import com.example.stopwaitingadmin.dto.AdminWaitingListItem;
 import com.example.stopwaitingadmin.viewholder.AdminWaitingListItemViewHolder;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -41,4 +45,16 @@ public class AdminWaitingListAdapter extends RecyclerView.Adapter<AdminWaitingLi
     public int getItemCount() {
         return mItemList.size();
     }
+
+//    public void permissionResultRequest(Boolean TorF){
+//        JSONObject jsonBodyObj = new JSONObject();
+//        try {
+//            jsonBodyObj.put("WaitingId",mItemList.get(pos) );
+//            jsonBodyObj.put("PermissionResult", TorF);
+//
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        final String requestBody = String.valueOf(jsonBodyObj.toString());
+//    }
 }

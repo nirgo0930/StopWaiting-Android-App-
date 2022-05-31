@@ -61,15 +61,19 @@ public class AdminMainActivity extends AppCompatActivity {
         btn_create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new java.util.Timer().schedule(
-                        new java.util.TimerTask() {
-                            @Override
-                            public void run() {
-                                createNotification(NOTICE_DEFAULT, 1, "웨이팅", "웨이팅 이름" + "(개설자 이름)", ToLoginIntent);
-                            }
-                        },
-                        3000
-                );
+                createNotification(NOTICE_DEFAULT, 1, "웨이팅", "웨이팅 이름" + "(개설자 이름)", ToLoginIntent);
+
+                //3초 딜레이
+//                new java.util.Timer().schedule(
+//                        new java.util.TimerTask() {
+//                            @Override
+//                            public void run() {
+//                                createNotification(NOTICE_DEFAULT, 1, "웨이팅", "웨이팅 이름" + "(개설자 이름)", ToLoginIntent);
+//                            }
+//                        },ㅅ
+//                        3000
+//                );
+
                 //createNotification(DEFAULT, 1, "title", "text", intent);
                 //finish();
             }

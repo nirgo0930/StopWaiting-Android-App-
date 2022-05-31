@@ -38,6 +38,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button btn_login;
     public static Activity login_Activity;
     private final String sharedID = "Login";
+    private String token;
 
     String[] permission_list = {
             Manifest.permission.INTERNET,
@@ -143,7 +144,7 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 jsonBodyObj.put("id", Long.valueOf(edt_id.getText().toString()));
                 jsonBodyObj.put("password", edt_password.getText().toString());
-//                jsonBodyObj.put("token", token);    //토큰
+                jsonBodyObj.put("token", token);    //토큰
             } catch (JSONException e) {
                 e.printStackTrace();
             }

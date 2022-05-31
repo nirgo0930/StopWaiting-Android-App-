@@ -1,20 +1,10 @@
 package com.example.stopwaitingadmin.activity;
 
 import android.app.Application;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
-import com.example.stopwaitingadmin.dto.ReportedUserListItem;
 import com.example.stopwaitingadmin.dto.AdminWaitingListItem;
-import com.google.android.gms.tasks.Task;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Base64;
 
 public class DataApplication extends Application {
     static public boolean isTest = true;
@@ -47,19 +37,6 @@ public class DataApplication extends Application {
 //    }
 
 
-    public boolean firstIsLater(String a, String b) {
-        int hourA = Integer.valueOf(a.substring(0, 2));
-        int minA = Integer.valueOf(a.substring(3));
-        int hourB = Integer.valueOf(b.substring(0, 2));
-        int minB = Integer.valueOf(b.substring(3));
-        if (hourA > hourB) {
-            return true;
-        } else if (hourA == hourB) {
-            if (minA > minB) {
-                return true;
-            }
-        }
-        return false;
-    }
+
 
 }
