@@ -68,11 +68,10 @@ public class SettingLocationActivity extends AppCompatActivity implements OnMapR
 
         marker = new Marker();
         marker.setWidth(50);
-        marker.setHeight(50);
+        marker.setHeight(60);
 
         naverMap.setOnMapLongClickListener((point, coord) ->
         {
-//            Toast.makeText(this, coord.latitude + ", " + coord.longitude, Toast.LENGTH_SHORT).show();
             marker.setPosition(new LatLng(coord.latitude, coord.longitude));
             marker.setMap(naverMap);
         });

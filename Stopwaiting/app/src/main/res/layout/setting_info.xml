@@ -114,7 +114,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center|right"
-                android:text="최대 인원 :" />
+                android:text="최대 대기 인원 :" />
 
             <EditText
                 android:id="@+id/edtMaxPerson"
@@ -122,9 +122,9 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:ems="10"
-                android:hint="ex) 3"
+                android:hint="ex) 10"
                 android:inputType="number"
-                android:maxLength="2" />
+                android:maxLength="3" />
         </LinearLayout>
 
         <LinearLayout

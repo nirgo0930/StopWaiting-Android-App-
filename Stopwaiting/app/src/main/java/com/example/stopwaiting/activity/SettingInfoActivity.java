@@ -3,8 +3,10 @@ package com.example.stopwaiting.activity;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,27 +20,27 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
+import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.stopwaiting.R;
 import com.example.stopwaiting.adapter.SettingImageAdapter;
-import com.example.stopwaiting.dto.ImgItem;
 import com.example.stopwaiting.dto.WaitingInfo;
 import com.example.stopwaiting.dto.WaitingQueue;
+import com.example.stopwaiting.service.MultipartRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
 
 public class SettingInfoActivity extends AppCompatActivity {
     private EditText edtName, edtDetail, edtInfo, edtPerson;
@@ -51,6 +53,10 @@ public class SettingInfoActivity extends AppCompatActivity {
     private ArrayList<Uri> uriList;
     public static Activity setting_info_Activity;
     private int mStatusCode = 0;
+    private final String twoHyphens = "--";
+    private final String lineEnd = "\r\n";
+    private final String boundary = "apiclient-" + System.currentTimeMillis();
+    private final String mimeType = "multipart/form-data;boundary=" + boundary;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,8 +168,6 @@ public class SettingInfoActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (rdoGroup.getCheckedRadioButtonId() == R.id.rdoNormal) {
                     addWaitingRequest();
-
-
                 } else if (rdoGroup.getCheckedRadioButtonId() == R.id.rdoTime) {
                     settingInfoIntent.putExtra("name", edtName.getText().toString());
                     settingInfoIntent.putExtra("detail", edtDetail.getText().toString());
@@ -174,6 +178,7 @@ public class SettingInfoActivity extends AppCompatActivity {
                     } else {
                         settingInfoIntent.putParcelableArrayListExtra("image", null);
                     }
+
                     settingInfoIntent.setClass(SettingInfoActivity.this, SettingTimeActivity.class);
 
                     startActivity(settingInfoIntent);
@@ -182,19 +187,133 @@ public class SettingInfoActivity extends AppCompatActivity {
         });
     }
 
-    public void addWaitingRequest() {
+//    public void addWaitingRequest() {
+//        if (DataApplication.isTest) {
+//            ArrayList<String> imgList = new ArrayList<>();
+//            if (uriList.size() > 0) {
+//                for (int i = 0; i < uriList.size(); i++) {
+//                    imgList.add(uriList.get(i).toString());
+//                }
+//            }
+//            DataApplication.testDBList.add(new WaitingInfo(DataApplication.currentUser.getStudentCode(), 10L,
+//                    settingInfoIntent.getDoubleExtra("latitude", 0),
+//                    settingInfoIntent.getDoubleExtra("longitude", 0),
+//                    edtName.getText().toString(), edtDetail.getText().toString(), edtInfo.getText().toString(),
+//                    "normal", Integer.valueOf(edtPerson.getText().toString()), imgList));
+//
+//            DataApplication.testWaitingQueueDBList.add(new WaitingQueue(DataApplication.qCnt++, edtName.getText().toString(),
+//                    "normal", Integer.valueOf(edtPerson.getText().toString())));
+//
+//            Intent temp = new Intent(SettingInfoActivity.this, MyPageActivity.class);
+//            MyPageActivity.myPageActivity.finish();
+//            startActivity(temp);
+//        } else {
+//            JSONObject jsonBodyObj = new JSONObject();
+//            try {
+//                jsonBodyObj.put("admin", DataApplication.currentUser.getStudentCode());
+//                jsonBodyObj.put("latitude", settingInfoIntent.getDoubleExtra("latitude", 0));
+//                jsonBodyObj.put("longitude", settingInfoIntent.getDoubleExtra("longitude", 0));
+//                jsonBodyObj.put("waitingName", edtName.getText().toString());
+//                jsonBodyObj.put("locationDetail", edtDetail.getText().toString());
+//                jsonBodyObj.put("information", edtInfo.getText().toString());
+//                jsonBodyObj.put("type", "NORMAL");
+//                jsonBodyObj.put("maxPerson", Integer.valueOf(edtPerson.getText().toString()));
+//
+//                JSONArray imgArray = new JSONArray();
+//                for (int i = 0; i < uriList.size(); i++) {
+//                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uriList.get(i));
+//                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+//                    byte[] imageBytes = baos.toByteArray();
+//                    String encodedImage = Base64Utils.encodeUrlSafe(imageBytes);
+//                    imgArray.put(encodedImage);
+//                }
+//                jsonBodyObj.put("images", imgArray);
+//
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            final String requestBody = String.valueOf(jsonBodyObj.toString());
+//
+//            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, DataApplication.serverURL + "/waitinginfo", null,
+//                    new Response.Listener<JSONObject>() {
+//                        @Override
+//                        public void onResponse(JSONObject jsonObject) {
+//                            int statusCode = mStatusCode;
+//                            switch (statusCode) {
+//                                case HttpURLConnection.HTTP_OK:
+//                                    Toast.makeText(getApplicationContext(), "정상 등록되었습니다.", Toast.LENGTH_SHORT).show();
+//
+//                                    Intent temp = new Intent(SettingInfoActivity.this, MyPageActivity.class);
+//                                    MyPageActivity.myPageActivity.finish();
+//                                    startActivity(temp);
+//                                    break;
+////                                case HttpURLConnection.HTTP_NOT_FOUND:
+//                                //do stuff
+////                                    break;
+////                                case HttpURLConnection.HTTP_INTERNAL_ERROR:
+//                                //do stuff
+////                                    break;
+//                            }
+//                        }
+//                    },
+//                    new Response.ErrorListener() {
+//                        @Override
+//                        public void onErrorResponse(VolleyError error) {
+//                            Toast.makeText(getApplicationContext(), "등록에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+//                        }
+//                    }) {
+//                @Override
+//                public Map<String, String> getHeaders() throws AuthFailureError {
+//                    HashMap<String, String> headers = new HashMap<String, String>();
+//                    headers.put("Content-Type", "application/json");
+//                    return headers;
+//                }
+//
+//                @Override
+//                public byte[] getBody() {
+//                    try {
+//                        if (requestBody != null && requestBody.length() > 0 && !requestBody.equals("")) {
+//                            return requestBody.getBytes("utf-8");
+//                        } else {
+//                            return null;
+//                        }
+//                    } catch (UnsupportedEncodingException uee) {
+//                        return null;
+//                    }
+//                }
+//
+//                @Override
+//                protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+//                    if (response != null) {
+//                        mStatusCode = response.statusCode;
+//                    }
+//                    return super.parseNetworkResponse(response);
+//                }
+//            };
+//
+//            request.setRetryPolicy(new DefaultRetryPolicy(30000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+//            request.setShouldCache(false);
+//            DataApplication.requestQueue.add(request);
+//        }
+//    }
+
+    private void addWaitingRequest() {
         if (DataApplication.isTest) {
+            ArrayList<String> imgList = new ArrayList<>();
+            if (uriList.size() > 0) {
+                for (int i = 0; i < uriList.size(); i++) {
+                    imgList.add(uriList.get(i).toString());
+                }
+            }
             DataApplication.testDBList.add(new WaitingInfo(DataApplication.currentUser.getStudentCode(), 10L,
                     settingInfoIntent.getDoubleExtra("latitude", 0),
                     settingInfoIntent.getDoubleExtra("longitude", 0),
                     edtName.getText().toString(), edtDetail.getText().toString(), edtInfo.getText().toString(),
-                    "normal", Integer.valueOf(edtPerson.getText().toString())));
-            if (uriList.size() != 0) {
-                String wName = edtName.getText().toString();
-                for (int i = 0; i < uriList.size(); i++) {
-                    DataApplication.testImageDBList.add(new ImgItem(wName, (long) i + 1, uriList.get(i)));
-                }
-            }
+                    "normal", Integer.valueOf(edtPerson.getText().toString()), imgList));
+
             DataApplication.testWaitingQueueDBList.add(new WaitingQueue(DataApplication.qCnt++, edtName.getText().toString(),
                     "normal", Integer.valueOf(edtPerson.getText().toString())));
 
@@ -210,48 +329,71 @@ public class SettingInfoActivity extends AppCompatActivity {
                 jsonBodyObj.put("waitingName", edtName.getText().toString());
                 jsonBodyObj.put("locationDetail", edtDetail.getText().toString());
                 jsonBodyObj.put("information", edtInfo.getText().toString());
-                jsonBodyObj.put("type", "normal");
+                jsonBodyObj.put("type", "NORMAL");
                 jsonBodyObj.put("maxPerson", Integer.valueOf(edtPerson.getText().toString()));
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             final String requestBody = String.valueOf(jsonBodyObj.toString());
-
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, DataApplication.serverURL + "/waitinginfo", null,
-                    new Response.Listener<JSONObject>() {
+            MultipartRequest multipartRequest = new MultipartRequest(Request.Method.POST, DataApplication.serverURL + "/waitinginfo",
+                    new Response.Listener<NetworkResponse>() {
                         @Override
-                        public void onResponse(JSONObject jsonObject) {
-                            int statusCode = mStatusCode;
-                            switch (statusCode) {
-                                case HttpURLConnection.HTTP_OK:
-                                    Toast.makeText(getApplicationContext(), "정상 등록되었습니다.", Toast.LENGTH_SHORT).show();
+                        public void onResponse(NetworkResponse response) {
+                            String resultResponse = new String(response.data);
+                            try {
+                                JSONObject result = new JSONObject(resultResponse);
+                                String status = result.getString("status");
+                                String message = result.getString("message");
 
-                                    Intent temp = new Intent(SettingInfoActivity.this, MyPageActivity.class);
-                                    MyPageActivity.myPageActivity.finish();
-                                    startActivity(temp);
-                                    break;
-//                                case HttpURLConnection.HTTP_NOT_FOUND:
-                                //do stuff
-//                                    break;
-//                                case HttpURLConnection.HTTP_INTERNAL_ERROR:
-                                //do stuff
-//                                    break;
+                                if (status.equals("")) {
+                                    // tell everybody you have succed upload image and post strings
+                                    Log.i("Messsage", message);
+                                } else {
+                                    Log.i("Unexpected", message);
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
                         }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(getApplicationContext(), "등록에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-                        }
-                    }) {
+                    }, new Response.ErrorListener() {
                 @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    HashMap<String, String> headers = new HashMap<String, String>();
-                    headers.put("Content-Type", "application/json");
-                    return headers;
-                }
+                public void onErrorResponse(VolleyError error) {
+                    NetworkResponse networkResponse = error.networkResponse;
+                    String errorMessage = "Unknown error";
+                    if (networkResponse == null) {
+                        if (error.getClass().equals(TimeoutError.class)) {
+                            errorMessage = "Request timeout";
+                        } else if (error.getClass().equals(NoConnectionError.class)) {
+                            errorMessage = "Failed to connect server";
+                        }
+                    } else {
+                        String result = new String(networkResponse.data);
+                        try {
+                            JSONObject response = new JSONObject(result);
+                            String status = response.getString("status");
+                            String message = response.getString("message");
 
+                            Log.e("Error Status", status);
+                            Log.e("Error Message", message);
+
+                            if (networkResponse.statusCode == 404) {
+                                errorMessage = "Resource not found";
+                            } else if (networkResponse.statusCode == 401) {
+                                errorMessage = message + " Please login again";
+                            } else if (networkResponse.statusCode == 400) {
+                                errorMessage = message + " Check your inputs";
+                            } else if (networkResponse.statusCode == 500) {
+                                errorMessage = message + " Something is getting wrong";
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    Log.i("Error", errorMessage);
+                    error.printStackTrace();
+                }
+            }) {
                 @Override
                 public byte[] getBody() {
                     try {
@@ -266,17 +408,28 @@ public class SettingInfoActivity extends AppCompatActivity {
                 }
 
                 @Override
-                protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
-                    if (response != null) {
-                        mStatusCode = response.statusCode;
+                protected Map<String, MultipartRequest.DataPart> getByteData() {
+                    Map<String, MultipartRequest.DataPart> params = new HashMap<>();
+
+                    for (int i = 0; i < uriList.size(); i++) {
+                        Bitmap bitmap = null;
+                        try {
+                            bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uriList.get(i));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                        byte[] imageBytes = baos.toByteArray();
+                        params.put("image" + String.valueOf(i),
+                                new MultipartRequest.DataPart(edtName.getText().toString() + String.valueOf(i) + ".jpg", imageBytes, "image/jpeg"));
                     }
-                    return super.parseNetworkResponse(response);
+
+                    return params;
                 }
             };
 
-            request.setShouldCache(false);
-            DataApplication.requestQueue.add(request);
+            DataApplication.requestQueue.add(multipartRequest);
         }
     }
-
 }

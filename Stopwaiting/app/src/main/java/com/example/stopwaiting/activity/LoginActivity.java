@@ -25,7 +25,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.stopwaiting.R;
-import com.example.stopwaiting.dto.ImgItem;
 import com.example.stopwaiting.dto.UserInfo;
 import com.example.stopwaiting.dto.WaitingInfo;
 import com.example.stopwaiting.dto.WaitingQueue;
@@ -121,6 +120,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void getTestInfo() {
+        String root = "android.resource://" + R.class.getPackage().getName() + "/";
+
         ((DataApplication) this.getApplication()).qCnt = (long) 1;
         //test data
         ArrayList<String> temp = new ArrayList<>();
@@ -128,24 +129,27 @@ public class LoginActivity extends AppCompatActivity {
         temp.add("14:00");
         temp.add("15:00");
         ((DataApplication) this.getApplication()).testDBList.add(new WaitingInfo
-                (20170873L, 1L, 36.144760, 128.393884, "미용실", "학생회관 B208", "미용실입니다.", "time", 5, temp));
+                (20170873L, 1L, 36.144760, 128.393884, "미용실", "학생회관 B208", "미용실입니다.", "time", 5, temp, new ArrayList<>()));
         for (int i = 0; i < temp.size(); i++) {
             ((DataApplication) getApplication()).testWaitingQueueDBList.add(new WaitingQueue(((DataApplication) this.getApplication()).qCnt++, "미용실", temp.get(i), 5));
         }
 
-        ((DataApplication) this.getApplication()).testDBList.add(new WaitingInfo
-                (20170873L, 2L, 36.145619, 128.392535, "특식배부", "디지털관 330", "컴소공 특식배부.", "normal", 3));
+        ((DataApplication) this.getApplication()).testDBList.add(new WaitingInfo(20170873L, 2L, 36.145619, 128.392535,
+                "특식배부", "디지털관 330", "컴소공 특식배부.", "normal", 3, new ArrayList<>()));
         ((DataApplication) getApplication()).testWaitingQueueDBList.add(new WaitingQueue(((DataApplication) this.getApplication()).qCnt++, "특식배부", "normal", 3));
 
-        ((DataApplication) this.getApplication()).testDBList.add(new WaitingInfo
-                (20170526L, 3L, 36.145123, 128.394244, "북카페", "학생회관 B218", "북카페입니다.", "normal", 10));
+
+        ArrayList<String> tempList = new ArrayList<>();
+        tempList.add(Uri.parse(root + R.drawable.haircut_cost).toString());
+        tempList.add(Uri.parse(root + R.drawable.human_icon).toString());
+
+
+        ((DataApplication) this.getApplication()).testDBList.add(new WaitingInfo(20170526L, 3L, 36.145123, 128.394244,
+                "북카페", "학생회관 B218", "북카페입니다.", "normal", 10, tempList));
         WaitingQueue tempQ = new WaitingQueue(((DataApplication) this.getApplication()).qCnt++, "북카페", "normal", 10);
         tempQ.addWPerson(((DataApplication) getApplication()).currentUser);
         ((DataApplication) getApplication()).testWaitingQueueDBList.add(tempQ);
 
-        String root = "android.resource://" + R.class.getPackage().getName() + "/";
-        ((DataApplication) this.getApplication()).testImageDBList.add(new ImgItem("북카페", (long) 1, Uri.parse(root + R.drawable.haircut_cost)));
-        ((DataApplication) this.getApplication()).testImageDBList.add(new ImgItem("북카페", (long) 2, Uri.parse(root + R.drawable.human_icon)));
     }
 
     public void checkPermissions(String[] permissions) {
@@ -191,15 +195,15 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void loginRequest() {
-        if (DataApplication.isTest) {
+        if (((DataApplication) getApplication()).isTest) {
             if (edt_password.getText().toString().equals("test")) {
                 Toast.makeText(getApplicationContext(), "로그인에 성공하였습니다.\n 잠시만 기다려주세요", Toast.LENGTH_SHORT).show();
 
-                DataApplication.currentUser = new UserInfo("test", Long.valueOf(edt_id.getText().toString()), "01094536639");
+                ((DataApplication) getApplication()).currentUser = new UserInfo("test", Long.valueOf(edt_id.getText().toString()), "01094536639");
 
-                if (DataApplication.isFirstBoot && DataApplication.isTest) {
+                if (((DataApplication) getApplication()).isFirstBoot && ((DataApplication) getApplication()).isTest) {
                     getTestInfo();
-                    DataApplication.isFirstBoot = false;
+                    ((DataApplication) getApplication()).isFirstBoot = false;
                 }
 
                 Intent loginIntent = new Intent(LoginActivity.this, MainActivity.class);
@@ -219,7 +223,7 @@ public class LoginActivity extends AppCompatActivity {
             }
             final String requestBody = String.valueOf(jsonBodyObj.toString());
 
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, DataApplication.serverURL + "/login", null,
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL + "/login", null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
@@ -231,7 +235,7 @@ public class LoginActivity extends AppCompatActivity {
                                 temp.setName(jsonObject.getString("name"));
                                 temp.setTel(jsonObject.getString("phoneNumber"));
 
-                                DataApplication.currentUser = temp;
+                                ((DataApplication) getApplication()).currentUser = temp;
 
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent);
@@ -269,8 +273,7 @@ public class LoginActivity extends AppCompatActivity {
             };
 
             request.setShouldCache(false);
-            DataApplication.requestQueue.add(request);
+            ((DataApplication) getApplication()).requestQueue.add(request);
         }
-//        ((DataApplication) getApplication()).sendRefresh();
     }
 }

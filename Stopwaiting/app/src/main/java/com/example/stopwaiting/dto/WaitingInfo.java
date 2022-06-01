@@ -20,7 +20,7 @@ public class WaitingInfo implements Serializable {
     public WaitingInfo() {
     }
 
-    public WaitingInfo(Long adm, Long waitingId, Double latitude, Double longitude, String name, String locDetail, String info, String type, int maxPerson) {
+    public WaitingInfo(Long adm, Long waitingId, Double latitude, Double longitude, String name, String locDetail, String info, String type, int maxPerson, ArrayList<String> urlList) {
         this.adminId = adm;
         this.waitingId = waitingId;
         this.latitude = latitude;
@@ -30,10 +30,11 @@ public class WaitingInfo implements Serializable {
         this.info = info;
         this.type = type;
         this.maxPerson = maxPerson;
+        this.urlList = urlList;
 
     }
 
-    public WaitingInfo(Long adm, Long waitingId, Double latitude, Double longitude, String name, String locDetail, String info, String type, int maxPerson, ArrayList timetable) {
+    public WaitingInfo(Long adm, Long waitingId, Double latitude, Double longitude, String name, String locDetail, String info, String type, int maxPerson, ArrayList timetable, ArrayList<String> urlList) {
         this.adminId = adm;
         this.waitingId = waitingId;
         this.latitude = latitude;
@@ -44,6 +45,7 @@ public class WaitingInfo implements Serializable {
         this.type = type;
         this.maxPerson = maxPerson;
         this.timetable = timetable;
+        this.urlList = urlList;
     }
 
     public Long getAdminId() {
@@ -126,6 +128,14 @@ public class WaitingInfo implements Serializable {
         this.timetable = timetable;
     }
 
+    public ArrayList<String> getUrlList() {
+        return urlList;
+    }
+
+    public void setUrlList(ArrayList<String> urlList) {
+        this.urlList = urlList;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -143,8 +153,4 @@ public class WaitingInfo implements Serializable {
         return waitingId != null ? waitingId.hashCode() : 0;
     }
 
-//    @Override
-//    public String toString() {
-//        return String.format("WaitingInfo", adminId, waitingId, latitude, longitude, name, locDetail, info, type, maxPerson, timetable.toString());
-//    }
 }

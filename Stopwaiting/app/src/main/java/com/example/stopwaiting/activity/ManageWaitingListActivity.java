@@ -60,14 +60,16 @@ public class ManageWaitingListActivity extends AppCompatActivity {
 
         txtTitle.setText("개설한 웨이팅");
 
-        myManageWaitingInfoRequest(); //set mWaitingQueueList
+        myManageWaitingInfoRequest();
 
         if (mWaitingQueueList.size() > 0) {
             for (int i = 0; i < mWaitingQueueList.size(); i++) {
                 waitingInfoRequest(mWaitingQueueList.get(i).getQueueName());
                 WaitingInfo tempInfo = tempWaitingInfo;
 
-                imgRequest(mWaitingQueueList.get(i).getQueueName());
+
+                tempImgInfo.setSUri(tempInfo.getUrlList().get(0));
+
                 ImgItem tempImg = tempImgInfo;
 
                 boolean check = false;
@@ -270,72 +272,72 @@ public class ManageWaitingListActivity extends AppCompatActivity {
         }
     }
 
-    public void imgRequest(String waitingName) {
-        if (DataApplication.isTest) {
-            for (int i = 0; i < DataApplication.testImageDBList.size(); i++) {
-                tempImgInfo = DataApplication.testImageDBList.get(i);
-                if (tempImgInfo.getName().equals(waitingName)) {
-                    break;
-                }
-            }
-        } else {
-            ImgItem tempInfo = new ImgItem();
-            JSONObject jsonBodyObj = new JSONObject();
-            try {
-                jsonBodyObj.put("name", waitingName);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            final String requestBody = String.valueOf(jsonBodyObj.toString());
-
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, DataApplication.serverURL + "/waitingInfo",
-                    null, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject jsonObject) {
-                    try {
-                        JSONArray dataArray = jsonObject.getJSONArray("data");
-
-                        for (int i = 0; i < dataArray.length(); i++) {
-                            JSONObject dataObject = dataArray.getJSONObject(i);
-
-                            tempInfo.setId(dataObject.getLong("id"));
-                            tempInfo.setName(dataObject.getString("name"));
-
-                            tempImgInfo = tempInfo;
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getApplicationContext(), "로딩에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-                }
-            }) {
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    HashMap<String, String> headers = new HashMap<String, String>();
-                    headers.put("Content-Type", "application/json");
-                    return headers;
-                }
-
-                @Override
-                public byte[] getBody() {
-                    try {
-                        if (requestBody != null && requestBody.length() > 0 && !requestBody.equals("")) {
-                            return requestBody.getBytes("utf-8");
-                        } else {
-                            return null;
-                        }
-                    } catch (UnsupportedEncodingException uee) {
-                        return null;
-                    }
-                }
-            };
-
-            request.setShouldCache(false);
-            DataApplication.requestQueue.add(request);
-        }
-    }
+//    public void imgRequest(String waitingName) {
+//        if (DataApplication.isTest) {
+//            for (int i = 0; i < DataApplication.testImageDBList.size(); i++) {
+//                tempImgInfo = DataApplication.testImageDBList.get(i);
+//                if (tempImgInfo.getName().equals(waitingName)) {
+//                    break;
+//                }
+//            }
+//        } else {
+//            ImgItem tempInfo = new ImgItem();
+//            JSONObject jsonBodyObj = new JSONObject();
+//            try {
+//                jsonBodyObj.put("name", waitingName);
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//            final String requestBody = String.valueOf(jsonBodyObj.toString());
+//
+//            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, DataApplication.serverURL + "/waitingInfo",
+//                    null, new Response.Listener<JSONObject>() {
+//                @Override
+//                public void onResponse(JSONObject jsonObject) {
+//                    try {
+//                        JSONArray dataArray = jsonObject.getJSONArray("data");
+//
+//                        for (int i = 0; i < dataArray.length(); i++) {
+//                            JSONObject dataObject = dataArray.getJSONObject(i);
+//
+//                            tempInfo.setId(dataObject.getLong("id"));
+//                            tempInfo.setName(dataObject.getString("name"));
+//
+//                            tempImgInfo = tempInfo;
+//                        }
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }, new Response.ErrorListener() {
+//                @Override
+//                public void onErrorResponse(VolleyError error) {
+//                    Toast.makeText(getApplicationContext(), "로딩에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+//                }
+//            }) {
+//                @Override
+//                public Map<String, String> getHeaders() throws AuthFailureError {
+//                    HashMap<String, String> headers = new HashMap<String, String>();
+//                    headers.put("Content-Type", "application/json");
+//                    return headers;
+//                }
+//
+//                @Override
+//                public byte[] getBody() {
+//                    try {
+//                        if (requestBody != null && requestBody.length() > 0 && !requestBody.equals("")) {
+//                            return requestBody.getBytes("utf-8");
+//                        } else {
+//                            return null;
+//                        }
+//                    } catch (UnsupportedEncodingException uee) {
+//                        return null;
+//                    }
+//                }
+//            };
+//
+//            request.setShouldCache(false);
+//            DataApplication.requestQueue.add(request);
+//        }
+//    }
 }

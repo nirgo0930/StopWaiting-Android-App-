@@ -109,9 +109,15 @@ public class MyWaitingListAdapter extends RecyclerView.Adapter<MyWaitingListItem
     public void onBindViewHolder(@NonNull MyWaitingListItemViewHolder holder, int position) {
         final WaitingListItem waitingItem = mItemList.get(position);
 
-        Glide.with(mContext.getApplicationContext())
-                .load(waitingItem.getImgUri())
-                .into(holder.imgItem);
+        if (DataApplication.isTest) {
+            Glide.with(mContext.getApplicationContext())
+                    .load(waitingItem.getImgUri())
+                    .into(holder.imgItem);
+        } else {
+            Glide.with(mContext.getApplicationContext())
+                    .load(waitingItem.getImgUrl())
+                    .into(holder.imgItem);
+        }
 
         holder.txtName.setText(waitingItem.getName());
         holder.txtLocDetail.setText(waitingItem.getLocDetail());

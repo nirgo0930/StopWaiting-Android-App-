@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,7 +49,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private NaverMap naverMap;
     private FusedLocationSource locationSource;
     private ArrayList<Marker> markers;
-    public static ArrayList<WaitingInfo> waitingList;
 
     public static Activity mainActivity;
     public static Context context_main;
@@ -75,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         userId.setText(DataApplication.currentUser.getName() + " 님(" + String.valueOf(DataApplication.currentUser.getStudentCode()) + ")");
 
         markers = new ArrayList<>();
-        waitingList = new ArrayList<>();
+        ((DataApplication) getApplication()).waitingList = new ArrayList<>();
 
 //        waitingInfoAllRequest();
 
@@ -87,8 +85,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
         locationSource = new FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE);
 
-        Button myPage = findViewById(R.id.btnMypage);
-        myPage.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btnMypage).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 refresh();
@@ -99,8 +96,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-        Button refresh = findViewById(R.id.btnRefresh);
-        refresh.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btnRefresh).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ActivityCompat.requestPermissions(mainActivity, PERMISSIONS, LOCATION_PERMISSION_REQUEST_CODE);
@@ -108,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-        refresh();
+//        refresh();
     }
 
     @Override
@@ -141,15 +137,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Intent infoIntent;
                 WaitingInfo temp = new WaitingInfo();
                 temp.setWaitingId(Long.valueOf(infoWindow.getMarker().getTag().toString()));
-                temp = waitingList.get(waitingList.indexOf(temp));
+                temp = ((DataApplication) getApplication()).waitingList.get(((DataApplication) getApplication()).waitingList.indexOf(temp));
 
                 if (temp.getType() == "time") {
                     infoIntent = new Intent(MainActivity.this, WaitingSelectTimeActivity.class);
                 } else {
                     infoIntent = new Intent(MainActivity.this, WaitingNormalActivity.class);
                 }
-                Log.e("wsize", String.valueOf(waitingList.size()));
-                infoIntent.putExtra("name", temp.getName());
+                infoIntent.putExtra("id", temp.getWaitingId());
 
                 startActivity(infoIntent);
             }
@@ -199,8 +194,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 String selectName = data.getStringExtra("name");
                 switch (data.getIntExtra("case", 0)) {
                     case 1:
-                        for (int i = 0; i < waitingList.size(); i++) {
-                            WaitingInfo temp = waitingList.get(i);
+                        for (int i = 0; i < DataApplication.waitingList.size(); i++) {
+                            WaitingInfo temp = DataApplication.waitingList.get(i);
                             if (temp.getName().equals(selectName)) {
                                 CameraUpdate cameraUpdate = CameraUpdate.scrollAndZoomTo(
                                         new LatLng(temp.getLatitude(), temp.getLongitude()), 15).animate(CameraAnimation.Fly, 1000);
@@ -224,6 +219,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             markers.get(i).setMap(null);
         }
         markers = new ArrayList<>();
+
         waitingInfoAllRequest();
 
 //        myWaitingRequest();
@@ -234,12 +230,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void myWaitingRequest() {
         DataApplication.myWaiting = new ArrayList<>();
         if (DataApplication.isTest) {
-            for (int i = 0; i < ((DataApplication) getApplication()).testWaitingQueueDBList.size(); i++) {
-                WaitingQueue tempDBQ = ((DataApplication) getApplication()).testWaitingQueueDBList.get(i);
+            for (int i = 0; i < DataApplication.testWaitingQueueDBList.size(); i++) {
+                WaitingQueue tempDBQ = DataApplication.testWaitingQueueDBList.get(i);
                 for (int j = 0; j < tempDBQ.getWaitingPersonList().size(); j++) {
-                    if (tempDBQ.getWaitingPersonList().get(j).getStudentCode().equals(((DataApplication) getApplication()).currentUser.getStudentCode()) &&
-                            !(((DataApplication) getApplication()).myWaiting.contains(tempDBQ))) {
-                        ((DataApplication) getApplication()).myWaiting.add(tempDBQ);
+                    if (tempDBQ.getWaitingPersonList().get(j).getStudentCode().equals(DataApplication.currentUser.getStudentCode()) &&
+                            !(DataApplication.myWaiting.contains(tempDBQ))) {
+                        DataApplication.myWaiting.add(tempDBQ);
                     }
                 }
             }
@@ -277,8 +273,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                                         UserInfo tempUser = new UserInfo();
                                         tempUser.setStudentCode(userObject.getLong("id"));
-                                        tempUser.setName(userObject.getString("name"));
-                                        tempUser.setTel(userObject.getString("phoneNumber"));
 
                                         tempUserList.add(tempUser);
                                     }
@@ -319,21 +313,28 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             };
 
             request.setShouldCache(false);
-            ((DataApplication) getApplication()).requestQueue.add(request);
+            DataApplication.requestQueue.add(request);
         }
 
     }
 
     public void waitingInfoAllRequest() {
-        waitingList.clear();
-        if (DataApplication.isTest) {
-            waitingList = ((DataApplication) getApplication()).getTestDBList();
+        ((DataApplication) getApplication()).waitingList = new ArrayList<>();
+        if (((DataApplication) getApplication()).isTest) {
+            ((DataApplication) getApplication()).waitingList = ((DataApplication) getApplication()).getTestDBList();
+
+            for (int i = 0; i < ((DataApplication) getApplication()).waitingList.size(); i++) {
+                setInfo(((DataApplication) getApplication()).waitingList.get(i));
+            }
         } else {
+            JSONObject jsonBodyObj = new JSONObject();
+            final String requestBody = String.valueOf(jsonBodyObj.toString());
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, ((DataApplication) getApplication()).serverURL + "/waitinginfo", null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
                             try {
+                                Log.e("data", jsonObject.toString());
                                 JSONArray dataArray = jsonObject.getJSONArray("data");
 
                                 for (int i = 0; i < dataArray.length(); i++) {
@@ -357,9 +358,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                         }
                                         data.setTimetable(timetable);
                                     }
+                                    ArrayList<String> urlList = new ArrayList();
+//                                    JSONArray imageArray = dataObject.getJSONArray("images");
+//                                    for (int j = 0; j < imageArray.length(); j++) {
+//                                        urlList.add(imageArray.getString(j));
+//                                    }
+                                    data.setUrlList(urlList);
 
-                                    waitingList.add(data);
                                     setInfo(data);
+                                    ((DataApplication) getApplication()).waitingList.add(data);
+
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -373,16 +381,28 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         }
                     }) {
                 @Override
-                protected Map<String, String> getParams() throws AuthFailureError {
-                    Map<String, String> params = new HashMap<String, String>();
-                    params.put("type", "waitinginfo_all");
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json");
+                    return headers;
+                }
 
-                    return params;
+                @Override
+                public byte[] getBody() {
+                    try {
+                        if (requestBody != null && requestBody.length() > 0 && !requestBody.equals("")) {
+                            return requestBody.getBytes("utf-8");
+                        } else {
+                            return null;
+                        }
+                    } catch (UnsupportedEncodingException uee) {
+                        return null;
+                    }
                 }
             };
 
             request.setShouldCache(false);
-            DataApplication.requestQueue.add(request);
+            ((DataApplication) getApplication()).requestQueue.add(request);
         }
     }
 
@@ -391,13 +411,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         ((DataApplication) getApplication()).sendUserInfo();
 
         ArrayList<WaitingInfo> tempList = new ArrayList<>();
-        for (int i = 0; i < waitingList.size(); i++) {
+        for (int i = 0; i < DataApplication.waitingList.size(); i++) {
             for (int j = 0; j < ((DataApplication) getApplication()).myWaiting.size(); j++) {
                 WaitingInfo tempA = new WaitingInfo();
                 tempA.setName(DataApplication.myWaiting.get(j).getQueueName());
-                if (waitingList.get(i).getName().equals(DataApplication.myWaiting.get(j).getQueueName()) &&
+                if (DataApplication.waitingList.get(i).getName().equals(DataApplication.myWaiting.get(j).getQueueName()) &&
                         !tempList.contains(tempA.getName())) {
-                    tempList.add(waitingList.get(i));
+                    tempList.add(DataApplication.waitingList.get(i));
                     break;
                 }
             }

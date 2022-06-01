@@ -8,7 +8,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
-import com.example.stopwaiting.dto.ImgItem;
 import com.example.stopwaiting.dto.UserInfo;
 import com.example.stopwaiting.dto.WaitingInfo;
 import com.example.stopwaiting.dto.WaitingQueue;
@@ -31,15 +30,15 @@ public class DataApplication extends Application {
     static public boolean isFirstBoot = true;
 
     static public ArrayList<WaitingInfo> testDBList;
-    static public ArrayList<ImgItem> testImageDBList;
     static public ArrayList<WaitingQueue> testWaitingQueueDBList;
     static public Long qCnt;
 
     static public UserInfo currentUser;
+    public static ArrayList<WaitingInfo> waitingList;
     static public ArrayList<WaitingQueue> myWaiting;
     static public RequestQueue requestQueue;
 
-    static public String serverURL = "http://192.168.25.37:8080/api/v1";
+    static public String serverURL = "http://192.168.235.193:8080/api/v1";
     private String path = "/my_path";
 
 
@@ -49,14 +48,6 @@ public class DataApplication extends Application {
 
     public void setTestDBList(ArrayList<WaitingInfo> testDBList) {
         this.testDBList = testDBList;
-    }
-
-    public ArrayList<ImgItem> getTestImageDBList() {
-        return testImageDBList;
-    }
-
-    public void setTestImageDBList(ArrayList<ImgItem> testImageDBList) {
-        this.testImageDBList = testImageDBList;
     }
 
     public static ArrayList<WaitingQueue> getTestWaitingQueueDBList() {
@@ -72,7 +63,6 @@ public class DataApplication extends Application {
         super.onCreate();
 
         testDBList = new ArrayList<>();
-        testImageDBList = new ArrayList<>();
         testWaitingQueueDBList = new ArrayList<>();
         currentUser = new UserInfo();
         myWaiting = new ArrayList<>();
