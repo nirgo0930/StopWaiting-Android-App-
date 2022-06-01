@@ -25,13 +25,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
+import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.stopwaiting.R;
 import com.example.stopwaiting.dto.WaitingInfo;
 import com.example.stopwaiting.dto.WaitingQueue;
+import com.example.stopwaiting.service.MultipartRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -140,27 +143,18 @@ public class SettingTimeActivity extends AppCompatActivity {
 
     public void addWaitingRequest() {
         if (DataApplication.isTest) {
-            ArrayList<String> imgList = new ArrayList<>();
-            if (uriList.size() > 0) {
-                for (int i = 0; i < uriList.size(); i++) {
-                    imgList.add(uriList.get(i).toString());
-                }
-            }
             DataApplication.testDBList.add(new WaitingInfo(DataApplication.currentUser.getStudentCode(), 11L,
                     timeIntent.getDoubleExtra("latitude", 0),
                     timeIntent.getDoubleExtra("longitude", 0),
                     timeIntent.getStringExtra("name"), timeIntent.getStringExtra("detail"), timeIntent.getStringExtra("info"),
-                    "TIME", timeIntent.getIntExtra("maxPerson", 1), mTimeList, imgList));
+                    "TIME", timeIntent.getIntExtra("maxPerson", 1), mTimeList, new ArrayList<>()));
 
             for (int i = 0; i < mTimeList.size(); i++) {
                 DataApplication.testWaitingQueueDBList.add(new WaitingQueue(DataApplication.qCnt++,
                         timeIntent.getStringExtra("name"), mTimeList.get(i),
                         timeIntent.getIntExtra("maxPerson", 1)));
             }
-            Intent temp = new Intent(SettingTimeActivity.this, MyPageActivity.class);
-            temp.putExtra("userID", timeIntent.getStringExtra("userID"));
-            MyPageActivity.myPageActivity.finish();
-            startActivity(temp);
+            addImageRequest(11L);
         } else {
             JSONObject jsonBodyObj = new JSONObject();
             try {
@@ -197,18 +191,18 @@ public class SettingTimeActivity extends AppCompatActivity {
             }
             final String requestBody = String.valueOf(jsonBodyObj.toString());
 
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, DataApplication.serverURL + "/waitinginfo", null,
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, DataApplication.serverURL + "/waitinginfo", null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
                             int statusCode = mStatusCode;
                             switch (statusCode) {
                                 case HttpURLConnection.HTTP_OK:
-                                    Toast.makeText(getApplicationContext(), "정상 등록되었습니다.", Toast.LENGTH_SHORT).show();
-
-                                    Intent temp = new Intent(SettingTimeActivity.this, MyPageActivity.class);
-                                    MyPageActivity.myPageActivity.finish();
-                                    startActivity(temp);
+                                    try {
+                                        addImageRequest(jsonObject.getLong("waitingId"));
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
                                     break;
 //                                case HttpURLConnection.HTTP_NOT_FOUND:
                                 //do stuff
@@ -257,6 +251,115 @@ public class SettingTimeActivity extends AppCompatActivity {
             request.setRetryPolicy(new DefaultRetryPolicy(30000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
             request.setShouldCache(false);
             DataApplication.requestQueue.add(request);
+        }
+    }
+
+    private void addImageRequest(Long waitingId) {
+        if (DataApplication.isTest) {
+            ArrayList<String> imgList = new ArrayList<>();
+            if (uriList.size() > 0) {
+                for (int i = 0; i < uriList.size(); i++) {
+                    imgList.add(uriList.get(i).toString());
+                }
+            }
+            for (int i = 0; i < DataApplication.testDBList.size(); i++) {
+                if (DataApplication.testDBList.get(i).getWaitingId().equals(waitingId)) {
+                    WaitingInfo temp = DataApplication.testDBList.get(i);
+                    temp.setUrlList(imgList);
+                    break;
+                }
+            }
+
+            Intent temp = new Intent(SettingTimeActivity.this, MyPageActivity.class);
+            MyPageActivity.myPageActivity.finish();
+            startActivity(temp);
+        } else {
+            MultipartRequest multipartRequest = new MultipartRequest(Request.Method.POST, DataApplication.serverURL + "/waitinginfo",
+                    new Response.Listener<NetworkResponse>() {
+                        @Override
+                        public void onResponse(NetworkResponse response) {
+                            String resultResponse = new String(response.data);
+                            try {
+                                JSONObject result = new JSONObject(resultResponse);
+                                String status = result.getString("status");
+                                String message = result.getString("message");
+
+                                if (status.equals("")) {
+                                    // tell everybody you have succed upload image and post strings
+                                    Log.i("Messsage", message);
+
+
+                                    Intent temp = new Intent(SettingTimeActivity.this, MyPageActivity.class);
+                                    MyPageActivity.myPageActivity.finish();
+                                    startActivity(temp);
+                                } else {
+                                    Log.i("Unexpected", message);
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    NetworkResponse networkResponse = error.networkResponse;
+                    String errorMessage = "Unknown error";
+                    if (networkResponse == null) {
+                        if (error.getClass().equals(TimeoutError.class)) {
+                            errorMessage = "Request timeout";
+                        } else if (error.getClass().equals(NoConnectionError.class)) {
+                            errorMessage = "Failed to connect server";
+                        }
+                    } else {
+                        String result = new String(networkResponse.data);
+                        try {
+                            JSONObject response = new JSONObject(result);
+                            String status = response.getString("status");
+                            String message = response.getString("message");
+
+                            Log.e("Error Status", status);
+                            Log.e("Error Message", message);
+
+                            if (networkResponse.statusCode == 404) {
+                                errorMessage = "Resource not found";
+                            } else if (networkResponse.statusCode == 401) {
+                                errorMessage = message + " Please login again";
+                            } else if (networkResponse.statusCode == 400) {
+                                errorMessage = message + " Check your inputs";
+                            } else if (networkResponse.statusCode == 500) {
+                                errorMessage = message + " Something is getting wrong";
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    Log.i("Error", errorMessage);
+                    error.printStackTrace();
+                }
+            }) {
+                @Override
+                protected Map<String, MultipartRequest.DataPart> getByteData() {
+                    Map<String, MultipartRequest.DataPart> params = new HashMap<>();
+
+                    for (int i = 0; i < uriList.size(); i++) {
+                        Bitmap bitmap = null;
+                        try {
+                            bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uriList.get(i));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                        byte[] imageBytes = baos.toByteArray();
+                        params.put("image" + String.valueOf(i),
+                                new MultipartRequest.DataPart(timeIntent.getStringExtra("name") + String.valueOf(i) + ".jpg", imageBytes, "image/jpeg"));
+                    }
+
+                    return params;
+                }
+            };
+
+            DataApplication.requestQueue.add(multipartRequest);
         }
     }
 }
