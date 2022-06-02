@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 temp.setWaitingId(Long.valueOf(infoWindow.getMarker().getTag().toString()));
                 temp = ((DataApplication) getApplication()).waitingList.get(((DataApplication) getApplication()).waitingList.indexOf(temp));
 
-                if (temp.getType() == "time") {
+                if (temp.getType().equals("TIME")) {
                     infoIntent = new Intent(MainActivity.this, WaitingSelectTimeActivity.class);
                 } else {
                     infoIntent = new Intent(MainActivity.this, WaitingNormalActivity.class);
@@ -350,22 +350,27 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     data.setInfo(dataObject.getString("information"));
                                     data.setType(dataObject.getString("type"));
                                     data.setMaxPerson(dataObject.getInt("maxPerson"));
-                                    if (data.getType().equals("time")) {
+                                    if (data.getType().equals("TIME")) {
                                         ArrayList<String> timetable = new ArrayList();
                                         JSONArray timeArray = dataObject.getJSONArray("timetables");
                                         for (int j = 0; j < timeArray.length(); j++) {
                                             timetable.add(timeArray.getString(j));
                                         }
                                         data.setTimetable(timetable);
+                                    } else {
+                                        data.setTimetable(new ArrayList());
                                     }
                                     ArrayList<String> urlList = new ArrayList();
-//                                    JSONArray imageArray = dataObject.getJSONArray("images");
-//                                    for (int j = 0; j < imageArray.length(); j++) {
-//                                        urlList.add(imageArray.getString(j));
+//                                    if (dataObject.getJSONArray("images") != null) {
+//                                        JSONArray imageArray = dataObject.getJSONArray("images");
+//                                        for (int j = 0; j < imageArray.length(); j++) {
+//                                            urlList.add(imageArray.getString(j));
+//                                        }
 //                                    }
                                     data.setUrlList(urlList);
 
                                     setInfo(data);
+                                    Log.e("wId", String.valueOf(data.getWaitingId()));
                                     ((DataApplication) getApplication()).waitingList.add(data);
 
                                 }

@@ -28,22 +28,19 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.example.stopwaiting.R;
 import com.example.stopwaiting.adapter.SettingImageAdapter;
 import com.example.stopwaiting.dto.WaitingInfo;
 import com.example.stopwaiting.dto.WaitingQueue;
 import com.example.stopwaiting.service.MultipartRequest;
-import com.google.android.gms.common.util.Base64Utils;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -208,54 +205,37 @@ public class SettingInfoActivity extends AppCompatActivity {
         } else {
             JSONObject jsonBodyObj = new JSONObject();
             try {
-                jsonBodyObj.put("admin", DataApplication.currentUser.getStudentCode());
+                jsonBodyObj.put("adminId", DataApplication.currentUser.getStudentCode());
                 jsonBodyObj.put("latitude", settingInfoIntent.getDoubleExtra("latitude", 0));
                 jsonBodyObj.put("longitude", settingInfoIntent.getDoubleExtra("longitude", 0));
-                jsonBodyObj.put("waitingName", edtName.getText().toString());
+                jsonBodyObj.put("name", edtName.getText().toString());
                 jsonBodyObj.put("locationDetail", edtDetail.getText().toString());
                 jsonBodyObj.put("information", edtInfo.getText().toString());
-                jsonBodyObj.put("type", "NORMAL");
                 jsonBodyObj.put("maxPerson", Integer.valueOf(edtPerson.getText().toString()));
+                jsonBodyObj.put("type", "NORMAL");
+                jsonBodyObj.put("timetables", new ArrayList<>());
 
-                JSONArray imgArray = new JSONArray();
-                for (int i = 0; i < uriList.size(); i++) {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uriList.get(i));
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                    byte[] imageBytes = baos.toByteArray();
-                    String encodedImage = Base64Utils.encodeUrlSafe(imageBytes);
-                    imgArray.put(encodedImage);
-                }
-                jsonBodyObj.put("images", imgArray);
+//                JSONArray imgArray = new JSONArray();
+//                for (int i = 0; i < uriList.size(); i++) {
+//                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uriList.get(i));
+//                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+//                    byte[] imageBytes = baos.toByteArray();
+//                    String encodedImage = Base64Utils.encodeUrlSafe(imageBytes);
+//                    imgArray.put(encodedImage);
+//                }
+//                jsonBodyObj.put("images", imgArray);
 
             } catch (JSONException e) {
                 e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
             }
             final String requestBody = String.valueOf(jsonBodyObj.toString());
-
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, DataApplication.serverURL + "/waitinginfo", null,
-                    new Response.Listener<JSONObject>() {
+            StringRequest request = new StringRequest(Request.Method.POST, DataApplication.serverURL + "/waitinginfo",
+                    new Response.Listener<String>() {
                         @Override
-                        public void onResponse(JSONObject jsonObject) {
-                            int statusCode = mStatusCode;
-                            switch (statusCode) {
-                                case HttpURLConnection.HTTP_OK:
-                                    try {
-                                        addImageRequest(jsonObject.getLong("waitingId"));
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-
-                                    break;
-//                                case HttpURLConnection.HTTP_NOT_FOUND:
-                                //do stuff
-//                                    break;
-//                                case HttpURLConnection.HTTP_INTERNAL_ERROR:
-                                //do stuff
-//                                    break;
-                            }
+                        public void onResponse(String jsonObject) {
+                            Log.e("response", jsonObject);
+                            addImageRequest(Long.valueOf(jsonObject));
                         }
                     },
                     new Response.ErrorListener() {
@@ -282,14 +262,6 @@ public class SettingInfoActivity extends AppCompatActivity {
                     } catch (UnsupportedEncodingException uee) {
                         return null;
                     }
-                }
-
-                @Override
-                protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
-                    if (response != null) {
-                        mStatusCode = response.statusCode;
-                    }
-                    return super.parseNetworkResponse(response);
                 }
             };
 
@@ -319,7 +291,7 @@ public class SettingInfoActivity extends AppCompatActivity {
             MyPageActivity.myPageActivity.finish();
             startActivity(temp);
         } else {
-            MultipartRequest multipartRequest = new MultipartRequest(Request.Method.POST, DataApplication.serverURL + "/waitinginfo",
+            MultipartRequest multipartRequest = new MultipartRequest(Request.Method.POST, DataApplication.serverURL + "/waitinginfo/image",
                     new Response.Listener<NetworkResponse>() {
                         @Override
                         public void onResponse(NetworkResponse response) {
@@ -383,23 +355,24 @@ public class SettingInfoActivity extends AppCompatActivity {
                 }
             }) {
                 @Override
-                protected Map<String, MultipartRequest.DataPart> getByteData() {
-                    Map<String, MultipartRequest.DataPart> params = new HashMap<>();
-
-                    for (int i = 0; i < uriList.size(); i++) {
-                        Bitmap bitmap = null;
-                        try {
-                            bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uriList.get(i));
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                protected Map<String, byte[]> getByteData() {
+                    Map<String, byte[]> params = new HashMap<>();
+                    if (uriList != null) {
+                        for (int i = 0; i < uriList.size(); i++) {
+                            Bitmap bitmap = null;
+                            try {
+                                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uriList.get(i));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                            byte[] imageBytes = baos.toByteArray();
+//                        edtName.getText().toString() + String.valueOf(i) + ".jpg",
+                            params.put("image" + String.valueOf(i), imageBytes);
+//                                new MultipartRequest.DataPart(imageBytes, "image/jpeg"));
                         }
-                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                        byte[] imageBytes = baos.toByteArray();
-                        params.put("image" + String.valueOf(i),
-                                new MultipartRequest.DataPart(edtName.getText().toString() + String.valueOf(i) + ".jpg", imageBytes, "image/jpeg"));
                     }
-
                     return params;
                 }
             };

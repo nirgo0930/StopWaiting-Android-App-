@@ -129,14 +129,14 @@ public class LoginActivity extends AppCompatActivity {
         temp.add("14:00");
         temp.add("15:00");
         ((DataApplication) this.getApplication()).testDBList.add(new WaitingInfo
-                (20170873L, 1L, 36.144760, 128.393884, "미용실", "학생회관 B208", "미용실입니다.", "time", 5, temp, new ArrayList<>()));
+                (20170873L, 1L, 36.144760, 128.393884, "미용실", "학생회관 B208", "미용실입니다.", "TIME", 5, temp, new ArrayList<>()));
         for (int i = 0; i < temp.size(); i++) {
             ((DataApplication) getApplication()).testWaitingQueueDBList.add(new WaitingQueue(((DataApplication) this.getApplication()).qCnt++, "미용실", temp.get(i), 5));
         }
 
         ((DataApplication) this.getApplication()).testDBList.add(new WaitingInfo(20170873L, 2L, 36.145619, 128.392535,
-                "특식배부", "디지털관 330", "컴소공 특식배부.", "normal", 3, new ArrayList<>()));
-        ((DataApplication) getApplication()).testWaitingQueueDBList.add(new WaitingQueue(((DataApplication) this.getApplication()).qCnt++, "특식배부", "normal", 3));
+                "특식배부", "디지털관 330", "컴소공 특식배부.", "NORMAL", 3, new ArrayList<>()));
+        ((DataApplication) getApplication()).testWaitingQueueDBList.add(new WaitingQueue(((DataApplication) this.getApplication()).qCnt++, "특식배부", "NORMAL", 3));
 
 
         ArrayList<String> tempList = new ArrayList<>();
@@ -145,8 +145,8 @@ public class LoginActivity extends AppCompatActivity {
 
 
         ((DataApplication) this.getApplication()).testDBList.add(new WaitingInfo(20170526L, 3L, 36.145123, 128.394244,
-                "북카페", "학생회관 B218", "북카페입니다.", "normal", 10, tempList));
-        WaitingQueue tempQ = new WaitingQueue(((DataApplication) this.getApplication()).qCnt++, "북카페", "normal", 10);
+                "북카페", "학생회관 B218", "북카페입니다.", "NORMAL", 10, tempList));
+        WaitingQueue tempQ = new WaitingQueue(((DataApplication) this.getApplication()).qCnt++, "북카페", "NORMAL", 10);
         tempQ.addWPerson(((DataApplication) getApplication()).currentUser);
         ((DataApplication) getApplication()).testWaitingQueueDBList.add(tempQ);
 

@@ -38,7 +38,7 @@ public class DataApplication extends Application {
     static public ArrayList<WaitingQueue> myWaiting;
     static public RequestQueue requestQueue;
 
-    static public String serverURL = "http://192.168.235.193:8080/api/v1";
+    static public String serverURL = "http://192.168.228.127:8080/api/v1";
     private String path = "/my_path";
 
 
