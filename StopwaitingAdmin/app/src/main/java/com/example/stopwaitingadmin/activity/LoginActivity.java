@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -70,14 +71,14 @@ public class LoginActivity extends AppCompatActivity {
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferences sharedPreferences = getSharedPreferences(sharedID, Activity.MODE_PRIVATE);
-
-                SharedPreferences.Editor autoLogin = sharedPreferences.edit();
-
-                autoLogin.putString("inputId", edt_id.getText().toString());
-                autoLogin.putString("inputPwd", edt_password.getText().toString());
-
-                autoLogin.commit();
+//                SharedPreferences sharedPreferences = getSharedPreferences(sharedID, Activity.MODE_PRIVATE);
+//
+//                SharedPreferences.Editor autoLogin = sharedPreferences.edit();
+//
+//                autoLogin.putString("inputId", edt_id.getText().toString());
+//                autoLogin.putString("inputPwd", edt_password.getText().toString());
+//
+//                autoLogin.commit();
 
                 loginRequest();
 
@@ -150,11 +151,17 @@ public class LoginActivity extends AppCompatActivity {
             }
             final String requestBody = String.valueOf(jsonBodyObj.toString());
 
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ((DataApplication) getApplication()).serverURL + "/login", null,
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, DataApplication.serverURL + "/login", null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
                             Toast.makeText(getApplicationContext(), "로그인에 성공하였습니다.\n 잠시만 기다려주세요", Toast.LENGTH_SHORT).show();
+
+//                            UserInfo temp = new UserInfo();
+//                            temp.setStudentCode(jsonObject.getLong("id"));
+//                            temp.setName(jsonObject.getString("name"));
+//                            temp.setTel(jsonObject.getString("phoneNumber"));
+
 
 //                                ((DataApplication) getApplication()).currentUser = temp;
 
@@ -166,6 +173,7 @@ public class LoginActivity extends AppCompatActivity {
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
+                            Log.e("Test",error.toString());
                             Toast.makeText(getApplicationContext(), "로그인에 실패하였습니다.", Toast.LENGTH_SHORT).show();
                         }
                     }) {
@@ -191,7 +199,7 @@ public class LoginActivity extends AppCompatActivity {
             };
 
             request.setShouldCache(false);
-            ((DataApplication) getApplication()).requestQueue.add(request);
+            DataApplication.requestQueue.add(request);
         }
 
     }
