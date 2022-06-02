@@ -70,7 +70,7 @@ public class AdminMainActivity extends AppCompatActivity {
 //                            public void run() {
 //                                createNotification(NOTICE_DEFAULT, 1, "웨이팅", "웨이팅 이름" + "(개설자 이름)", ToLoginIntent);
 //                            }
-//                        },ㅅ
+//                        },
 //                        3000
 //                );
 
