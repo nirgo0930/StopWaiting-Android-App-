@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         waitingInfoAllRequest();
 
-//        myWaitingRequest();
+        myWaitingRequest();
 
         setWearOS();
     }

@@ -65,7 +65,7 @@
                     android:id="@+id/btnCancel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="취소하기" />
+                    android:text="예약 취소" />
 
             </LinearLayout>
         </ScrollView>

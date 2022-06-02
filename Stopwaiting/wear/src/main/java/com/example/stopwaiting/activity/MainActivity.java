@@ -56,14 +56,16 @@ public class MainActivity extends Activity {
             if(DataApplication.myWaiting.get(i).getTime().equals("normal")){
                 str="normal/"+DataApplication.myWaiting.get(i).getMyNum()+"/"+
                         DataApplication.myWaiting.get(i).getQueueName()+"/"+
-                DataApplication.myWaiting.get(i).getLatitude()+"/"+
-                DataApplication.myWaiting.get(i).getLongitude();
+                        DataApplication.myWaiting.get(i).getLatitude()+"/"+
+                        DataApplication.myWaiting.get(i).getLongitude()+"/"+
+                        Long.toString(DataApplication.myWaiting.get(i).getqId());
             }
             else{//time인 경우
                 str="time/"+DataApplication.myWaiting.get(i).getTime()+"/"+
                         DataApplication.myWaiting.get(i).getQueueName()+"/"+
                         DataApplication.myWaiting.get(i).getLatitude()+"/"+
-                        DataApplication.myWaiting.get(i).getLongitude();
+                        DataApplication.myWaiting.get(i).getLongitude()+"/"+
+                        Long.toString(DataApplication.myWaiting.get(i).getqId());
             }
             strs.add(str);
         }

@@ -57,6 +57,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:21.1.0'
 
     testImplementation 'junit:junit:4.13.2'
+    implementation 'androidx.core:core:1.2.0'
     wearApp project(":wear")
 
 }

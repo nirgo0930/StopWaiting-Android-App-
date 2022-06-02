@@ -9,6 +9,13 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.stopwaiting.R;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.Wearable;
+
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class WaitingDetailActivity extends Activity {
 
@@ -16,6 +23,7 @@ public class WaitingDetailActivity extends Activity {
     private double latitude;
     private double longitude;
     private String location;
+    private String qId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +39,8 @@ public class WaitingDetailActivity extends Activity {
         location = textList[2];
         latitude = Double.parseDouble(textList[3]);
         longitude = Double.parseDouble(textList[4]);
+        qId = textList[5];
+
         TextView textLoc = findViewById(R.id.textLoc);
         TextView textTime = findViewById(R.id.textTime);
 
@@ -52,8 +62,12 @@ public class WaitingDetailActivity extends Activity {
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
+                //예약 취소로 바꾸기
+                String datapath = "/my_path";
+                String onClickMessage = String.valueOf(DataApplication.currentUserInfo.getStudentCode())
+                        + "/"+ qId;
+                new SendMessage(datapath,onClickMessage).start();
+                Log.e("test", onClickMessage);
             }
         });
 
@@ -80,5 +94,54 @@ public class WaitingDetailActivity extends Activity {
             }
         });
 
+    }
+
+    class SendMessage extends Thread{
+        String path;
+        String message;
+
+        SendMessage(String p, String m){
+            path = p;
+            message = m;
+        }
+
+        public void run() {
+
+            //Get all the nodes//
+
+            Task<List<Node>> nodeListTask =
+                    Wearable.getNodeClient(getApplicationContext()).getConnectedNodes();
+            try {
+
+            //Block on a task and get the result synchronously//
+
+                List<Node> nodes = Tasks.await(nodeListTask);
+
+            //Send the message to each device//
+
+                for (Node node : nodes) {
+                    Task<Integer> sendMessageTask =
+                            Wearable.getMessageClient(WaitingDetailActivity.this).sendMessage(node.getId(), path, message.getBytes());
+                    try {
+                        Integer result = Tasks.await(sendMessageTask);
+                        //Handle the errors//
+                    } catch (ExecutionException exception) {
+                        //TO DO//
+                    } catch (InterruptedException exception) {
+                        //TO DO//
+                    }
+
+                }
+
+            } catch (ExecutionException exception) {
+
+                //TO DO//
+
+            } catch (InterruptedException exception) {
+
+                //TO DO//
+
+            }
+        }
     }
 }
