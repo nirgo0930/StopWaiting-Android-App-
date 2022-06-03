@@ -1,6 +1,8 @@
 package com.example.stopwaiting.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -62,12 +64,28 @@ public class WaitingDetailActivity extends Activity {
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //예약 취소로 바꾸기
-                String datapath = "/my_path";
-                String onClickMessage = String.valueOf(DataApplication.currentUserInfo.getStudentCode())
-                        + "/"+ qId;
-                new SendMessage(datapath,onClickMessage).start();
-                Log.e("test", onClickMessage);
+
+                new AlertDialog.Builder(WaitingDetailActivity.this)
+                        .setTitle(location)
+                        .setMessage("해당 웨이팅을 취소하시겠습니까?")
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //예약 취소로 바꾸기
+                                String datapath = "/my_path";
+                                String onClickMessage = String.valueOf(DataApplication.currentUserInfo.getStudentCode())
+                                        + "/"+ qId;
+                                new SendMessage(datapath,onClickMessage).start();
+                                Log.e("test", onClickMessage);
+                            }
+                        })
+                        .setNegativeButton("취소",new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        })
+                        .show();
             }
         });
 
