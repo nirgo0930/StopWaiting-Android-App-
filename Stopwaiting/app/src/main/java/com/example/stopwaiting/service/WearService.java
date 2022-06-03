@@ -41,6 +41,7 @@ public class WearService extends WearableListenerService {
     public void onMessageReceived(MessageEvent messageEvent) {
         if (messageEvent.getPath().equals("/my_path")) {
             final String message = new String(messageEvent.getData());
+            Log.e("message머라옴",message);
             switch (message){
                 case "refresh":
                     Log.e("refresh","refresh 왔음");

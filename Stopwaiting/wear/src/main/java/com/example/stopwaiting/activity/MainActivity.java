@@ -114,7 +114,7 @@ public class MainActivity extends Activity {
             public void onClick(View view){
                 String datapath="/my_path";
                 String message="refresh";
-                new SendMessage(datapath, message);
+                new SendMessage(datapath, message).start();
                 Log.e("refresh","refresh 보냄");
 
             }

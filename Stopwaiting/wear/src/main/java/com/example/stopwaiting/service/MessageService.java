@@ -87,6 +87,8 @@ public class MessageService extends WearableListenerService {
                 + DataApplication.myWaiting.size() + "/" + temp);
 
         autoEdit.commit();
+
+
     }
 
     public UserInfo loadUserInfoFromAsset(Asset asset) {
