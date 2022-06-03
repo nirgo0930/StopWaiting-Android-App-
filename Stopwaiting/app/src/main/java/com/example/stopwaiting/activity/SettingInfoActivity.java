@@ -23,10 +23,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
-import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.stopwaiting.R;
@@ -39,6 +37,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -56,10 +55,6 @@ public class SettingInfoActivity extends AppCompatActivity {
     private ArrayList<Uri> uriList;
     public static Activity setting_info_Activity;
     private int mStatusCode = 0;
-    private final String twoHyphens = "--";
-    private final String lineEnd = "\r\n";
-    private final String boundary = "apiclient-" + System.currentTimeMillis();
-    private final String mimeType = "multipart/form-data;boundary=" + boundary;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -213,7 +208,7 @@ public class SettingInfoActivity extends AppCompatActivity {
                 jsonBodyObj.put("information", edtInfo.getText().toString());
                 jsonBodyObj.put("maxPerson", Integer.valueOf(edtPerson.getText().toString()));
                 jsonBodyObj.put("type", "NORMAL");
-                jsonBodyObj.put("timetables", new ArrayList<>());
+//                jsonBodyObj.put("timetables", new ArrayList<>());
 
 //                JSONArray imgArray = new JSONArray();
 //                for (int i = 0; i < uriList.size(); i++) {
@@ -290,94 +285,141 @@ public class SettingInfoActivity extends AppCompatActivity {
             Intent temp = new Intent(SettingInfoActivity.this, MyPageActivity.class);
             MyPageActivity.myPageActivity.finish();
             startActivity(temp);
+//        } else {
+//            MultipartRequest multipartRequest = new MultipartRequest(Request.Method.POST, DataApplication.serverURL + "/waitinginfo/image",
+//                    new Response.Listener<NetworkResponse>() {
+//                        @Override
+//                        public void onResponse(NetworkResponse response) {
+////                            String resultResponse = new String(response.data);
+////                            try {
+////                                JSONObject result = new JSONObject(resultResponse);
+////                                String status = result.getString("status");
+////                                String message = result.getString("message");
+////
+////                                if (status.equals("")) {
+////                                    // tell everybody you have succed upload image and post strings
+////                                    Log.i("Messsage", message);
+//
+//                            Intent temp = new Intent(SettingInfoActivity.this, MyPageActivity.class);
+//                            MyPageActivity.myPageActivity.finish();
+//                            startActivity(temp);
+//
+////                                } else {
+////                                    Log.i("Unexpected", message);
+////                                }
+////                            } catch (JSONException e) {
+////                                e.printStackTrace();
+////                            }
+//                        }
+//                    }, new Response.ErrorListener() {
+//                @Override
+//                public void onErrorResponse(VolleyError error) {
+//                    NetworkResponse networkResponse = error.networkResponse;
+//                    String errorMessage = "Unknown error";
+//                    if (networkResponse == null) {
+//                        if (error.getClass().equals(TimeoutError.class)) {
+//                            errorMessage = "Request timeout";
+//                        } else if (error.getClass().equals(NoConnectionError.class)) {
+//                            errorMessage = "Failed to connect server";
+//                        }
+//                    } else {
+//                        String result = new String(networkResponse.data);
+//                        try {
+//                            JSONObject response = new JSONObject(result);
+//                            String status = response.getString("status");
+//                            String message = response.getString("message");
+//
+//                            Log.e("Error Status", status);
+//                            Log.e("Error Message", message);
+//
+//                            if (networkResponse.statusCode == 404) {
+//                                errorMessage = "Resource not found";
+//                            } else if (networkResponse.statusCode == 401) {
+//                                errorMessage = message + " Please login again";
+//                            } else if (networkResponse.statusCode == 400) {
+//                                errorMessage = message + " Check your inputs";
+//                            } else if (networkResponse.statusCode == 500) {
+//                                errorMessage = message + " Something is getting wrong";
+//                            }
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                    Log.i("Error", errorMessage);
+//                    error.printStackTrace();
+//                }
+//            }) {
+//                @Override
+//                protected Map<String, DataPart> getByteData() {
+//                    Map<String, DataPart> params = new HashMap<>();
+//                    if (uriList != null) {
+//                        for (int i = 0; i < uriList.size(); i++) {
+//                            Bitmap bitmap = null;
+//                            try {
+//                                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uriList.get(i));
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                            }
+//                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+//                            byte[] imageBytes = baos.toByteArray();
+////                            "image" + String.valueOf(i), imageBytes
+//                            params.put("image" + String.valueOf(i),
+//                                    new MultipartRequest.DataPart(edtName.getText().toString() + String.valueOf(i) + ".jpg", imageBytes, "image/jpeg"));
+//                        }
+//                    }
+//                    return params;
+//                }
+//            };
+//
+//            DataApplication.requestQueue.add(multipartRequest);
+//        }
         } else {
-            MultipartRequest multipartRequest = new MultipartRequest(Request.Method.POST, DataApplication.serverURL + "/waitinginfo/image",
-                    new Response.Listener<NetworkResponse>() {
-                        @Override
-                        public void onResponse(NetworkResponse response) {
-                            String resultResponse = new String(response.data);
-                            try {
-                                JSONObject result = new JSONObject(resultResponse);
-                                String status = result.getString("status");
-                                String message = result.getString("message");
+            byte[] multipartBody = new byte[0];
+            try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+                DataOutputStream dos = new DataOutputStream(bos);
 
-                                if (status.equals("")) {
-                                    // tell everybody you have succed upload image and post strings
-                                    Log.i("Messsage", message);
-
-                                    Intent temp = new Intent(SettingInfoActivity.this, MyPageActivity.class);
-                                    MyPageActivity.myPageActivity.finish();
-                                    startActivity(temp);
-
-                                } else {
-                                    Log.i("Unexpected", message);
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    NetworkResponse networkResponse = error.networkResponse;
-                    String errorMessage = "Unknown error";
-                    if (networkResponse == null) {
-                        if (error.getClass().equals(TimeoutError.class)) {
-                            errorMessage = "Request timeout";
-                        } else if (error.getClass().equals(NoConnectionError.class)) {
-                            errorMessage = "Failed to connect server";
-                        }
-                    } else {
-                        String result = new String(networkResponse.data);
+                if (uriList != null) {
+                    for (int i = 0; i < uriList.size(); i++) {
+                        Bitmap bitmap = null;
                         try {
-                            JSONObject response = new JSONObject(result);
-                            String status = response.getString("status");
-                            String message = response.getString("message");
-
-                            Log.e("Error Status", status);
-                            Log.e("Error Message", message);
-
-                            if (networkResponse.statusCode == 404) {
-                                errorMessage = "Resource not found";
-                            } else if (networkResponse.statusCode == 401) {
-                                errorMessage = message + " Please login again";
-                            } else if (networkResponse.statusCode == 400) {
-                                errorMessage = message + " Check your inputs";
-                            } else if (networkResponse.statusCode == 500) {
-                                errorMessage = message + " Something is getting wrong";
-                            }
-                        } catch (JSONException e) {
+                            bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uriList.get(i));
+                        } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                        byte[] imageBytes = baos.toByteArray();
+
+
+                        MultipartRequest.buildPart(dos, imageBytes, edtName.getText().toString() + String.valueOf(i) + ".jpg");
                     }
-                    Log.i("Error", errorMessage);
-                    error.printStackTrace();
                 }
-            }) {
+                dos.writeBytes(MultipartRequest.twoHyphens + MultipartRequest.boundary + MultipartRequest.twoHyphens + MultipartRequest.lineEnd);
+                multipartBody = bos.toByteArray();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            MultipartRequest multipartRequest = new MultipartRequest(DataApplication.serverURL + "/waitinginfo/images",
+                    null, MultipartRequest.mimeType, multipartBody, new Response.Listener<NetworkResponse>() {
                 @Override
-                protected Map<String, byte[]> getByteData() {
-                    Map<String, byte[]> params = new HashMap<>();
-                    if (uriList != null) {
-                        for (int i = 0; i < uriList.size(); i++) {
-                            Bitmap bitmap = null;
-                            try {
-                                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uriList.get(i));
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                            byte[] imageBytes = baos.toByteArray();
-//                        edtName.getText().toString() + String.valueOf(i) + ".jpg",
-                            params.put("image" + String.valueOf(i), imageBytes);
-//                                new MultipartRequest.DataPart(imageBytes, "image/jpeg"));
-                        }
-                    }
-                    return params;
+                public void onResponse(NetworkResponse response) {
+                    Toast.makeText(SettingInfoActivity.this, "Upload successfully!", Toast.LENGTH_SHORT).show();
+                    Intent temp = new Intent(SettingInfoActivity.this, MyPageActivity.class);
+                    MyPageActivity.myPageActivity.finish();
+                    startActivity(temp);
                 }
-            };
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(SettingInfoActivity.this, "Upload failed!\r\n" + error.toString(), Toast.LENGTH_SHORT).show();
+                }
+            });
 
             DataApplication.requestQueue.add(multipartRequest);
         }
     }
+
 }
