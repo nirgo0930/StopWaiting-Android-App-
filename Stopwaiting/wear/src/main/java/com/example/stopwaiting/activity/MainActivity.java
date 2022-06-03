@@ -5,11 +5,15 @@ import android.app.Application;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -26,16 +30,16 @@ import java.util.concurrent.ExecutionException;
 public class MainActivity extends Activity {
 
     private TextView mTextView;
-    private ListView listView;
-    private ArrayAdapter<String> textWaitingAdapter;
-    private ArrayList<String> waitingList;
+    public static ListView listView;
+    public static ArrayAdapter<String> textWaitingAdapter;
+    private static ArrayList<String> waitingList;
 
     //임시 타입
-    private String str=null;
+    private static String str = null;
 
-    private String[] strList;
-    private ArrayList<String> screenList;
-
+    private static String[] strList;
+    private static ArrayList<String> screenList;
+    public static List<String> strs;
     private String type;
 
     public static Application mainApp;
@@ -43,6 +47,14 @@ public class MainActivity extends Activity {
     public static SharedPreferences sharedPreferences;
     public static SharedPreferences.Editor autoEdit;
 
+    public static final Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
+            // 원래 하려던 동작 (UI변경 작업 등),
+            Log.e("msg", "msg");
+
+            textWaitingAdapter.notifyDataSetChanged();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,80 +65,98 @@ public class MainActivity extends Activity {
                 + DataApplication.myWaiting.size());
 
         listView = findViewById(R.id.listView);
+
         waitingList = new ArrayList<>();
         screenList = new ArrayList<>();
-        List<String> strs = new ArrayList<>();
-
-        //이부분 서버에서 받아오는 리스트 부분
-        for(int i=0; i< DataApplication.myWaiting.size();i++){
-            if(DataApplication.myWaiting.get(i).getTime().equals("NORMAL")){
-                str="normal/"+DataApplication.myWaiting.get(i).getMyNum()+"/"+
-                        DataApplication.myWaiting.get(i).getQueueName()+"/"+
-                        DataApplication.myWaiting.get(i).getLatitude()+"/"+
-                        DataApplication.myWaiting.get(i).getLongitude()+"/"+
-                        Long.toString(DataApplication.myWaiting.get(i).getQId());
-            }
-            else{//time인 경우
-                str="time/"+DataApplication.myWaiting.get(i).getTime()+"/"+
-                        DataApplication.myWaiting.get(i).getQueueName()+"/"+
-                        DataApplication.myWaiting.get(i).getLatitude()+"/"+
-                        DataApplication.myWaiting.get(i).getLongitude()+"/"+
-                        Long.toString(DataApplication.myWaiting.get(i).getQId());
-            }
-            strs.add(str);
-        }
-
-
-        for (int i = 0; i < strs.size(); i++) { //나중에 서버에서 받아온 수만큼 for문 돌리기
-            strList = strs.get(i).split("/");
-            if (strList[0].equals("normal")) {
-                screenList.add("\t" + strList[1] + "명\t\t\t" + strList[2]);
-            } else {
-                screenList.add("\t" + strList[1] + "\t\t" + strList[2]);
-            }
-        }
-        if(strs.size()==0){
+        strs = new ArrayList<>();
+        if (strs.size() == 0) {
             screenList.add("신청한 웨이팅이 없어요!");
-
-            textWaitingAdapter = new ArrayAdapter<String>(this, R.layout.listview_item, screenList);
-
-            listView.setAdapter(textWaitingAdapter);
         }
-        else{
-            textWaitingAdapter = new ArrayAdapter<String>(this, R.layout.listview_item, screenList);
 
-            listView.setAdapter(textWaitingAdapter);
+        textWaitingAdapter = new ArrayAdapter<String>(this, R.layout.listview_item, screenList);
+        listView.setAdapter(textWaitingAdapter);
+        screenOpen();
+//        textWaitingAdapter = new ArrayAdapter<String>(this, R.layout.listview_item, screenList);
+//        listView.setAdapter(textWaitingAdapter);
+//        screenOpen(textWaitingAdapter, screenList);
 
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (strList != null) {
                     type = strList[0];
                     Intent intent = new Intent(getApplicationContext(), WaitingDetailActivity.class);
                     intent.putExtra("text", strs.get(i));
                     startActivity(intent);
                 }
-            });
-        }
+            }
+        });
+
 
         Button btn_refresh = (Button) findViewById(R.id.btn_refresh);
-        btn_refresh.setOnClickListener(new View.OnClickListener(){
+        btn_refresh.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view){
-                String datapath="/my_path";
-                String message="refresh";
+            public void onClick(View view) {
+                String datapath = "/my_path";
+                String message = "refresh";
                 new SendMessage(datapath, message).start();
-                Log.e("refresh","refresh 보냄");
+                Log.e("refresh", "refresh 보냄");
 
             }
         });
 
+
     }
 
-    class SendMessage extends Thread{
+    public static void screenOpen() {
+        waitingList = new ArrayList<>();
+        ArrayList<String> tempList = new ArrayList<>();
+        strs = new ArrayList<>();
+        handler.sendMessage(handler.obtainMessage());
+        //이부분 서버에서 받아오는 리스트 부분
+        for (int i = 0; i < DataApplication.myWaiting.size(); i++) {
+            if (DataApplication.myWaiting.get(i).getTime().equals("NORMAL")) {
+                str = "normal/" + DataApplication.myWaiting.get(i).getMyNum() + "/" +
+                        DataApplication.myWaiting.get(i).getQueueName() + "/" +
+                        DataApplication.myWaiting.get(i).getLatitude() + "/" +
+                        DataApplication.myWaiting.get(i).getLongitude() + "/" +
+                        Long.toString(DataApplication.myWaiting.get(i).getQId());
+            } else {//time인 경우
+                str = "time/" + DataApplication.myWaiting.get(i).getTime() + "/" +
+                        DataApplication.myWaiting.get(i).getQueueName() + "/" +
+                        DataApplication.myWaiting.get(i).getLatitude() + "/" +
+                        DataApplication.myWaiting.get(i).getLongitude() + "/" +
+                        Long.toString(DataApplication.myWaiting.get(i).getQId());
+            }
+            strs.add(str);
+        }
+
+        for (int i = 0; i < strs.size(); i++) { //나중에 서버에서 받아온 수만큼 for문 돌리기
+            strList = strs.get(i).split("/");
+            if (strList[0].equals("normal")) {
+                tempList.add("\t" + strList[1] + "명\t\t\t" + strList[2]);
+            } else {
+                tempList.add("\t" + strList[1] + "\t\t" + strList[2]);
+            }
+            Log.e("add_cnt", String.valueOf(tempList.get(i).toString()));
+            handler.sendMessage(handler.obtainMessage());
+        }
+
+
+        if (strs.size() == 0) {
+            tempList.add("신청한 웨이팅이 없어요!");
+        }
+        screenList.clear();
+        screenList.addAll(tempList);
+        handler.sendMessage(handler.obtainMessage());
+
+    }
+
+    class SendMessage extends Thread {
         String path;
         String message;
 
-        SendMessage(String p, String m){
+        SendMessage(String p, String m) {
             path = p;
             message = m;
         }
@@ -171,4 +201,7 @@ public class MainActivity extends Activity {
         }
     }
 
+
 }
+
+

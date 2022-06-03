@@ -41,10 +41,10 @@ public class WearService extends WearableListenerService {
     public void onMessageReceived(MessageEvent messageEvent) {
         if (messageEvent.getPath().equals("/my_path")) {
             final String message = new String(messageEvent.getData());
-            Log.e("message머라옴",message);
-            switch (message){
+            Log.e("message머라옴", message);
+            switch (message) {
                 case "refresh":
-                    Log.e("refresh","refresh 왔음");
+                    Log.e("refresh", "refresh 왔음");
                     wearRequest();
                     setWearOS();
 
@@ -64,35 +64,38 @@ public class WearService extends WearableListenerService {
         ((DataApplication) getApplication()).sendRefresh();
         ((DataApplication) getApplication()).sendUserInfo();
 
-        ArrayList<WaitingInfo> tempList = new ArrayList<>();
-        for (int i = 0; i < DataApplication.waitingList.size(); i++) {
-            for (int j = 0; j < ((DataApplication) getApplication()).myWaiting.size(); j++) {
-                WaitingInfo tempA = new WaitingInfo();
-                tempA.setName(DataApplication.myWaiting.get(j).getQueueName());
-                if (DataApplication.waitingList.get(i).getName().equals(DataApplication.myWaiting.get(j).getQueueName()) &&
-                        !tempList.contains(tempA.getName())) {
-                    tempList.add(DataApplication.waitingList.get(i));
-                    break;
-                }
-            }
-        }
+//        ArrayList<WaitingInfo> tempList = new ArrayList<>();
+//        for (int i = 0; i < DataApplication.waitingList.size(); i++) {
+//            for (int j = 0; j < ((DataApplication) getApplication()).myWaiting.size(); j++) {
+//                WaitingInfo tempA = new WaitingInfo();
+//                tempA.setName(DataApplication.myWaiting.get(j).getQueueName());
+//                if (DataApplication.waitingList.get(i).getName().equals(DataApplication.myWaiting.get(j).getQueueName()) &&
+//                        !tempList.contains(tempA.getName())) {
+//                    tempList.add(DataApplication.waitingList.get(i));
+//                    break;
+//                }
+//            }
+//        }
 
         sendMyQueueInfo();
     }
 
     public void wearRequest() {
-        DataApplication.myWaiting = new ArrayList<>();
+//        DataApplication.myWaiting = new ArrayList<>();
         if (DataApplication.isTest) {
+            Log.e("size", String.valueOf(DataApplication.myWaiting.size()));
             for (int i = 0; i < DataApplication.myWaiting.size(); i++) {
                 WaitingInfo selectInfo = new WaitingInfo();
                 for (int j = 0; j < DataApplication.waitingList.size(); j++) {
                     if (DataApplication.waitingList.get(j).getName().equals(DataApplication.myWaiting.get(i).getQueueName())) {
                         selectInfo = DataApplication.waitingList.get(j);
+                        Log.e("cnt", String.format("%d/%d", i, j));
                         break;
                     }
                 }
 
                 WearQueueDTO selectItem = new WearQueueDTO(DataApplication.currentUser, DataApplication.myWaiting.get(i), selectInfo);
+                Log.e("info", selectItem.getQueueName());
                 qDTO.add(selectItem);
             }
         } else {

@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.example.stopwaiting.activity.DataApplication;
+import com.example.stopwaiting.activity.MainActivity;
 import com.example.stopwaiting.dto.UserInfo;
 import com.example.stopwaiting.dto.WearQueueDTO;
 import com.google.android.gms.tasks.Tasks;
@@ -88,7 +89,8 @@ public class MessageService extends WearableListenerService {
 
         autoEdit.commit();
 
-
+        MainActivity.screenOpen();
+//        MainActivity.handler.sendMessage(handler.obtainMessage());
     }
 
     public UserInfo loadUserInfoFromAsset(Asset asset) {
