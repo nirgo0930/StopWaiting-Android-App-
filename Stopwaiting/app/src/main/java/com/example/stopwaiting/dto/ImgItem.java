@@ -4,14 +4,23 @@ import android.net.Uri;
 
 import java.io.Serializable;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ImgItem implements Serializable {
     private String name;
     private Long id;
     private String uri;
 
-    public ImgItem() {
-
-    }
+//    public ImgItem() {
+//
+//    }
 
     public ImgItem(String name, Long id, Uri uri) {
         this.name = name;
@@ -19,28 +28,28 @@ public class ImgItem implements Serializable {
         this.uri = uri.toString();
     }
 
-    public ImgItem(String name, Long id, String uri) {
-        this.name = name;
-        this.id = id;
-        this.uri = uri;
-    }
+//    public ImgItem(String name, Long id, String uri) {
+//        this.name = name;
+//        this.id = id;
+//        this.uri = uri;
+//    }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
+//    public String getName() {
+//        return name;
+//    }
+//
+//    public void setName(String name) {
+//        this.name = name;
+//    }
+//
+//    public Long getId() {
+//        return id;
+//    }
+//
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
+//
     public String getSUri() {
         return uri;
     }

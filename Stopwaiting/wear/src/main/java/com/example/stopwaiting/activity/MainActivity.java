@@ -37,7 +37,6 @@ public class MainActivity extends Activity {
 
     //임시 타입
     private static String str = null;
-
     private static String[] strList;
     private static ArrayList<String> screenList;
     public static List<String> strs;
@@ -66,7 +65,6 @@ public class MainActivity extends Activity {
                 + DataApplication.myWaiting.size());
 
         listView = findViewById(R.id.listView);
-
         waitingList = new ArrayList<>();
         screenList = new ArrayList<>();
         strs = new ArrayList<>();

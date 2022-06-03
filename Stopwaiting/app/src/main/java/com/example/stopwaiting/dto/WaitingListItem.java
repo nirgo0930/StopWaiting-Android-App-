@@ -4,6 +4,15 @@ import android.net.Uri;
 
 import java.io.Serializable;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class WaitingListItem implements Serializable {
     private Uri imgUri;
     private String name;
@@ -12,9 +21,9 @@ public class WaitingListItem implements Serializable {
     private String locDetail;
     private String imgUrl;
 
-    public WaitingListItem() {
-
-    }
+//    public WaitingListItem() {
+//
+//    }
 
     public WaitingListItem(Uri imgId, String txtName, Long qId, int txtWaitingCnt, String txtLocDetail) {
         this.imgUri = imgId;
@@ -32,51 +41,51 @@ public class WaitingListItem implements Serializable {
         this.locDetail = txtLocDetail;
     }
 
-    public Uri getImgUri() {
-        return imgUri;
-    }
-
-    public void setImgUri(Uri mImgUri) {
-        this.imgUri = mImgUri;
-    }
-
-    public String getImgUrl() {
-        return imgUrl;
-    }
-
-    public void setImgUrl(String imgUrl) {
-        this.imgUrl = imgUrl;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String mTxtName) {
-        this.name = mTxtName;
-    }
-
-    public Long getQId() {
-        return qId;
-    }
-
-    public void setQId(Long qId) {
-        this.qId = qId;
-    }
-
-    public int getWaitingCnt() {
-        return waitingCnt;
-    }
-
-    public void setWaitingCnt(int mTxtWaitingCnt) {
-        this.waitingCnt = mTxtWaitingCnt;
-    }
-
-    public String getLocDetail() {
-        return locDetail;
-    }
-
-    public void setLocDetail(String mTxtLocDetail) {
-        this.locDetail = mTxtLocDetail;
-    }
+//    public Uri getImgUri() {
+//        return imgUri;
+//    }
+//
+//    public void setImgUri(Uri mImgUri) {
+//        this.imgUri = mImgUri;
+//    }
+//
+//    public String getImgUrl() {
+//        return imgUrl;
+//    }
+//
+//    public void setImgUrl(String imgUrl) {
+//        this.imgUrl = imgUrl;
+//    }
+//
+//    public String getName() {
+//        return name;
+//    }
+//
+//    public void setName(String mTxtName) {
+//        this.name = mTxtName;
+//    }
+//
+//    public Long getQId() {
+//        return qId;
+//    }
+//
+//    public void setQId(Long qId) {
+//        this.qId = qId;
+//    }
+//
+//    public int getWaitingCnt() {
+//        return waitingCnt;
+//    }
+//
+//    public void setWaitingCnt(int mTxtWaitingCnt) {
+//        this.waitingCnt = mTxtWaitingCnt;
+//    }
+//
+//    public String getLocDetail() {
+//        return locDetail;
+//    }
+//
+//    public void setLocDetail(String mTxtLocDetail) {
+//        this.locDetail = mTxtLocDetail;
+//    }
 }

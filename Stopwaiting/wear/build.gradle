@@ -26,6 +26,9 @@ android {
 }
 
 dependencies {
+    compileOnly 'org.projectlombok:lombok:1.18.16'
+    annotationProcessor 'org.projectlombok:lombok:1.18.16'
+
     implementation 'com.android.support:wear:32.1.0'
 
     implementation 'androidx.percentlayout:percentlayout:1.0.0'
