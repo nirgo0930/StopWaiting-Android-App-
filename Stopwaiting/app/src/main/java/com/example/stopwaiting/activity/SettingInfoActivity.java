@@ -287,7 +287,7 @@ public class SettingInfoActivity extends AppCompatActivity {
             MyPageActivity.myPageActivity.finish();
             startActivity(temp);
         } else {
-            MultipartRequest multipartRequest = new MultipartRequest(Request.Method.POST, DataApplication.serverURL + "/waitinginfo/images",
+            MultipartRequest multipartRequest = new MultipartRequest(Request.Method.POST, DataApplication.serverURL + "/waitinginfo/" + waitingId + "/images",
                     new Response.Listener<NetworkResponse>() {
                         @Override
                         public void onResponse(NetworkResponse response) {

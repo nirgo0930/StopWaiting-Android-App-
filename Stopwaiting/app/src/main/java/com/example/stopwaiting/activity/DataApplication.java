@@ -39,7 +39,7 @@ public class DataApplication extends Application {
     static public RequestQueue requestQueue;
 
     static public String serverURL = "http://192.168.226.52:8080/api/v1";
-    public static String path = "/my_path";
+    public String path = "/my_path";
 
 
     public ArrayList<WaitingInfo> getTestDBList() {
