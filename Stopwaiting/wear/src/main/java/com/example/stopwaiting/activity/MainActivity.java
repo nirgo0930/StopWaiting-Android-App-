@@ -9,13 +9,19 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.stopwaiting.R;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.Wearable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends Activity {
 
@@ -58,14 +64,14 @@ public class MainActivity extends Activity {
                         DataApplication.myWaiting.get(i).getQueueName()+"/"+
                         DataApplication.myWaiting.get(i).getLatitude()+"/"+
                         DataApplication.myWaiting.get(i).getLongitude()+"/"+
-                        Long.toString(DataApplication.myWaiting.get(i).getqId());
+                        Long.toString(DataApplication.myWaiting.get(i).getQId());
             }
             else{//time인 경우
                 str="time/"+DataApplication.myWaiting.get(i).getTime()+"/"+
                         DataApplication.myWaiting.get(i).getQueueName()+"/"+
                         DataApplication.myWaiting.get(i).getLatitude()+"/"+
                         DataApplication.myWaiting.get(i).getLongitude()+"/"+
-                        Long.toString(DataApplication.myWaiting.get(i).getqId());
+                        Long.toString(DataApplication.myWaiting.get(i).getQId());
             }
             strs.add(str);
         }
@@ -94,7 +100,6 @@ public class MainActivity extends Activity {
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
                     type = strList[0];
                     Intent intent = new Intent(getApplicationContext(), WaitingDetailActivity.class);
                     intent.putExtra("text", strs.get(i));
@@ -103,8 +108,67 @@ public class MainActivity extends Activity {
             });
         }
 
+        Button btn_refresh = (Button) findViewById(R.id.btn_refresh);
+        btn_refresh.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                String datapath="/my_path";
+                String message="refresh";
+                new SendMessage(datapath, message);
+                Log.e("refresh","refresh 보냄");
 
+            }
+        });
 
+    }
+
+    class SendMessage extends Thread{
+        String path;
+        String message;
+
+        SendMessage(String p, String m){
+            path = p;
+            message = m;
+        }
+
+        public void run() {
+
+            //Get all the nodes//
+
+            Task<List<Node>> nodeListTask =
+                    Wearable.getNodeClient(getApplicationContext()).getConnectedNodes();
+            try {
+
+                //Block on a task and get the result synchronously//
+
+                List<Node> nodes = Tasks.await(nodeListTask);
+
+                //Send the message to each device//
+
+                for (Node node : nodes) {
+                    Task<Integer> sendMessageTask =
+                            Wearable.getMessageClient(MainActivity.this).sendMessage(node.getId(), path, message.getBytes());
+                    try {
+                        Integer result = Tasks.await(sendMessageTask);
+                        //Handle the errors//
+                    } catch (ExecutionException exception) {
+                        //TO DO//
+                    } catch (InterruptedException exception) {
+                        //TO DO//
+                    }
+
+                }
+
+            } catch (ExecutionException exception) {
+
+                //TO DO//
+
+            } catch (InterruptedException exception) {
+
+                //TO DO//
+
+            }
+        }
     }
 
 }

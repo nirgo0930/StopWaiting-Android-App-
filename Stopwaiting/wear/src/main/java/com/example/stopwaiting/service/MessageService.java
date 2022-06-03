@@ -63,7 +63,7 @@ public class MessageService extends WearableListenerService {
                         break;
                     case "/my_path/refresh":
                         for (int i = 0; i < DataApplication.myWaiting.size(); i++) {
-                            if (DataApplication.myWaiting.get(i).getqId().equals(loadQueueInfoFromAsset(dataMapItem.getDataMap().getAsset("refreshData")).getqId())) {
+                            if (DataApplication.myWaiting.get(i).getQId().equals(loadQueueInfoFromAsset(dataMapItem.getDataMap().getAsset("refreshData")).getQId())) {
                                 if (loadQueueInfoFromAsset(dataMapItem.getDataMap().getAsset("refreshData")).getMyNum() == -1) {
                                     DataApplication.myWaiting.remove(i);
                                 } else {

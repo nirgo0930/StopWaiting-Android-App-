@@ -82,7 +82,7 @@ public class WaitingNormalActivity extends AppCompatActivity {
 
         for (int i = 0; i < ((DataApplication) getApplication()).testWaitingQueueDBList.size(); i++) {
             WaitingQueue temp = ((DataApplication) getApplication()).testWaitingQueueDBList.get(i);
-            if (temp.getQueueName().equals(mWaitingInfo.getName()) && temp.getTime().equals("normal")) {
+            if (temp.getQueueName().equals(mWaitingInfo.getName()) && temp.getTime().equals("NORMAL")) {
                 if (temp.getWaitingPersonList() != null) {
                     waitCnt.setText("현재 " + String.valueOf(temp.getWaitingPersonList().size()) + "명 대기중");
                 } else {
