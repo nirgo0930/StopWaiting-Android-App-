@@ -28,17 +28,18 @@
 
                 <TextView
                     android:id="@+id/textView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="92dp"
+                    android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="웨이팅 목록" />
 
-                <Button
+                <ImageButton
                     android:id="@+id/btn_refresh"
-                    android:layout_width="wrap_content"
+                    android:layout_width="60dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Button" />
+                    android:src="@android:drawable/stat_notify_sync" />
+
             </LinearLayout>
 
             <ListView

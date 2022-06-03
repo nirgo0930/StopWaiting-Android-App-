@@ -13,6 +13,7 @@ import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -93,7 +94,7 @@ public class MainActivity extends Activity {
         });
 
 
-        Button btn_refresh = (Button) findViewById(R.id.btn_refresh);
+        ImageButton btn_refresh = (ImageButton) findViewById(R.id.btn_refresh);
         btn_refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
