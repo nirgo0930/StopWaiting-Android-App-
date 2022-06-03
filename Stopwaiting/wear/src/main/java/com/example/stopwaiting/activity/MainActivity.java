@@ -53,7 +53,7 @@ public class MainActivity extends Activity {
 
         //이부분 서버에서 받아오는 리스트 부분
         for(int i=0; i< DataApplication.myWaiting.size();i++){
-            if(DataApplication.myWaiting.get(i).getTime().equals("normal")){
+            if(DataApplication.myWaiting.get(i).getTime().equals("NORMAL")){
                 str="normal/"+DataApplication.myWaiting.get(i).getMyNum()+"/"+
                         DataApplication.myWaiting.get(i).getQueueName()+"/"+
                         DataApplication.myWaiting.get(i).getLatitude()+"/"+
