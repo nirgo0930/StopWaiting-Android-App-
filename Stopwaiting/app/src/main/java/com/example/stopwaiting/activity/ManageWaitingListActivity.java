@@ -50,6 +50,8 @@ public class ManageWaitingListActivity extends AppCompatActivity {
         txtTitle = findViewById(R.id.txtTitle);
         recyclerView = findViewById(R.id.recyclerView);
 
+        tempWaitingInfo = new WaitingInfo();
+        tempImgInfo = new ImgItem();
         mWaitingList = new ArrayList<>();
         mWaitingQueueList = new ArrayList<>();
         mListAdapter = new ManageWaitingListAdapter(this, mWaitingList);
@@ -60,28 +62,23 @@ public class ManageWaitingListActivity extends AppCompatActivity {
 
         txtTitle.setText("개설한 웨이팅");
 
-        myManageWaitingInfoRequest();
+        myWaitingRequest();
 
         if (mWaitingQueueList.size() > 0) {
-            for (int i = 0; i < mWaitingQueueList.size(); i++) {
-                waitingInfoRequest(mWaitingQueueList.get(i).getQueueName());
-                WaitingInfo tempInfo = tempWaitingInfo;
-
-
-                tempImgInfo.setSUri(tempInfo.getUrlList().get(0));
-
-                ImgItem tempImg = tempImgInfo;
+            for (WaitingQueue selectQueue : mWaitingQueueList) {
+                waitingInfoRequest(selectQueue.getQId());
+                tempImgInfo.setSUri(tempWaitingInfo.getUrlList().get(0));
 
                 boolean check = false;
                 for (int j = 0; j < mWaitingList.size(); j++) {
-                    if (mWaitingList.get(j).getName().equals(mWaitingQueueList.get(i).getQueueName())) {
+                    if (mWaitingList.get(j).getName().equals(selectQueue.getQueueName())) {
                         check = true;
                         break;
                     }
                 }
                 if (!check) {
-                    mWaitingList.add(new WaitingListItem(tempImg.getUri(), mWaitingQueueList.get(i).getQueueName(), mWaitingQueueList.get(i).getQId(),
-                            mWaitingQueueList.get(i).getWaitingPersonList().size(), tempInfo.getLocDetail()));
+                    mWaitingList.add(new WaitingListItem(tempImgInfo.getUri(), selectQueue.getQueueName(), selectQueue.getQId(),
+                            selectQueue.getWaitingPersonList().size(), tempWaitingInfo.getLocDetail()));
                 }
 
             }
@@ -93,23 +90,19 @@ public class ManageWaitingListActivity extends AppCompatActivity {
         mListAdapter.notifyDataSetChanged();
     }
 
-    public void myManageWaitingInfoRequest() {
+    public void myWaitingRequest() {
         if (DataApplication.isTest) {
             for (int i = 0; i < DataApplication.testDBList.size(); i++) {
                 WaitingInfo tempInfo = DataApplication.testDBList.get(i);
                 if (tempInfo.getAdminId().equals(DataApplication.currentUser.getStudentCode())) {
-                    String qName = tempInfo.getName();
                     for (int j = 0; j < DataApplication.testWaitingQueueDBList.size(); j++) {
                         WaitingQueue tempQ = DataApplication.testWaitingQueueDBList.get(j);
-                        if (tempQ.getQueueName().equals(qName)) {
+                        if (tempQ.getQueueName().equals(tempInfo.getName())) {
                             mWaitingQueueList.add(tempQ);
                         }
                     }
                 }
             }
-
-
-
 
         } else {
             JSONObject jsonBodyObj = new JSONObject();
@@ -126,7 +119,6 @@ public class ManageWaitingListActivity extends AppCompatActivity {
                 public void onResponse(JSONObject jsonObject) {
                     try {
                         JSONArray dataArray = jsonObject.getJSONArray("data");
-                        mWaitingList = new ArrayList<>();
                         mWaitingQueueList = new ArrayList<>();
                         for (int i = 0; i < dataArray.length(); i++) {
                             JSONObject dataObject = dataArray.getJSONObject(i);
@@ -188,19 +180,21 @@ public class ManageWaitingListActivity extends AppCompatActivity {
         }
     }
 
-    public void waitingInfoRequest(String waitingName) {
+    public void waitingInfoRequest(Long qId) {
         if (DataApplication.isTest) {
-            for (int j = 0; j < DataApplication.testDBList.size(); j++) {
-                WaitingInfo temp = DataApplication.testDBList.get(j);
-                if (temp.getName().equals(waitingName)) {
-                    tempWaitingInfo = temp;
+            for (WaitingInfo tempInfo : DataApplication.testDBList) {
+                for (WaitingQueue tempQ : DataApplication.testWaitingQueueDBList) {
+                    if (tempQ.getQId().equals(qId) && tempInfo.getName().equals(tempQ.getQueueName())) {
+                        mWaitingQueueList.add(tempQ);
+                        break;
+                    }
                 }
             }
         } else {
             WaitingInfo tempInfo = new WaitingInfo();
             JSONObject jsonBodyObj = new JSONObject();
             try {
-                jsonBodyObj.put("name", waitingName);
+                jsonBodyObj.put("queueId", qId);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -212,7 +206,6 @@ public class ManageWaitingListActivity extends AppCompatActivity {
                 public void onResponse(JSONObject jsonObject) {
                     try {
                         JSONArray dataArray = jsonObject.getJSONArray("data");
-
                         for (int i = 0; i < dataArray.length(); i++) {
                             JSONObject dataObject = dataArray.getJSONObject(i);
 
@@ -272,72 +265,4 @@ public class ManageWaitingListActivity extends AppCompatActivity {
         }
     }
 
-//    public void imgRequest(String waitingName) {
-//        if (DataApplication.isTest) {
-//            for (int i = 0; i < DataApplication.testImageDBList.size(); i++) {
-//                tempImgInfo = DataApplication.testImageDBList.get(i);
-//                if (tempImgInfo.getName().equals(waitingName)) {
-//                    break;
-//                }
-//            }
-//        } else {
-//            ImgItem tempInfo = new ImgItem();
-//            JSONObject jsonBodyObj = new JSONObject();
-//            try {
-//                jsonBodyObj.put("name", waitingName);
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//            final String requestBody = String.valueOf(jsonBodyObj.toString());
-//
-//            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, DataApplication.serverURL + "/waitingInfo",
-//                    null, new Response.Listener<JSONObject>() {
-//                @Override
-//                public void onResponse(JSONObject jsonObject) {
-//                    try {
-//                        JSONArray dataArray = jsonObject.getJSONArray("data");
-//
-//                        for (int i = 0; i < dataArray.length(); i++) {
-//                            JSONObject dataObject = dataArray.getJSONObject(i);
-//
-//                            tempInfo.setId(dataObject.getLong("id"));
-//                            tempInfo.setName(dataObject.getString("name"));
-//
-//                            tempImgInfo = tempInfo;
-//                        }
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }, new Response.ErrorListener() {
-//                @Override
-//                public void onErrorResponse(VolleyError error) {
-//                    Toast.makeText(getApplicationContext(), "로딩에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-//                }
-//            }) {
-//                @Override
-//                public Map<String, String> getHeaders() throws AuthFailureError {
-//                    HashMap<String, String> headers = new HashMap<String, String>();
-//                    headers.put("Content-Type", "application/json");
-//                    return headers;
-//                }
-//
-//                @Override
-//                public byte[] getBody() {
-//                    try {
-//                        if (requestBody != null && requestBody.length() > 0 && !requestBody.equals("")) {
-//                            return requestBody.getBytes("utf-8");
-//                        } else {
-//                            return null;
-//                        }
-//                    } catch (UnsupportedEncodingException uee) {
-//                        return null;
-//                    }
-//                }
-//            };
-//
-//            request.setShouldCache(false);
-//            DataApplication.requestQueue.add(request);
-//        }
-//    }
 }

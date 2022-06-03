@@ -151,7 +151,7 @@ public class WaitingNormalActivity extends AppCompatActivity {
         if (DataApplication.isTest) {
             for (int i = 0; i < ((DataApplication) getApplication()).testWaitingQueueDBList.size(); i++) {
                 WaitingQueue temp = ((DataApplication) getApplication()).testWaitingQueueDBList.get(i);
-                if (temp.getQueueName().equals(name.getText()) && temp.getTime().equals("normal")) {
+                if (temp.getQueueName().equals(name.getText()) && temp.getTime().equals("NORMAL")) {
                     if (temp.getWaitingPersonList() != null) {
                         int check = temp.addWPerson(((DataApplication) getApplication()).currentUser);
                         switch (check) {

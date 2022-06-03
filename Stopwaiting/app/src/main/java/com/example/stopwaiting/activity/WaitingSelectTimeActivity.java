@@ -206,21 +206,19 @@ public class WaitingSelectTimeActivity extends AppCompatActivity implements Adap
         if (DataApplication.isTest) {
             for (int i = 0; i < ((DataApplication) getApplication()).testWaitingQueueDBList.size(); i++) {
                 WaitingQueue temp = ((DataApplication) getApplication()).testWaitingQueueDBList.get(i);
-                if (temp.getQueueName().equals(name.getText()) && temp.getTime().equals(choice.getText())) {
-                    if (temp.getWaitingPersonList() != null) {
-                        int check = temp.addWPerson(((DataApplication) getApplication()).currentUser);
-                        switch (check) {
-                            case 0:
-                                ((DataApplication) getApplication()).testWaitingQueueDBList.set(i, temp);
-                                finish();
-                                break;
-                            case 1:
-                                Toast.makeText(getApplicationContext(), "이미 등록한 웨이팅입니다.", Toast.LENGTH_SHORT).show();
-                                break;
-                            case 2:
-                                Toast.makeText(getApplicationContext(), "최대 인원인 웨이팅입니다.", Toast.LENGTH_SHORT).show();
-                                break;
-                        }
+                if (temp.getQueueName().equals(name.getText()) && temp.getTime().equals(choice.getText()) && temp.getWaitingPersonList() != null) {
+                    int check = temp.addWPerson(((DataApplication) getApplication()).currentUser);
+                    switch (check) {
+                        case 0:
+                            ((DataApplication) getApplication()).testWaitingQueueDBList.set(i, temp);
+                            finish();
+                            break;
+                        case 1:
+                            Toast.makeText(getApplicationContext(), "이미 등록한 웨이팅입니다.", Toast.LENGTH_SHORT).show();
+                            break;
+                        case 2:
+                            Toast.makeText(getApplicationContext(), "최대 인원인 웨이팅입니다.", Toast.LENGTH_SHORT).show();
+                            break;
                     }
                     break;
                 }

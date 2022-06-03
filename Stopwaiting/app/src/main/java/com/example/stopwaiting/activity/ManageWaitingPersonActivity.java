@@ -19,10 +19,7 @@ import java.util.ArrayList;
 public class ManageWaitingPersonActivity extends AppCompatActivity {
     public static Activity manageWaitingPersonActivity;
     public static Long qId;
-    private WaitingQueue wQueue;
     private RecyclerView recyclerView;
-    private ManageWaitingPersonAdapter mListAdapter;
-    private ArrayList<UserInfo> userList;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,17 +35,15 @@ public class ManageWaitingPersonActivity extends AppCompatActivity {
         txtTitle.setText("대기 명단");
         txtNotice.setText("길게 눌러서 명단에서 제거");
 
-        wQueue = new WaitingQueue();
-        userList = new ArrayList<>();
+        ArrayList<UserInfo> userList = new ArrayList<>();
 
-        for (int i = 0; i < DataApplication.testWaitingQueueDBList.size(); i++) {
-            if (DataApplication.testWaitingQueueDBList.get(i).getQId().equals(qId)) {
-                wQueue = (DataApplication.testWaitingQueueDBList.get(i));
-                userList = wQueue.getWaitingPersonList();
+        for (WaitingQueue tempQueue : DataApplication.testWaitingQueueDBList) {
+            if (tempQueue.getQId().equals(qId)) {
+                userList = tempQueue.getWaitingPersonList();
                 break;
             }
         }
-        mListAdapter = new ManageWaitingPersonAdapter(this, userList);
+        ManageWaitingPersonAdapter mListAdapter = new ManageWaitingPersonAdapter(this, userList);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mListAdapter);

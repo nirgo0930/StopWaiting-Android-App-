@@ -209,18 +209,6 @@ public class SettingInfoActivity extends AppCompatActivity {
                 jsonBodyObj.put("information", edtInfo.getText().toString());
                 jsonBodyObj.put("maxPerson", Integer.valueOf(edtPerson.getText().toString()));
                 jsonBodyObj.put("type", "NORMAL");
-//                jsonBodyObj.put("timetables", new ArrayList<>());
-
-//                JSONArray imgArray = new JSONArray();
-//                for (int i = 0; i < uriList.size(); i++) {
-//                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uriList.get(i));
-//                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-//                    byte[] imageBytes = baos.toByteArray();
-//                    String encodedImage = Base64Utils.encodeUrlSafe(imageBytes);
-//                    imgArray.put(encodedImage);
-//                }
-//                jsonBodyObj.put("images", imgArray);
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -271,13 +259,12 @@ public class SettingInfoActivity extends AppCompatActivity {
         if (DataApplication.isTest) {
             ArrayList<String> imgList = new ArrayList<>();
             if (uriList.size() > 0) {
-                for (int i = 0; i < uriList.size(); i++) {
-                    imgList.add(uriList.get(i).toString());
+                for (Uri img : uriList) {
+                    imgList.add(img.toString());
                 }
             }
-            for (int i = 0; i < DataApplication.testDBList.size(); i++) {
-                if (DataApplication.testDBList.get(i).getWaitingId().equals(waitingId)) {
-                    WaitingInfo temp = DataApplication.testDBList.get(i);
+            for (WaitingInfo temp : DataApplication.testDBList) {
+                if (temp.getWaitingId().equals(waitingId)) {
                     temp.setUrlList(imgList);
                     break;
                 }
@@ -291,26 +278,10 @@ public class SettingInfoActivity extends AppCompatActivity {
                     new Response.Listener<NetworkResponse>() {
                         @Override
                         public void onResponse(NetworkResponse response) {
-//                            String resultResponse = new String(response.data);
-//                            try {
-//                                JSONObject result = new JSONObject(resultResponse);
-//                                String status = result.getString("status");
-//                                String message = result.getString("message");
-//
-//                                if (status.equals("")) {
-//                                    // tell everybody you have succed upload image and post strings
-//                                    Log.i("Messsage", message);
-
                             Intent temp = new Intent(SettingInfoActivity.this, MyPageActivity.class);
                             MyPageActivity.myPageActivity.finish();
                             startActivity(temp);
 
-//                                } else {
-//                                    Log.i("Unexpected", message);
-//                                }
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            }
                         }
                     }, new Response.ErrorListener() {
                 @Override

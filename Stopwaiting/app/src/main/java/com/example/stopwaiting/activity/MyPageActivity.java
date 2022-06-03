@@ -72,7 +72,6 @@ public class MyPageActivity extends AppCompatActivity {
                 startActivity(intent);
 
                 SharedPreferences sharedPreferences = getSharedPreferences("Login", Activity.MODE_PRIVATE);
-
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();
                 editor.commit();

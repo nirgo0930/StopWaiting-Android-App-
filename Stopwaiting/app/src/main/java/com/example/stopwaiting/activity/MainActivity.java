@@ -194,8 +194,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 String selectName = data.getStringExtra("name");
                 switch (data.getIntExtra("case", 0)) {
                     case 1:
-                        for (int i = 0; i < DataApplication.waitingList.size(); i++) {
-                            WaitingInfo temp = DataApplication.waitingList.get(i);
+                        for (WaitingInfo temp : DataApplication.waitingList) {
                             if (temp.getName().equals(selectName)) {
                                 CameraUpdate cameraUpdate = CameraUpdate.scrollAndZoomTo(
                                         new LatLng(temp.getLatitude(), temp.getLongitude()), 15).animate(CameraAnimation.Fly, 1000);
@@ -215,27 +214,24 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void refresh() {
-        for (int i = 0; i < markers.size(); i++) {
-            markers.get(i).setMap(null);
+        for (Marker marker : markers) {
+            marker.setMap(null);
         }
         markers = new ArrayList<>();
 
         waitingInfoAllRequest();
-
         myWaitingRequest();
-
         setWearOS();
     }
 
     public void myWaitingRequest() {
         DataApplication.myWaiting = new ArrayList<>();
         if (DataApplication.isTest) {
-            for (int i = 0; i < DataApplication.testWaitingQueueDBList.size(); i++) {
-                WaitingQueue tempDBQ = DataApplication.testWaitingQueueDBList.get(i);
-                for (int j = 0; j < tempDBQ.getWaitingPersonList().size(); j++) {
-                    if (tempDBQ.getWaitingPersonList().get(j).getStudentCode().equals(DataApplication.currentUser.getStudentCode()) &&
-                            !(DataApplication.myWaiting.contains(tempDBQ))) {
-                        DataApplication.myWaiting.add(tempDBQ);
+            for (WaitingQueue tempQueue : DataApplication.testWaitingQueueDBList) {
+                for (UserInfo tempUser : tempQueue.getWaitingPersonList()) {
+                    if (tempUser.getStudentCode().equals(DataApplication.currentUser.getStudentCode())
+                            && !(DataApplication.myWaiting.contains(tempQueue))) {
+                        DataApplication.myWaiting.add(tempQueue);
                     }
                 }
             }
@@ -361,12 +357,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                         data.setTimetable(new ArrayList());
                                     }
                                     ArrayList<String> urlList = new ArrayList();
-//                                    if (dataObject.getJSONArray("images") != null) {
-//                                        JSONArray imageArray = dataObject.getJSONArray("images");
-//                                        for (int j = 0; j < imageArray.length(); j++) {
-//                                            urlList.add(imageArray.getString(j));
-//                                        }
-//                                    }
+                                    if (dataObject.getJSONArray("images") != null) {
+                                        JSONArray imageArray = dataObject.getJSONArray("images");
+                                        for (int j = 0; j < imageArray.length(); j++) {
+                                            JSONObject imgInfo = imageArray.getJSONObject(j);
+
+                                            urlList.add(((DataApplication) getApplication()).imgURL + imgInfo.getString("fileurl"));
+                                            Log.e("URL", ((DataApplication) getApplication()).imgURL + imgInfo.getString("fileurl"));
+
+                                        }
+                                    }
                                     data.setUrlList(urlList);
 
                                     setInfo(data);
@@ -416,13 +416,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         ((DataApplication) getApplication()).sendUserInfo();
 
         ArrayList<WaitingInfo> tempList = new ArrayList<>();
-        for (int i = 0; i < DataApplication.waitingList.size(); i++) {
-            for (int j = 0; j < ((DataApplication) getApplication()).myWaiting.size(); j++) {
-                WaitingInfo tempA = new WaitingInfo();
-                tempA.setName(DataApplication.myWaiting.get(j).getQueueName());
-                if (DataApplication.waitingList.get(i).getName().equals(DataApplication.myWaiting.get(j).getQueueName()) &&
-                        !tempList.contains(tempA.getName())) {
-                    tempList.add(DataApplication.waitingList.get(i));
+        for (WaitingInfo tempInfo : DataApplication.waitingList) {
+            for (WaitingQueue tempQueue : ((DataApplication) getApplication()).myWaiting) {
+                WaitingInfo temp = new WaitingInfo();
+                temp.setName(tempQueue.getQueueName());
+                if (tempInfo.getName().equals(tempQueue.getQueueName()) && !tempList.contains(temp.getName())) {
+                    tempList.add(tempInfo);
                     break;
                 }
             }
