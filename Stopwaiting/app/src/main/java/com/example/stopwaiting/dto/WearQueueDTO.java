@@ -11,11 +11,11 @@ public class WearQueueDTO implements Serializable {
     private Double longitude; //경도
 
 
-    public Long getqId() {
+    public Long getQId() {
         return qId;
     }
 
-    public void setqId(Long qId) {
+    public void setQId(Long qId) {
         this.qId = qId;
     }
 

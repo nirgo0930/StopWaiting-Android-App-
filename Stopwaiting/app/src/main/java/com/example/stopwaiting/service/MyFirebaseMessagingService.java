@@ -1,6 +1,5 @@
 package com.example.stopwaiting.service;
 
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
@@ -83,7 +82,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         byte[] serializedMember = null;
 
         WearQueueDTO tempQ = new WearQueueDTO();
-        tempQ.setqId(qId);
+        tempQ.setQId(qId);
         tempQ.setMyNum(myNum);
 
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
