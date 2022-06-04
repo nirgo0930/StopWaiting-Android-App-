@@ -90,7 +90,6 @@ public class MessageService extends WearableListenerService {
         autoEdit.commit();
 
         MainActivity.screenOpen();
-//        MainActivity.handler.sendMessage(handler.obtainMessage());
     }
 
     public UserInfo loadUserInfoFromAsset(Asset asset) {
@@ -98,7 +97,7 @@ public class MessageService extends WearableListenerService {
         if (asset == null) {
             return null;
         }
-        // convert asset into a file descriptor and block until it's ready
+        // asset을 파일 설명자로 변환하고 준비될 때까지 차단
         InputStream assetInputStream = null;
         try {
             assetInputStream = Tasks.await(Wearable.getDataClient(getApplicationContext()).getFdForAsset(asset)).getInputStream();
@@ -125,7 +124,6 @@ public class MessageService extends WearableListenerService {
             Log.w(TAG, "Requested an unknown Asset.");
             return null;
         }
-        // decode the stream into a bitmap
         return data;
     }
 
@@ -134,7 +132,6 @@ public class MessageService extends WearableListenerService {
         if (asset == null) {
             return null;
         }
-        // convert asset into a file descriptor and block until it's ready
         InputStream assetInputStream = null;
         try {
             assetInputStream = Tasks.await(Wearable.getDataClient(getApplicationContext()).getFdForAsset(asset)).getInputStream();
@@ -161,7 +158,6 @@ public class MessageService extends WearableListenerService {
             Log.w(TAG, "Requested an unknown Asset.");
             return null;
         }
-        // decode the stream into a bitmap
         return data;
     }
 }

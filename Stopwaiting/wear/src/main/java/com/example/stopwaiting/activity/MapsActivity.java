@@ -13,7 +13,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.wear.widget.SwipeDismissFrameLayout;
 
 import com.example.stopwaiting.R;
@@ -26,8 +25,6 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-//import androidx.test.core.app.ApplicationProvider;
 
 public class MapsActivity extends Activity implements OnMapReadyCallback {
 
@@ -59,10 +56,6 @@ public class MapsActivity extends Activity implements OnMapReadyCallback {
                 binding.swipeDismissRootContainer;
         final FrameLayout mapFrameLayout = binding.mapContainer;
 
-        // Enables the Swipe-To-Dismiss Gesture via the root layout (SwipeDismissFrameLayout).
-        // Swipe-To-Dismiss is a standard pattern in Wear for closing an app and needs to be
-        // manually enabled for any Google Maps Activity. For more information, review our docs:
-        // https://developer.android.com/training/wearables/ui/exit.html
         swipeDismissRootFrameLayout.addCallback(new SwipeDismissFrameLayout.Callback() {
             @Override
             public void onDismissed(SwipeDismissFrameLayout layout) {
@@ -72,7 +65,7 @@ public class MapsActivity extends Activity implements OnMapReadyCallback {
             }
         });
 
-        // Adjusts margins to account for the system window insets when they become available.
+        //시스템 창 삽입을 사용할 수 있게 되면 이를 고려하여 여백을 조정
         swipeDismissRootFrameLayout.setOnApplyWindowInsetsListener(
                 new View.OnApplyWindowInsetsListener() {
                     @Override
@@ -82,7 +75,7 @@ public class MapsActivity extends Activity implements OnMapReadyCallback {
                         FrameLayout.LayoutParams params =
                                 (FrameLayout.LayoutParams) mapFrameLayout.getLayoutParams();
 
-                        // Sets Wearable insets to FrameLayout container holding map as margins
+                        // 지도를 여백으로 유지하는 FrameLayout 컨테이너에 웨어러블 인셋 설정
                         params.setMargins(
                                 insets.getSystemWindowInsetLeft(),
                                 insets.getSystemWindowInsetTop(),
@@ -94,25 +87,16 @@ public class MapsActivity extends Activity implements OnMapReadyCallback {
                     }
                 });
 
-        // Obtain the MapFragment and set the async listener to be notified when the map is ready.
+        // MapFragment를 가져오고 지도가 준비되면 알림을 받을 비동기 수신기를 설정
         MapFragment mapFragment =
                 (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-//        //자기 위치 반환
+        //자기 위치 반환
         locationSource = LocationServices.getFusedLocationProviderClient(this);
 
-
-        // 권한ID를 가져옵니다
-//        int permission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-//        int permission2 = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
-       // int permission,permission2;
-        // 권한이 열려있는지 확인
-       // if (permission == PackageManager.PERMISSION_DENIED || permission2 == PackageManager.PERMISSION_DENIED) {
-            // 마쉬멜로우 이상버전부터 권한을 물어본다
+            // 마쉬멜로우 이상버전부터 권한 요청
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                // 권한 체크(READ_PHONE_STATE의 requestCode를 1000으로 세팅
                 requestPermissions(
                         new String[]
                                 {Manifest.permission.ACCESS_FINE_LOCATION,
@@ -120,7 +104,6 @@ public class MapsActivity extends Activity implements OnMapReadyCallback {
                         1000);
             }
             return;
-        //}
     }
 
     // 권한 체크 이후로직
@@ -141,13 +124,7 @@ public class MapsActivity extends Activity implements OnMapReadyCallback {
             // 권한 체크에 동의를 하지 않으면 안드로이드 종료
             if (check_result == true) {
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
+
                     return;
                 }
                 mMap.setMyLocationEnabled(true);
@@ -160,33 +137,23 @@ public class MapsActivity extends Activity implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        // Map is ready to be used.
+        // 맵 준비 완료
         mMap = googleMap;
-
-        //googleMap.(locationSource);
-
-        // Inform user how to close app (Swipe-To-Close).
-        int duration = Toast.LENGTH_LONG;
-//        Toast toast = Toast.makeText(getApplicationContext(), "ㅇㅅㅇ", duration);
-//        toast.setGravity(Gravity.CENTER, 0, 0);
-//        toast.show();
-
-        //얘네들 서버로 받아서 좌표랑 이름 입력
 
         Intent intent = getIntent();
         latitude =intent.getDoubleExtra("latitude",0);
         longitude = intent.getDoubleExtra("longitude", 0);
         String name = intent.getStringExtra("location");
 
-        LatLng location2 = new LatLng(latitude, longitude);
-        mMap.addMarker(new MarkerOptions().position(location2).title(name));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(location2));
+        LatLng location = new LatLng(latitude, longitude);
+        mMap.addMarker(new MarkerOptions().position(location).title(name));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
 
         //줌버튼 입력
         mMap.getUiSettings().setZoomControlsEnabled(true);
         
         //초기줌 설정
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location2, 16));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 16));
 
     }
 }

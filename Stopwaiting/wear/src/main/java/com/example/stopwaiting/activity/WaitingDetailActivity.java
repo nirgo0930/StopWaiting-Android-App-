@@ -7,23 +7,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
-import com.example.stopwaiting.R;
 import com.example.stopwaiting.databinding.ActivityDetailBinding;
 import com.example.stopwaiting.service.SendMessage;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
-import com.google.android.gms.wearable.Node;
-import com.google.android.gms.wearable.Wearable;
-
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class WaitingDetailActivity extends Activity {
 
-    //private TextView mTextView;
     private double latitude;
     private double longitude;
     private String location;
@@ -38,10 +27,6 @@ public class WaitingDetailActivity extends Activity {
         binding = ActivityDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-
-        //setContentView(R.layout.activity_detail);
-
-
         Intent intent = getIntent();
 
         String text = intent.getStringExtra("text");
@@ -51,9 +36,6 @@ public class WaitingDetailActivity extends Activity {
         latitude = Double.parseDouble(textList[3]);
         longitude = Double.parseDouble(textList[4]);
         qId = textList[5];
-
-        //TextView textLoc = findViewById(R.id.textLoc);
-        //TextView textTime = findViewById(R.id.textTime);
 
         if(textList[0].equals("normal")){
             if(textList[1].equals("0")){
@@ -69,7 +51,6 @@ public class WaitingDetailActivity extends Activity {
         binding.textLoc.setText(location);
 
         //취소하기
-        //Button btnCancel = (Button) findViewById(R.id.btnCancel);
         binding.btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -99,7 +80,6 @@ public class WaitingDetailActivity extends Activity {
         });
 
         //QR인식
-        //Button btnQR = (Button) findViewById(R.id.btnQR);
         binding.btnQR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -109,7 +89,6 @@ public class WaitingDetailActivity extends Activity {
         });
 
         //위치확인
-        //Button btnLoc = (Button) findViewById(R.id.btnLoc);
         binding.btnLoc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -122,53 +101,4 @@ public class WaitingDetailActivity extends Activity {
         });
 
     }
-
-//    class SendMessage extends Thread{
-//        String path;
-//        String message;
-//
-//        SendMessage(String p, String m){
-//            path = p;
-//            message = m;
-//        }
-//
-//        public void run() {
-//
-//            //Get all the nodes//
-//
-//            Task<List<Node>> nodeListTask =
-//                    Wearable.getNodeClient(getApplicationContext()).getConnectedNodes();
-//            try {
-//
-//            //Block on a task and get the result synchronously//
-//
-//                List<Node> nodes = Tasks.await(nodeListTask);
-//
-//            //Send the message to each device//
-//
-//                for (Node node : nodes) {
-//                    Task<Integer> sendMessageTask =
-//                            Wearable.getMessageClient(WaitingDetailActivity.this).sendMessage(node.getId(), path, message.getBytes());
-//                    try {
-//                        Integer result = Tasks.await(sendMessageTask);
-//                        //Handle the errors//
-//                    } catch (ExecutionException exception) {
-//                        //TO DO//
-//                    } catch (InterruptedException exception) {
-//                        //TO DO//
-//                    }
-//
-//                }
-//
-//            } catch (ExecutionException exception) {
-//
-//                //TO DO//
-//
-//            } catch (InterruptedException exception) {
-//
-//                //TO DO//
-//
-//            }
-//        }
-//    }
 }

@@ -22,39 +22,28 @@ public class SendMessage extends Thread{
     }
 
     public void run() {
-        //Get all the nodes//
 
         Task<List<Node>> nodeListTask =
                 Wearable.getNodeClient(context).getConnectedNodes();
         try {
 
-            //Block on a task and get the result synchronously//
-
             List<Node> nodes = Tasks.await(nodeListTask);
-
-            //Send the message to each device//
 
             for (Node node : nodes) {
                 Task<Integer> sendMessageTask =
                         Wearable.getMessageClient(context).sendMessage(node.getId(), path, message.getBytes());
                 try {
                     Integer result = Tasks.await(sendMessageTask);
-                    //Handle the errors//
                 } catch (ExecutionException exception) {
-                    //TO DO//
+
                 } catch (InterruptedException exception) {
-                    //TO DO//
                 }
 
             }
 
         } catch (ExecutionException exception) {
 
-            //TO DO//
-
         } catch (InterruptedException exception) {
-
-            //TO DO//
 
         }
     }
