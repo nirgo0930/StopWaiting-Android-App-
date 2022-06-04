@@ -24,6 +24,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.stopwaitingadmin.R;
+import com.example.stopwaitingadmin.databinding.LoginBinding;
 import com.example.stopwaitingadmin.dto.AdminWaitingListItem;
 
 import org.json.JSONException;
@@ -35,11 +36,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
-    private EditText edt_id, edt_password;
-    private Button btn_login;
     public static Activity login_Activity;
     private final String sharedID = "Login";
     private String token;
+
+    private LoginBinding binding;
 
     String[] permission_list = {
             Manifest.permission.INTERNET,
@@ -56,7 +57,8 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login);
+        binding = LoginBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         login_Activity = LoginActivity.this;
 
         checkPermissions(permission_list);
@@ -64,38 +66,12 @@ public class LoginActivity extends AppCompatActivity {
         if (DataApplication.requestQueue == null)
             DataApplication.requestQueue = Volley.newRequestQueue(getApplicationContext());
 
-        edt_id = findViewById(R.id.edtId);
-        edt_password = findViewById(R.id.edtPw);
-        btn_login = findViewById(R.id.btnLogin);
-
-        btn_login.setOnClickListener(new View.OnClickListener() {
+        binding.btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                SharedPreferences sharedPreferences = getSharedPreferences(sharedID, Activity.MODE_PRIVATE);
-//
-//                SharedPreferences.Editor autoLogin = sharedPreferences.edit();
-//
-//                autoLogin.putString("inputId", edt_id.getText().toString());
-//                autoLogin.putString("inputPwd", edt_password.getText().toString());
-//
-//                autoLogin.commit();
 
                 loginRequest();
 
-                // 이전 로그인 모듈
-//                String userID = edt_id.getText().toString();
-//                String userPass = edt_password.getText().toString();
-//
-//                if (userID.equals("test") && userPass.equals("test")) {
-//                    Toast.makeText(getApplicationContext(), "로그인에 성공하였습니다.\n 잠시만 기다려주세요", Toast.LENGTH_SHORT).show();
-//                    Intent loginIntent = new Intent(LoginActivity.this, AdminMainActivity.class);
-//                    loginIntent.putExtra("userID", userID);
-//                    loginIntent.putExtra("userPass", userPass);
-//                    startActivity(loginIntent);
-//                } else { // 로그인에 실패한 경우
-//                    Toast.makeText(getApplicationContext(), "로그인에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
             }
         });
     }
@@ -130,7 +106,7 @@ public class LoginActivity extends AppCompatActivity {
     public void loginRequest() {
         if (DataApplication.isTest) {
             //로그인 정보 확인
-            if (edt_id.getText().toString().equals("test") && edt_password.getText().toString().equals("test")) {
+            if (binding.edtId.getText().toString().equals("test") && binding.edtPw.getText().toString().equals("test")) {
                 // 로그인에 성공한 경우
                 Toast.makeText(getApplicationContext(), "로그인에 성공하였습니다.\n 잠시만 기다려주세요", Toast.LENGTH_SHORT).show();
 
@@ -143,8 +119,8 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             JSONObject jsonBodyObj = new JSONObject();
             try {
-                jsonBodyObj.put("id", Long.valueOf(edt_id.getText().toString()));
-                jsonBodyObj.put("password", edt_password.getText().toString());
+                jsonBodyObj.put("id", Long.valueOf(binding.edtId.getText().toString()));
+                jsonBodyObj.put("password", binding.edtPw.getText().toString());
                 jsonBodyObj.put("token", token);    //토큰
             } catch (JSONException e) {
                 e.printStackTrace();

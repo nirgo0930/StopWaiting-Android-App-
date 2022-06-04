@@ -35,8 +35,4 @@ public class DataApplication extends Application {
 
 
 
-
-
-
-
 }

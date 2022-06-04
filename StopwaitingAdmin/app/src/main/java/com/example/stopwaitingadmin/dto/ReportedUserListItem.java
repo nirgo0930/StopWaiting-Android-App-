@@ -1,5 +1,15 @@
 package com.example.stopwaitingadmin.dto;
 
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+//@AllArgsConstructor
 public class ReportedUserListItem {
 
     public ReportedUserListItem(int UserNum, String UserName, int reportedCount) {
