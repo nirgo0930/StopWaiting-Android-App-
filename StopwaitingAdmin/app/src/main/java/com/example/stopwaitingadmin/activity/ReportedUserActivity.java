@@ -12,6 +12,8 @@ import com.example.stopwaitingadmin.R;
 import com.example.stopwaitingadmin.adapter.ReportedUserListAdapter;
 import com.example.stopwaitingadmin.dto.ReportedUserListItem;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +31,8 @@ public class ReportedUserActivity extends AppCompatActivity {
         Intent intent = getIntent();
         LoginActivity.login_Activity.finish();
         txtNotice = findViewById(R.id.txtReportedUserNotice);
+
+        rePortedUserQueueRequest();
 
         mReportedUserList = new ArrayList<>();
         mReportedUserListView = (RecyclerView) findViewById(R.id.ReportedUserRecyclerView);
@@ -52,6 +56,12 @@ public class ReportedUserActivity extends AppCompatActivity {
         mReportedUserList.add(new ReportedUserListItem(20171250, "한유현", 1));
         mReportedUserList.add(new ReportedUserListItem(12345678, "방진성", 1));
         mReportedUserList.add(new ReportedUserListItem(135792468, "이윤석", 2));
+    }
+
+    public void rePortedUserQueueRequest(){
+        JSONObject jsonBodyObj = new JSONObject();
+
+        final String requestBody = String.valueOf(jsonBodyObj.toString());
     }
 
 }

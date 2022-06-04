@@ -32,6 +32,8 @@ public class WaitingListActivity extends AppCompatActivity {
         setContentView(R.layout.admin_wait_list);
         LoginActivity.login_Activity.finish();
 
+        waitingItemQueueRequest();
+
         txtNotice = findViewById(R.id.txtWaitingListNotice);
 
         mWaitingItemList = new ArrayList<>();
@@ -58,9 +60,10 @@ public class WaitingListActivity extends AppCompatActivity {
         mWaitingItemList.add(new AdminWaitingListItem(3L, R.drawable.empty_icon, "북카페", "이윤석", "학생회관 B113"));
     }
 
-    public void waitingItemRequest() {
+    public void waitingItemQueueRequest(){
         JSONObject jsonBodyObj = new JSONObject();
 
+        final String requestBody = String.valueOf(jsonBodyObj.toString());
     }
 
 }
