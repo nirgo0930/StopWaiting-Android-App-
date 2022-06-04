@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 
 public class DataApplication extends Application {
-    static public boolean isTest = false;
+    static public boolean isTest = true;
     static public boolean isFirstBoot = true;
 
     static public ArrayList<WaitingInfo> testDBList;
@@ -38,8 +38,8 @@ public class DataApplication extends Application {
     static public ArrayList<WaitingQueue> myWaiting;
     static public RequestQueue requestQueue;
 
-    static public String serverURL = "http://192.168.226.52:8080/api/v1";
-    static public String imgURL = "http://192.168.226.52:8080";
+    static public String serverURL = "http://192.168.25.37:8080/api/v1";
+    static public String imgURL = "http://192.168.25.37:8080";
     public String path = "/my_path";
 
 
