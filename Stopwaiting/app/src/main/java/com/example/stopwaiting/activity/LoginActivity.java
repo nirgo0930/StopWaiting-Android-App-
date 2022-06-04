@@ -25,6 +25,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.stopwaiting.R;
+import com.example.stopwaiting.databinding.LoginBinding;
 import com.example.stopwaiting.dto.UserInfo;
 import com.example.stopwaiting.dto.WaitingInfo;
 import com.example.stopwaiting.dto.WaitingQueue;
@@ -40,11 +41,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
-    private EditText edt_id, edt_password;
-    private Button btn_login, btn_new;
+//    private EditText edt_id, edt_password;
+//    private Button btn_login, btn_new;
     public static Activity login_Activity;
     private String sharedID = "Login";
     private String token;
+
+    private LoginBinding binding;
 
     String[] permission_list = {
             Manifest.permission.INTERNET,
@@ -61,7 +64,9 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login);
+        binding = LoginBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        //setContentView(R.layout.login);
         login_Activity = LoginActivity.this;
 
         FirebaseMessaging.getInstance().getToken().addOnSuccessListener(new OnSuccessListener<String>() {
@@ -78,23 +83,25 @@ public class LoginActivity extends AppCompatActivity {
         if (((DataApplication) getApplication()).requestQueue == null)
             ((DataApplication) getApplication()).requestQueue = Volley.newRequestQueue(getApplicationContext());
 
-        edt_id = findViewById(R.id.edtId);
-        edt_password = findViewById(R.id.edtPw);
-        btn_login = findViewById(R.id.btnLogin);
-        btn_new = findViewById(R.id.btnNewSignIn);
+//        edt_id = findViewById(R.id.edtId);
+//        edt_password = findViewById(R.id.edtPw);
+//        btn_login = findViewById(R.id.btnLogin);
+//        btn_new = findViewById(R.id.btnNewSignIn);
 
         String loginId = sharedPreferences.getString("inputId", null);
         String loginPwd = sharedPreferences.getString("inputPwd", null);
 
         if (loginId != null && loginPwd != null) {
             Toast.makeText(getApplicationContext(), loginId + "님 자동로그인 입니다!", Toast.LENGTH_SHORT).show();
-            edt_id.setText(loginId);
-            edt_password.setText(loginPwd);
+            //edt_id.setText(loginId);
+            //edt_password.setText(loginPwd);
+            binding.edtId.setText(loginId);
+            binding.edtPw.setText(loginPwd);
 
             loginRequest();
         }
         // 회원가입 버튼을 클릭 시 수행
-        btn_new.setOnClickListener(new View.OnClickListener() {
+        binding.btnNewSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(LoginActivity.this, SignInActivity.class);
@@ -102,15 +109,15 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        btn_login.setOnClickListener(new View.OnClickListener() {
+        binding.btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 SharedPreferences sharedPreferences = getSharedPreferences(sharedID, Activity.MODE_PRIVATE);
 
                 SharedPreferences.Editor autoLogin = sharedPreferences.edit();
 
-                autoLogin.putString("inputId", edt_id.getText().toString());
-                autoLogin.putString("inputPwd", edt_password.getText().toString());
+                autoLogin.putString("inputId", binding.edtId.getText().toString());
+                autoLogin.putString("inputPwd", binding.edtPw.getText().toString());
 
                 autoLogin.commit();
 
@@ -196,10 +203,10 @@ public class LoginActivity extends AppCompatActivity {
 
     public void loginRequest() {
         if (((DataApplication) getApplication()).isTest) {
-            if (edt_password.getText().toString().equals("test")) {
+            if (binding.edtPw.getText().toString().equals("test")) {
                 Toast.makeText(getApplicationContext(), "로그인에 성공하였습니다.\n 잠시만 기다려주세요", Toast.LENGTH_SHORT).show();
 
-                ((DataApplication) getApplication()).currentUser = new UserInfo("test", Long.valueOf(edt_id.getText().toString()), "01094536639");
+                ((DataApplication) getApplication()).currentUser = new UserInfo("test", Long.valueOf(binding.edtId.getText().toString()), "01094536639");
 
                 if (((DataApplication) getApplication()).isFirstBoot && ((DataApplication) getApplication()).isTest) {
                     getTestInfo();
@@ -215,8 +222,8 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             JSONObject jsonBodyObj = new JSONObject();
             try {
-                jsonBodyObj.put("id", Long.valueOf(edt_id.getText().toString()));
-                jsonBodyObj.put("password", edt_password.getText().toString());
+                jsonBodyObj.put("id", Long.valueOf(binding.edtId.getText().toString()));
+                jsonBodyObj.put("password", binding.edtPw.getText().toString());
                 jsonBodyObj.put("token", token);
             } catch (JSONException e) {
                 e.printStackTrace();

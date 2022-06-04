@@ -13,6 +13,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.stopwaiting.R;
+import com.example.stopwaiting.databinding.SettingLocationBinding;
 import com.naver.maps.geometry.LatLng;
 import com.naver.maps.map.LocationTrackingMode;
 import com.naver.maps.map.MapFragment;
@@ -32,10 +33,13 @@ public class SettingLocationActivity extends AppCompatActivity implements OnMapR
     public static Activity setting_loc_Activity;
     Marker marker;
 
+    private SettingLocationBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.setting_location);
+        binding = SettingLocationBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         Intent createIntent = getIntent();
         setting_loc_Activity = SettingLocationActivity.this;
         FragmentManager fm = getSupportFragmentManager();
@@ -46,8 +50,8 @@ public class SettingLocationActivity extends AppCompatActivity implements OnMapR
         mapFragment.getMapAsync(this);
         locationSource = new FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE);
 
-        Button next = findViewById(R.id.btnSettingNext);
-        next.setOnClickListener(new View.OnClickListener() {
+        //Button next = findViewById(R.id.btnSettingNext);
+        binding.btnSettingNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = createIntent;

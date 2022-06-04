@@ -33,8 +33,8 @@ import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends Activity {
 
-    private TextView mTextView;
-    public static ListView listView;
+    //private TextView mTextView;
+    //public static ListView listView;
     public static ArrayAdapter<String> textWaitingAdapter;
     private static ArrayList<String> waitingList;
 
@@ -71,7 +71,6 @@ public class MainActivity extends Activity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
 
         //listView = findViewById(R.id.listView);
         waitingList = new ArrayList<>();

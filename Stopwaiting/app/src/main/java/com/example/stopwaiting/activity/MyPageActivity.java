@@ -11,13 +11,17 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.stopwaiting.R;
+import com.example.stopwaiting.databinding.MypageBinding;
 
 public class MyPageActivity extends AppCompatActivity {
     public static Activity myPageActivity;
 
+    private MypageBinding binding;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.mypage);
+        binding = MypageBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         myPageActivity = MyPageActivity.this;
         if (SettingInfoActivity.setting_info_Activity != null) {
@@ -28,11 +32,11 @@ public class MyPageActivity extends AppCompatActivity {
             SettingInfoActivity.setting_info_Activity.finish();
         }
         Intent myIntent = getIntent();
-        TextView name = findViewById(R.id.txtMyName);
-        name.setText(((DataApplication) getApplication()).currentUser.getName() + " 님");
+        //TextView name = findViewById(R.id.txtMyName);
+        binding.txtMyName.setText(((DataApplication) getApplication()).currentUser.getName() + " 님");
 
-        Button myWaiting = findViewById(R.id.btnMyWaiting);
-        myWaiting.setOnClickListener(new View.OnClickListener() {
+        //Button myWaiting = findViewById(R.id.btnMyWaiting);
+        binding.btnMyWaiting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = myIntent;
@@ -42,8 +46,8 @@ public class MyPageActivity extends AppCompatActivity {
             }
         });
 
-        Button createWaiting = findViewById(R.id.btnNewWaiting);
-        createWaiting.setOnClickListener(new View.OnClickListener() {
+        //Button createWaiting = findViewById(R.id.btnNewWaiting);
+        binding.btnNewWaiting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = myIntent;
@@ -53,8 +57,8 @@ public class MyPageActivity extends AppCompatActivity {
             }
         });
 
-        Button manageWaiting = findViewById(R.id.btnManageWaiting);
-        manageWaiting.setOnClickListener(new View.OnClickListener() {
+        //Button manageWaiting = findViewById(R.id.btnManageWaiting);
+        binding.btnManageWaiting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = myIntent;
@@ -64,8 +68,8 @@ public class MyPageActivity extends AppCompatActivity {
             }
         });
 
-        Button logout = findViewById(R.id.btnLogOut);
-        logout.setOnClickListener(new View.OnClickListener() {
+        //Button logout = findViewById(R.id.btnLogOut);
+        binding.btnLogOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MyPageActivity.this, LoginActivity.class);

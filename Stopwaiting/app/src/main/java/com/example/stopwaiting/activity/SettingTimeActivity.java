@@ -30,6 +30,7 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.stopwaiting.R;
+import com.example.stopwaiting.databinding.SettingTimeBinding;
 import com.example.stopwaiting.dto.WaitingInfo;
 import com.example.stopwaiting.dto.WaitingQueue;
 import com.example.stopwaiting.service.MultipartRequest;
@@ -47,9 +48,9 @@ import java.util.List;
 import java.util.Map;
 
 public class SettingTimeActivity extends AppCompatActivity {
-    private ListView listView;
-    private TimePicker timePicker;
-    private Button btnComplete;
+    //private ListView listView;
+    //private TimePicker timePicker;
+    //private Button btnComplete;
     private ArrayList<String> mTimeList;
     private ArrayAdapter<String> mArrayAdapter;
     private ArrayList<Uri> uriList;
@@ -58,19 +59,21 @@ public class SettingTimeActivity extends AppCompatActivity {
     private final static int TIME_PICKER_INTERVAL = 10;
     private int mStatusCode = 0;
 
+    private SettingTimeBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.setting_time);
+        binding = SettingTimeBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         timeIntent = getIntent();
         setting_time_Activity = SettingTimeActivity.this;
 
-        listView = findViewById(R.id.listView);
-        timePicker = findViewById(R.id.timepicker);
-        btnComplete = findViewById(R.id.btnComplete);
-        setTimePickerInterval(timePicker);
+//        listView = findViewById(R.id.listView);
+//        timePicker = findViewById(R.id.timepicker);
+//        btnComplete = findViewById(R.id.btnComplete);
+        setTimePickerInterval(binding.timepicker);
 
         mTimeList = new ArrayList<>();
         uriList = new ArrayList<>();
@@ -80,14 +83,14 @@ public class SettingTimeActivity extends AppCompatActivity {
         }
 
 
-        findViewById(R.id.btnAdd).setOnClickListener(new OnClickListener() {
+        binding.btnAdd.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 createTextView();
             }
         });
 
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        binding.listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                 mTimeList.remove(i);
@@ -96,10 +99,10 @@ public class SettingTimeActivity extends AppCompatActivity {
             }
         });
         mArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mTimeList);
-        listView.setAdapter(mArrayAdapter);
+        binding.listView.setAdapter(mArrayAdapter);
 
 
-        btnComplete.setOnClickListener(new OnClickListener() {
+        binding.btnComplete.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 addWaitingRequest();
@@ -108,12 +111,12 @@ public class SettingTimeActivity extends AppCompatActivity {
     }
 
     private void createTextView() {
-        String hour = String.valueOf(timePicker.getHour());
-        if (timePicker.getHour() < 10) {
+        String hour = String.valueOf(binding.timepicker.getHour());
+        if (binding.timepicker.getHour() < 10) {
             hour = "0" + hour;
         }
-        String minute = String.valueOf(timePicker.getMinute() * TIME_PICKER_INTERVAL);
-        if (timePicker.getMinute() * TIME_PICKER_INTERVAL < 10) {
+        String minute = String.valueOf(binding.timepicker.getMinute() * TIME_PICKER_INTERVAL);
+        if (binding.timepicker.getMinute() * TIME_PICKER_INTERVAL < 10) {
             minute = "0" + minute;
         }
         mTimeList.add(hour + ":" + minute); //10:00 11:30

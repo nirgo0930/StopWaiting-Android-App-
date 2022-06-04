@@ -27,6 +27,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.bumptech.glide.Glide;
 import com.example.stopwaiting.R;
+import com.example.stopwaiting.databinding.WaitingTimeBinding;
 import com.example.stopwaiting.dto.ImgItem;
 import com.example.stopwaiting.dto.WaitingInfo;
 import com.example.stopwaiting.dto.WaitingQueue;
@@ -45,26 +46,29 @@ import java.util.Map;
 public class WaitingSelectTimeActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private int pivot, mStatusCode;
     private WaitingInfo mWaitingInfo;
-    private ImageView imageView;
-    private TextView name, imgCnt, choice, waitCnt, timeDetail, locDetail, info;
-    private Button btnOk;
-    private Spinner spinner;
+    //private ImageView imageView;
+    //private TextView name, imgCnt, choice, waitCnt, timeDetail, locDetail, info;
+    //private Button btnOk;
+    //private Spinner spinner;
     private ArrayList<ImgItem> imgItems;
     private ArrayList<String> urlItems, timeList;
+
+    private WaitingTimeBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.waiting_time);
+        binding = WaitingTimeBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         Intent intent = getIntent();
 
-        info = findViewById(R.id.txtInfo);
-        name = findViewById(R.id.txtWaitingName);
-        locDetail = findViewById(R.id.txtLocDeatail);
-        waitCnt = findViewById(R.id.txtWaitCnt);
-        timeDetail = findViewById(R.id.txtInfo);
-        choice = findViewById(R.id.txtSelectTime);
-        spinner = findViewById(R.id.spnTime);
+//        info = findViewById(R.id.txtInfo);
+//        name = findViewById(R.id.txtWaitingName);
+//        locDetail = findViewById(R.id.txtLocDeatail);
+//        waitCnt = findViewById(R.id.txtWaitCnt);
+//        timeDetail = findViewById(R.id.txtInfo);
+//        choice = findViewById(R.id.txtSelectTime);
+//        spinner = findViewById(R.id.spnTime);
 
         mWaitingInfo = new WaitingInfo();
         for (int i = 0; i < DataApplication.waitingList.size(); i++) {
@@ -75,23 +79,23 @@ public class WaitingSelectTimeActivity extends AppCompatActivity implements Adap
 
         setImages_Buttons();
 
-        if (spinner != null) {
-            spinner.setOnItemSelectedListener(this);
+        if (binding.spnTime != null) {
+            binding.spnTime.setOnItemSelectedListener(this);
         }
 
         timeList = mWaitingInfo.getTimetable();
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, timeList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
+        binding.spnTime.setAdapter(adapter);
 
-        name.setText(mWaitingInfo.getName());
-        locDetail.setText(mWaitingInfo.getLocDetail());
-        info.setText(mWaitingInfo.getInfo());
-        timeDetail.setText(mWaitingInfo.getLocDetail());
+        binding.txtWaitingName.setText(mWaitingInfo.getName());
+        binding.txtLocDeatail.setText(mWaitingInfo.getLocDetail());
+        binding.txtInfo.setText(mWaitingInfo.getInfo());
+        binding.txtInfo.setText(mWaitingInfo.getLocDetail());
 
-        btnOk = findViewById(R.id.btnOk);
-        btnOk.setOnClickListener(new View.OnClickListener() {
+        //btnOk = findViewById(R.id.btnOk);
+        binding.btnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 waitingRequest();
@@ -105,31 +109,31 @@ public class WaitingSelectTimeActivity extends AppCompatActivity implements Adap
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         String nowTime = sdf.format(new Date(System.currentTimeMillis()));
 
-        waitCnt.setText("현재 대기 인원이 없습니다.");
+        binding.txtWaitCnt.setText("현재 대기 인원이 없습니다.");
 
         if (((DataApplication) this.getApplication()).firstIsLater(spinner_item, nowTime)) {
             for (int i = 0; i < ((DataApplication) getApplication()).testWaitingQueueDBList.size(); i++) {
                 WaitingQueue temp = ((DataApplication) getApplication()).testWaitingQueueDBList.get(i);
-                if (temp.getQueueName().equals(name.getText()) && temp.getTime().equals(spinner_item)) {
+                if (temp.getQueueName().equals(binding.txtWaitingName.getText()) && temp.getTime().equals(spinner_item)) {
                     if (temp.getWaitingPersonList() != null) {
-                        waitCnt.setText("현재 " + String.valueOf(temp.getWaitingPersonList().size()) + "명 대기중");
+                        binding.txtWaitCnt.setText("현재 " + String.valueOf(temp.getWaitingPersonList().size()) + "명 대기중");
                     } else {
-                        waitCnt.setText("현재 대기 인원이 없습니다.");
+                        binding.txtWaitCnt.setText("현재 대기 인원이 없습니다.");
                     }
                     break;
                 }
             }
-            choice.setText(spinner_item);
-            btnOk.setClickable(true);
+            binding.txtSelectTime.setText(spinner_item);
+            binding.btnOk.setClickable(true);
         } else {
             onNothingSelected(adapterView);
             Toast.makeText(this, "선택한 시간은 예약이 불가능합니다.", Toast.LENGTH_SHORT).show();
-            btnOk.setClickable(false);
+            binding.btnOk.setClickable(false);
         }
     }
 
     public void onNothingSelected(AdapterView<?> adapterView) {
-        choice.setText("예약할 시간을 선택해 주세요.");
+        binding.txtSelectTime.setText("예약할 시간을 선택해 주세요.");
     }
 
     public void setImages_Buttons() {
@@ -142,20 +146,20 @@ public class WaitingSelectTimeActivity extends AppCompatActivity implements Adap
         }
 
 
-        imgCnt = findViewById(R.id.txtImgCnt);
-        imageView = findViewById(R.id.imageView);
+        //imgCnt = findViewById(R.id.txtImgCnt);
+        //imageView = findViewById(R.id.imageView);
         pivot = 0;
         String content = "";
         if (imgItems.size() > 0) {
             for (int i = 0; i < imgItems.size(); i++) {
                 content = content + "·";
             }
-            imgCnt.setText(content);
+            binding.txtImgCnt.setText(content);
             setImg();
         } else {
             content = "·";
-            imgCnt.setText(content);
-            imageView.setImageResource(R.drawable.empty_icon);
+            binding.txtImgCnt.setText(content);
+            binding.imageView.setImageResource(R.drawable.empty_icon);
         }
         findViewById(R.id.btnLeft).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -189,24 +193,24 @@ public class WaitingSelectTimeActivity extends AppCompatActivity implements Adap
     }
 
     public void setImg() {
-        String content = imgCnt.getText().toString();
+        String content = binding.txtImgCnt.getText().toString();
         SpannableString spannableString = new SpannableString(content);
 
         spannableString.setSpan(new ForegroundColorSpan(Color.parseColor("#FF6702")), pivot, pivot + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         spannableString.setSpan(new StyleSpan(Typeface.BOLD), pivot, pivot + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-        imgCnt.setText(spannableString);
+        binding.txtImgCnt.setText(spannableString);
 
         Glide.with(getApplicationContext())
                 .load(imgItems.get(pivot).getUri())
-                .into(imageView);
+                .into(binding.imageView);
     }
 
     public void waitingRequest() {
         if (DataApplication.isTest) {
             for (int i = 0; i < ((DataApplication) getApplication()).testWaitingQueueDBList.size(); i++) {
                 WaitingQueue temp = ((DataApplication) getApplication()).testWaitingQueueDBList.get(i);
-                if (temp.getQueueName().equals(name.getText()) && temp.getTime().equals(choice.getText()) && temp.getWaitingPersonList() != null) {
+                if (temp.getQueueName().equals(binding.txtWaitingName.getText()) && temp.getTime().equals(binding.txtSelectTime.getText()) && temp.getWaitingPersonList() != null) {
                     int check = temp.addWPerson(((DataApplication) getApplication()).currentUser);
                     switch (check) {
                         case 0:
@@ -229,7 +233,7 @@ public class WaitingSelectTimeActivity extends AppCompatActivity implements Adap
                 jsonBodyObj.put("studentCode", DataApplication.currentUser.getStudentCode());
                 jsonBodyObj.put("waitingId", mWaitingInfo.getWaitingId());
                 jsonBodyObj.put("type", mWaitingInfo.getType());
-                jsonBodyObj.put("time", choice.getText());
+                jsonBodyObj.put("time", binding.txtSelectTime.getText());
             } catch (JSONException e) {
                 e.printStackTrace();
             }

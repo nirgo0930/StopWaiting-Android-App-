@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.stopwaiting.R;
 import com.example.stopwaiting.adapter.MyWaitingListAdapter;
+import com.example.stopwaiting.databinding.WaitingListBinding;
 import com.example.stopwaiting.dto.ImgItem;
 import com.example.stopwaiting.dto.WaitingInfo;
 import com.example.stopwaiting.dto.WaitingListItem;
@@ -18,12 +19,14 @@ import com.example.stopwaiting.dto.WaitingListItem;
 import java.util.ArrayList;
 
 public class CheckMyWaitingActivity extends AppCompatActivity {
-    private RecyclerView recyclerView;
+    //private RecyclerView recyclerView;
 
     private ArrayList<WaitingListItem> mWaitingList;
     private MyWaitingListAdapter mListAdapter;
-    private TextView txtNotice;
+    //private TextView txtNotice;
     public static Activity myWaitingActivity;
+
+    private WaitingListBinding binding;
 
     @Override
     protected void onStop() {
@@ -33,10 +36,12 @@ public class CheckMyWaitingActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.waiting_list);
+        binding = WaitingListBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
         myWaitingActivity = CheckMyWaitingActivity.this;
-        txtNotice = findViewById(R.id.txtNotice);
-        recyclerView = findViewById(R.id.recyclerView);
+//        txtNotice = findViewById(R.id.txtNotice);
+//        recyclerView = findViewById(R.id.recyclerView);
         mWaitingList = new ArrayList<>();
 
         myWaitingRequest();
@@ -44,8 +49,8 @@ public class CheckMyWaitingActivity extends AppCompatActivity {
         mListAdapter = new MyWaitingListAdapter(this, mWaitingList);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(mListAdapter);
+        binding.recyclerView.setLayoutManager(layoutManager);
+        binding.recyclerView.setAdapter(mListAdapter);
 
         mListAdapter.notifyDataSetChanged();
     }
@@ -70,9 +75,9 @@ public class CheckMyWaitingActivity extends AppCompatActivity {
                 mWaitingList.add(new WaitingListItem(tempImg.getUri(), DataApplication.myWaiting.get(i).getQueueName(), DataApplication.myWaiting.get(i).getQId(),
                         DataApplication.myWaiting.get(i).getWaitingPersonList().indexOf(DataApplication.currentUser), tempInfo.getLocDetail()));
             }
-            txtNotice.setText("신청한 웨이팅은 총 " + mWaitingList.size() + "건 입니다.");
+            binding.txtNotice.setText("신청한 웨이팅은 총 " + mWaitingList.size() + "건 입니다.");
         } else {
-            txtNotice.setText("신청한 웨이팅이 없습니다.");
+            binding.txtNotice.setText("신청한 웨이팅이 없습니다.");
         }
     }
 

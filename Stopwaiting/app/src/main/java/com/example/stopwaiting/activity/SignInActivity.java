@@ -14,6 +14,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.stopwaiting.R;
+import com.example.stopwaiting.databinding.SigninBinding;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,9 +24,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SignInActivity extends AppCompatActivity {
-    private EditText edtName, edtPw, edtPwCk, edtSCode, edtTelNum;
+    //private EditText edtName, edtPw, edtPwCk, edtSCode, edtTelNum;
     private boolean dupCheck = false;
 
+    private SigninBinding binding;
 
     @Override
     protected void onStop() {
@@ -36,29 +38,30 @@ public class SignInActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.signin);
+        binding = SigninBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        edtName = findViewById(R.id.edtName);
-        edtPw = findViewById(R.id.edtPassword);
-        edtPwCk = findViewById(R.id.edtPwck);
-        edtSCode = findViewById(R.id.edtStudentCode);
-        edtTelNum = findViewById(R.id.edtTelNumber);
+//        edtName = findViewById(R.id.edtName);
+//        edtPw = findViewById(R.id.edtPassword);
+//        edtPwCk = findViewById(R.id.edtPwck);
+//        edtSCode = findViewById(R.id.edtStudentCode);
+//        edtTelNum = findViewById(R.id.edtTelNumber);
 
-        findViewById(R.id.btnNewSignIn).setOnClickListener(new View.OnClickListener() {
+        binding.btnNewSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 signInRequest();
             }
         });
 
-        findViewById(R.id.btnCancel).setOnClickListener(new View.OnClickListener() {
+        binding.btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
             }
         });
 
-        findViewById(R.id.btnCheckDuplicate).setOnClickListener(new View.OnClickListener() {
+        binding.btnCheckDuplicate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dupCheckRequest();
@@ -67,7 +70,7 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     public void signInRequest() {
-        if (!edtPw.getText().toString().equals(edtPwCk.getText().toString())) {
+        if (!binding.edtPassword.getText().toString().equals(binding.edtPwck.getText().toString())) {
             Toast.makeText(getApplicationContext(), "비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -78,10 +81,10 @@ public class SignInActivity extends AppCompatActivity {
 
         JSONObject jsonBodyObj = new JSONObject();
         try {
-            jsonBodyObj.put("id", Long.valueOf(edtSCode.getText().toString()));
-            jsonBodyObj.put("password", edtPw.getText().toString());
-            jsonBodyObj.put("name", edtName.getText().toString());
-            jsonBodyObj.put("phoneNumber", edtTelNum.getText().toString());
+            jsonBodyObj.put("id", Long.valueOf(binding.edtStudentCode.getText().toString()));
+            jsonBodyObj.put("password", binding.edtPassword.getText().toString());
+            jsonBodyObj.put("name", binding.edtName.getText().toString());
+            jsonBodyObj.put("phoneNumber", binding.edtTelNumber.getText().toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -131,7 +134,7 @@ public class SignInActivity extends AppCompatActivity {
     public void dupCheckRequest() {
         JSONObject jsonBodyObj = new JSONObject();
         try {
-            jsonBodyObj.put("id", Long.parseLong(edtSCode.getText().toString()));
+            jsonBodyObj.put("id", Long.parseLong(binding.edtStudentCode.getText().toString()));
         } catch (JSONException e) {
             e.printStackTrace();
         }

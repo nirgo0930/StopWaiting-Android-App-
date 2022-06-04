@@ -23,7 +23,7 @@ import java.util.concurrent.ExecutionException;
 
 public class WaitingDetailActivity extends Activity {
 
-    private TextView mTextView;
+    //private TextView mTextView;
     private double latitude;
     private double longitude;
     private String location;

@@ -27,7 +27,6 @@ public class QRActivity extends Activity {
         setContentView(binding.getRoot());
 
         //setContentView(R.layout.activity_qr);
-
         //iv = (ImageView)findViewById(R.id.qrcode);
         text = String.valueOf(DataApplication.currentUserInfo.getStudentCode());
 

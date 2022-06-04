@@ -23,6 +23,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.bumptech.glide.Glide;
 import com.example.stopwaiting.R;
+import com.example.stopwaiting.databinding.WaitingNormalBinding;
 import com.example.stopwaiting.dto.ImgItem;
 import com.example.stopwaiting.dto.WaitingInfo;
 import com.example.stopwaiting.dto.WaitingQueue;
@@ -40,22 +41,25 @@ public class WaitingNormalActivity extends AppCompatActivity {
     private int pivot, mStatusCode;
     private ArrayList<ImgItem> imgItems;
     private ArrayList<String> urlItems;
-    private TextView name, imgCnt, waitCnt, locDetail, info;
-    private ImageView imageView;
+    //private TextView name, imgCnt, waitCnt, locDetail, info;
+    //private ImageView imageView;
     private WaitingInfo mWaitingInfo;
+
+    private WaitingNormalBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.waiting_normal);
+        binding = WaitingNormalBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         Intent intent = getIntent();
 
-        name = findViewById(R.id.txtWaitingName);
-        locDetail = findViewById(R.id.txtLocDeatail);
-        imgCnt = findViewById(R.id.txtImgCnt);
-        waitCnt = findViewById(R.id.txtWaitCnt);
-        imageView = findViewById(R.id.imageView);
-        info = findViewById(R.id.txtInfo);
+//        name = findViewById(R.id.txtWaitingName);
+//        locDetail = findViewById(R.id.txtLocDeatail);
+//        imgCnt = findViewById(R.id.txtImgCnt);
+//        waitCnt = findViewById(R.id.txtWaitCnt);
+//        imageView = findViewById(R.id.imageView);
+//        info = findViewById(R.id.txtInfo);
 
         mWaitingInfo = new WaitingInfo();
         for (int i = 0; i < DataApplication.waitingList.size(); i++) {
@@ -72,31 +76,31 @@ public class WaitingNormalActivity extends AppCompatActivity {
             for (int i = 0; i < imgItems.size(); i++) {
                 content = content + "·";
             }
-            imgCnt.setText(content);
+            binding.txtImgCnt.setText(content);
             setImg();
         } else {
             content = "·";
-            imgCnt.setText(content);
-            imageView.setImageResource(R.drawable.empty_icon);
+            binding.txtImgCnt.setText(content);
+            binding.imageView.setImageResource(R.drawable.empty_icon);
         }
 
         for (int i = 0; i < ((DataApplication) getApplication()).testWaitingQueueDBList.size(); i++) {
             WaitingQueue temp = ((DataApplication) getApplication()).testWaitingQueueDBList.get(i);
             if (temp.getQueueName().equals(mWaitingInfo.getName()) && temp.getTime().equals("NORMAL")) {
                 if (temp.getWaitingPersonList() != null) {
-                    waitCnt.setText("현재 " + String.valueOf(temp.getWaitingPersonList().size()) + "명 대기중");
+                    binding.txtWaitCnt.setText("현재 " + String.valueOf(temp.getWaitingPersonList().size()) + "명 대기중");
                 } else {
-                    waitCnt.setText("현재 대기 인원이 없습니다.");
+                    binding.txtWaitCnt.setText("현재 대기 인원이 없습니다.");
                 }
                 break;
             }
         }
 
-        name.setText(mWaitingInfo.getName());
-        locDetail.setText(mWaitingInfo.getLocDetail());
-        info.setText(mWaitingInfo.getInfo());
+        binding.txtWaitingName.setText(mWaitingInfo.getName());
+        binding.txtLocDeatail.setText(mWaitingInfo.getLocDetail());
+        binding.txtInfo.setText(mWaitingInfo.getInfo());
 
-        findViewById(R.id.btnLeft).setOnClickListener(new View.OnClickListener() {
+        binding.btnLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (imgItems.size() > 1) {
@@ -110,7 +114,7 @@ public class WaitingNormalActivity extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.btnRight).setOnClickListener(new View.OnClickListener() {
+        binding.btnRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (imgItems.size() > 1) {
@@ -124,7 +128,7 @@ public class WaitingNormalActivity extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.btnOk).setOnClickListener(new View.OnClickListener() {
+        binding.btnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 waitingRequest();
@@ -133,17 +137,17 @@ public class WaitingNormalActivity extends AppCompatActivity {
     }
 
     public void setImg() {
-        String content = imgCnt.getText().toString();
+        String content = binding.txtImgCnt.getText().toString();
         SpannableString spannableString = new SpannableString(content);
 
         spannableString.setSpan(new ForegroundColorSpan(Color.parseColor("#FF6702")), pivot, pivot + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         spannableString.setSpan(new StyleSpan(Typeface.BOLD), pivot, pivot + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-        imgCnt.setText(spannableString);
+        binding.txtImgCnt.setText(spannableString);
 
         Glide.with(getApplicationContext())
                 .load(imgItems.get(pivot).getUri())
-                .into(imageView);
+                .into(binding.imageView);
 
     }
 
@@ -151,7 +155,7 @@ public class WaitingNormalActivity extends AppCompatActivity {
         if (DataApplication.isTest) {
             for (int i = 0; i < ((DataApplication) getApplication()).testWaitingQueueDBList.size(); i++) {
                 WaitingQueue temp = ((DataApplication) getApplication()).testWaitingQueueDBList.get(i);
-                if (temp.getQueueName().equals(name.getText()) && temp.getTime().equals("NORMAL")) {
+                if (temp.getQueueName().equals(binding.txtWaitingName.getText()) && temp.getTime().equals("NORMAL")) {
                     if (temp.getWaitingPersonList() != null) {
                         int check = temp.addWPerson(((DataApplication) getApplication()).currentUser);
                         switch (check) {

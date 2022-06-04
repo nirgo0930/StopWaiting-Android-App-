@@ -8,16 +8,21 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.stopwaiting.R;
+import com.example.stopwaiting.databinding.ScanQrBinding;
+import com.google.zxing.client.android.Intents;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 public class ScanQRActivity extends AppCompatActivity {
     private IntentIntegrator qrScan;
 
+    private ScanQrBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.scan_qr);
+        binding = ScanQrBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         qrScan = new IntentIntegrator(this);
         qrScan.setCameraId(1);

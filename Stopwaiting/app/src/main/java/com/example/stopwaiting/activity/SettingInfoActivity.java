@@ -31,6 +31,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.stopwaiting.R;
 import com.example.stopwaiting.adapter.SettingImageAdapter;
+import com.example.stopwaiting.databinding.SettingInfoBinding;
 import com.example.stopwaiting.dto.WaitingInfo;
 import com.example.stopwaiting.dto.WaitingQueue;
 import com.example.stopwaiting.service.MultipartRequest;
@@ -46,51 +47,55 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SettingInfoActivity extends AppCompatActivity {
-    private EditText edtName, edtDetail, edtInfo, edtPerson;
-    private RecyclerView recyclerView;
-    private RadioGroup rdoGroup;
-    private RadioButton rdoNormal, rdoTime;
-    private Button btnNext;
+    //private EditText edtName, edtDetail, edtInfo, edtPerson;
+    //private RecyclerView recyclerView;
+    //private RadioGroup rdoGroup;
+    //private RadioButton rdoNormal, rdoTime;
+    //private Button btnNext;
     private Intent settingInfoIntent;
     private SettingImageAdapter imgListAdapter;
     private ArrayList<Uri> uriList;
     public static Activity setting_info_Activity;
     private int mStatusCode = 0;
 
+    private SettingInfoBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.setting_info);
+        binding = SettingInfoBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
         settingInfoIntent = getIntent();
         setting_info_Activity = SettingInfoActivity.this;
         this.getContentResolver();
-        edtName = findViewById(R.id.edtName);
-        edtDetail = findViewById(R.id.edtLocDetail);
-        edtInfo = findViewById(R.id.edtInfo);
-        edtPerson = findViewById(R.id.edtMaxPerson);
-        recyclerView = findViewById(R.id.lstImg);
-        rdoGroup = findViewById(R.id.rdoGroup);
-        rdoNormal = findViewById(R.id.rdoNormal);
-        rdoTime = findViewById(R.id.rdoTime);
-        btnNext = findViewById(R.id.btnSettingNext);
+//        edtName = findViewById(R.id.edtName);
+//        edtDetail = findViewById(R.id.edtLocDetail);
+//        edtInfo = findViewById(R.id.edtInfo);
+//        edtPerson = findViewById(R.id.edtMaxPerson);
+//        recyclerView = findViewById(R.id.lstImg);
+//        rdoGroup = findViewById(R.id.rdoGroup);
+//        rdoNormal = findViewById(R.id.rdoNormal);
+//        rdoTime = findViewById(R.id.rdoTime);
+//        btnNext = findViewById(R.id.btnSettingNext);
 
         uriList = new ArrayList<>();
         imgListAdapter = new SettingImageAdapter(this, uriList);
-        recyclerView.setAdapter(imgListAdapter);
+        binding.lstImg.setAdapter(imgListAdapter);
 
         imgListAdapter.notifyDataSetChanged();
 
-        rdoNormal.setChecked(true);
-        rdoNormal.setOnClickListener(new OnClickListener() {
+        binding.rdoNormal.setChecked(true);
+        binding.rdoNormal.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                btnNext.setText("완료");
+                binding.btnSettingNext.setText("완료");
             }
         });
-        rdoTime.setOnClickListener(new OnClickListener() {
+        binding.rdoTime.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                btnNext.setText("다음");
+                binding.btnSettingNext.setText("다음");
             }
         });
         bindInsert();
@@ -99,7 +104,7 @@ public class SettingInfoActivity extends AppCompatActivity {
     }
 
     private void bindInsert() {
-        findViewById(R.id.btnAdd).setOnClickListener(new OnClickListener() {
+        binding.btnAdd.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
@@ -134,7 +139,7 @@ public class SettingInfoActivity extends AppCompatActivity {
                     }
                 }
                 imgListAdapter = new SettingImageAdapter(getApplicationContext(), uriList);
-                recyclerView.setAdapter(imgListAdapter);
+                binding.lstImg.setAdapter(imgListAdapter);
             }
         } else {
 
@@ -142,7 +147,7 @@ public class SettingInfoActivity extends AppCompatActivity {
     }
 
     private void bindDelete() {
-        findViewById(R.id.btnRemove).setOnClickListener(new OnClickListener() {
+        binding.btnRemove.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 final Uri recyclerItem = imgListAdapter.getSelected();
@@ -162,16 +167,16 @@ public class SettingInfoActivity extends AppCompatActivity {
     }
 
     private void bindNext() {
-        btnNext.setOnClickListener(new OnClickListener() {
+        binding.btnSettingNext.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (rdoGroup.getCheckedRadioButtonId() == R.id.rdoNormal) {
+                if (binding.rdoGroup.getCheckedRadioButtonId() == R.id.rdoNormal) {
                     addWaitingRequest();
-                } else if (rdoGroup.getCheckedRadioButtonId() == R.id.rdoTime) {
-                    settingInfoIntent.putExtra("name", edtName.getText().toString());
-                    settingInfoIntent.putExtra("detail", edtDetail.getText().toString());
-                    settingInfoIntent.putExtra("info", edtInfo.getText().toString());
-                    settingInfoIntent.putExtra("maxPerson", Integer.valueOf(edtPerson.getText().toString()));
+                } else if (binding.rdoGroup.getCheckedRadioButtonId() == R.id.rdoTime) {
+                    settingInfoIntent.putExtra("name", binding.edtName.getText().toString());
+                    settingInfoIntent.putExtra("detail", binding.edtLocDetail.getText().toString());
+                    settingInfoIntent.putExtra("info", binding.edtInfo.getText().toString());
+                    settingInfoIntent.putExtra("maxPerson", Integer.valueOf(binding.edtMaxPerson.getText().toString()));
                     if (uriList.size() != 0) {
                         settingInfoIntent.putParcelableArrayListExtra("image", uriList);
                     } else {
@@ -191,11 +196,11 @@ public class SettingInfoActivity extends AppCompatActivity {
             DataApplication.testDBList.add(new WaitingInfo(DataApplication.currentUser.getStudentCode(), 10L,
                     settingInfoIntent.getDoubleExtra("latitude", 0),
                     settingInfoIntent.getDoubleExtra("longitude", 0),
-                    edtName.getText().toString(), edtDetail.getText().toString(), edtInfo.getText().toString(),
-                    "normal", Integer.valueOf(edtPerson.getText().toString()), new ArrayList<>()));
+                    binding.edtName.getText().toString(), binding.edtLocDetail.getText().toString(), binding.edtInfo.getText().toString(),
+                    "normal", Integer.valueOf(binding.edtMaxPerson.getText().toString()), new ArrayList<>()));
 
-            DataApplication.testWaitingQueueDBList.add(new WaitingQueue(DataApplication.qCnt++, edtName.getText().toString(),
-                    "normal", Integer.valueOf(edtPerson.getText().toString())));
+            DataApplication.testWaitingQueueDBList.add(new WaitingQueue(DataApplication.qCnt++, binding.edtName.getText().toString(),
+                    "normal", Integer.valueOf(binding.edtMaxPerson.getText().toString())));
 
             addImageRequest(10L);
         } else {
@@ -204,10 +209,10 @@ public class SettingInfoActivity extends AppCompatActivity {
                 jsonBodyObj.put("adminId", DataApplication.currentUser.getStudentCode());
                 jsonBodyObj.put("latitude", settingInfoIntent.getDoubleExtra("latitude", 0));
                 jsonBodyObj.put("longitude", settingInfoIntent.getDoubleExtra("longitude", 0));
-                jsonBodyObj.put("name", edtName.getText().toString());
-                jsonBodyObj.put("locationDetail", edtDetail.getText().toString());
-                jsonBodyObj.put("information", edtInfo.getText().toString());
-                jsonBodyObj.put("maxPerson", Integer.valueOf(edtPerson.getText().toString()));
+                jsonBodyObj.put("name", binding.edtName.getText().toString());
+                jsonBodyObj.put("locationDetail", binding.edtLocDetail.getText().toString());
+                jsonBodyObj.put("information", binding.edtInfo.getText().toString());
+                jsonBodyObj.put("maxPerson", Integer.valueOf(binding.edtMaxPerson.getText().toString()));
                 jsonBodyObj.put("type", "NORMAL");
 
             } catch (JSONException e) {
@@ -337,7 +342,7 @@ public class SettingInfoActivity extends AppCompatActivity {
                             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                             byte[] imageBytes = baos.toByteArray();
 
-                            temp[i] = new MultipartRequest.DataPart(edtName.getText().toString() + String.valueOf(i) + ".jpg", imageBytes, "image/jpeg");
+                            temp[i] = new MultipartRequest.DataPart(binding.edtName.getText().toString() + String.valueOf(i) + ".jpg", imageBytes, "image/jpeg");
                         }
                         params.put("files", temp);
                     }

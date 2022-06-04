@@ -21,6 +21,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.stopwaiting.R;
+import com.example.stopwaiting.databinding.MainpageBinding;
 import com.example.stopwaiting.dto.UserInfo;
 import com.example.stopwaiting.dto.WaitingInfo;
 import com.example.stopwaiting.dto.WaitingQueue;
@@ -60,17 +61,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             Manifest.permission.ACCESS_COARSE_LOCATION
     };
 
+    private MainpageBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.mainpage);
+        binding = MainpageBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        //setContentView(R.layout.mainpage);
 
         mainIntent = getIntent();
         mainActivity = MainActivity.this;
         context_main = this;
 
-        TextView userId = findViewById(R.id.txtUser);
-        userId.setText(DataApplication.currentUser.getName() + " 님(" + String.valueOf(DataApplication.currentUser.getStudentCode()) + ")");
+        //TextView userId = findViewById(R.id.txtUser);
+        binding.txtUser.setText(DataApplication.currentUser.getName() + " 님(" + String.valueOf(DataApplication.currentUser.getStudentCode()) + ")");
 
         markers = new ArrayList<>();
         ((DataApplication) getApplication()).waitingList = new ArrayList<>();
@@ -85,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
         locationSource = new FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE);
 
-        findViewById(R.id.btnMypage).setOnClickListener(new View.OnClickListener() {
+        binding.btnMypage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 refresh();
@@ -96,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-        findViewById(R.id.btnRefresh).setOnClickListener(new View.OnClickListener() {
+        binding.btnRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ActivityCompat.requestPermissions(mainActivity, PERMISSIONS, LOCATION_PERMISSION_REQUEST_CODE);

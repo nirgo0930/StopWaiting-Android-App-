@@ -16,6 +16,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.stopwaiting.R;
 import com.example.stopwaiting.adapter.ManageWaitingListAdapter;
+import com.example.stopwaiting.databinding.WaitingListBinding;
 import com.example.stopwaiting.dto.ImgItem;
 import com.example.stopwaiting.dto.UserInfo;
 import com.example.stopwaiting.dto.WaitingInfo;
@@ -32,8 +33,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ManageWaitingListActivity extends AppCompatActivity {
-    private TextView txtResult, txtTitle;
-    private RecyclerView recyclerView;
+    //private TextView txtResult, txtTitle;
+    //private RecyclerView recyclerView;
     private ArrayList<WaitingQueue> mWaitingQueueList;
     private ArrayList<WaitingListItem> mWaitingList;
     private ManageWaitingListAdapter mListAdapter;
@@ -41,14 +42,17 @@ public class ManageWaitingListActivity extends AppCompatActivity {
     private ImgItem tempImgInfo;
     public static Activity manageWaitingActivity;
 
+    private WaitingListBinding binding;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.waiting_list);
+        binding = WaitingListBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         manageWaitingActivity = ManageWaitingListActivity.this;
 
-        txtResult = findViewById(R.id.txtNotice);
-        txtTitle = findViewById(R.id.txtTitle);
-        recyclerView = findViewById(R.id.recyclerView);
+//        txtResult = findViewById(R.id.txtNotice);
+//        txtTitle = findViewById(R.id.txtTitle);
+//        recyclerView = findViewById(R.id.recyclerView);
 
         tempWaitingInfo = new WaitingInfo();
         tempImgInfo = new ImgItem();
@@ -57,10 +61,10 @@ public class ManageWaitingListActivity extends AppCompatActivity {
         mListAdapter = new ManageWaitingListAdapter(this, mWaitingList);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(mListAdapter);
+        binding.recyclerView.setLayoutManager(layoutManager);
+        binding.recyclerView.setAdapter(mListAdapter);
 
-        txtTitle.setText("개설한 웨이팅");
+        binding.txtTitle.setText("개설한 웨이팅");
 
         myWaitingRequest();
 
@@ -82,9 +86,9 @@ public class ManageWaitingListActivity extends AppCompatActivity {
                 }
 
             }
-            txtResult.setText("개설한 웨이팅은 총 " + mWaitingList.size() + "건 입니다.");
+            binding.txtNotice.setText("개설한 웨이팅은 총 " + mWaitingList.size() + "건 입니다.");
         } else {
-            txtResult.setText("개설한 웨이팅이 없습니다.");
+            binding.txtNotice.setText("개설한 웨이팅이 없습니다.");
         }
 
         mListAdapter.notifyDataSetChanged();

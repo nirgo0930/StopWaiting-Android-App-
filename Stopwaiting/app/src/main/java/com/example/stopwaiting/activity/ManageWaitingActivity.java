@@ -20,6 +20,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.stopwaiting.R;
+import com.example.stopwaiting.databinding.ManageWaitingBinding;
 import com.example.stopwaiting.dto.UserInfo;
 import com.example.stopwaiting.dto.WaitingInfo;
 import com.example.stopwaiting.dto.WaitingQueue;
@@ -39,14 +40,18 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
     private ArrayList<String> timeList;
     private WaitingInfo wInfo;
     private WaitingQueue selectQ;
-    private Button btnShowList, btnCheckIn, btnRefresh;
-    private TextView txtWaitingCnt, txtChoice, txtNextName, txtWaitingName;
-    private Spinner spinner;
+    //private Button btnShowList, btnCheckIn, btnRefresh;
+    //private TextView txtWaitingCnt, txtChoice, txtNextName, txtWaitingName;
+    //private Spinner spinner;
     private ArrayAdapter<String> mAdapter;
+
+    private ManageWaitingBinding binding;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.manage_waiting);
+        binding = ManageWaitingBinding.inflate(getLayoutInflater());
+
+        setContentView(binding.getRoot());
         Intent intent = getIntent();
         manageWaitingActivity = ManageWaitingActivity.this;
         wQueue = new ArrayList<>();
@@ -54,25 +59,25 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
         timeList = new ArrayList<>();
         selectQ = new WaitingQueue();
 
-        btnCheckIn = findViewById(R.id.btnCheckIn);
-        btnShowList = findViewById(R.id.btnShowList);
-        btnRefresh = findViewById(R.id.btnRefresh);
-        txtWaitingCnt = findViewById(R.id.txtWaitingCnt);
-        txtChoice = findViewById(R.id.txtSelectTime);
-        txtNextName = findViewById(R.id.txtNextName);
-        txtWaitingName = findViewById(R.id.txtWaitingName);
-        spinner = findViewById(R.id.spnTime);
+//        btnCheckIn = findViewById(R.id.btnCheckIn);
+//        btnShowList = findViewById(R.id.btnShowList);
+//        btnRefresh = findViewById(R.id.btnRefresh);
+//        txtWaitingCnt = findViewById(R.id.txtWaitingCnt);
+//        txtChoice = findViewById(R.id.txtSelectTime);
+//        txtNextName = findViewById(R.id.txtNextName);
+//        txtWaitingName = findViewById(R.id.txtWaitingName);
+//        spinner = findViewById(R.id.spnTime);
 
         wInfo.setName(intent.getStringExtra("name"));
 
-        if (spinner != null) {
-            spinner.setOnItemSelectedListener(this);
+        if (binding.spnTime != null) {
+            binding.spnTime.setOnItemSelectedListener(this);
         }
         mAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, timeList);
         mAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(mAdapter);
+        binding.spnTime.setAdapter(mAdapter);
 
-        btnCheckIn.setOnClickListener(new View.OnClickListener() {
+        binding.btnCheckIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ManageWaitingActivity.this, ScanQRActivity.class);
@@ -80,7 +85,7 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
             }
         });
 
-        btnShowList.setOnClickListener(new View.OnClickListener() {
+        binding.btnShowList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(ManageWaitingActivity.this, ManageWaitingPersonActivity.class);
@@ -90,7 +95,7 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
             }
         });
 
-        btnRefresh.setOnClickListener(new View.OnClickListener() {
+        binding.btnRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 refresh();
@@ -124,7 +129,7 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
         waitingInfoRequest(wInfo.getWaitingId());
         queueListRequest(wInfo.getWaitingId());
 
-        txtWaitingName.setText(wInfo.getName());
+        binding.txtWaitingName.setText(wInfo.getName());
 
         timeList = new ArrayList<>();
         if (wInfo.getTimetable() != null) {
@@ -152,7 +157,7 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
         } else {
             for (int i = 0; i < wQueue.size(); i++) {
                 temp = wQueue.get(i);
-                if (temp.getTime().equals(txtChoice.getText().toString())) {
+                if (temp.getTime().equals(binding.txtSelectTime.getText().toString())) {
                     if (temp.getWaitingPersonList().size() != 0) {
                         wCnt = (temp.getWaitingPersonList().size()) + " 명";
                         next = temp.getWaitingPersonList().get(0).getName();
@@ -168,19 +173,19 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
         selectQ = temp;
 
 
-        txtWaitingCnt.setText(wCnt);
-        txtNextName.setText(next);
+        binding.txtWaitingCnt.setText(wCnt);
+        binding.txtNextName.setText(next);
     }
 
     public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
         String spinner_item = adapterView.getItemAtPosition(pos).toString();
-        txtChoice.setText(spinner_item);
+        binding.txtSelectTime.setText(spinner_item);
 
         refresh();
     }
 
     public void onNothingSelected(AdapterView<?> adapterView) {
-        txtChoice.setText("예약할 시간을 선택해 주세요.");
+        binding.txtSelectTime.setText("예약할 시간을 선택해 주세요.");
     }
 
     public void waitingInfoRequest(Long wId) {
