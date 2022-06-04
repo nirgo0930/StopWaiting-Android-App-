@@ -2,6 +2,7 @@ package com.example.stopwaiting.activity;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.stopwaiting.R;
+import com.example.stopwaiting.service.SendMessage;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.gms.wearable.Node;
@@ -98,7 +100,7 @@ public class MainActivity extends Activity {
             public void onClick(View view) {
                 String datapath = "/my_path";
                 String message = "refresh";
-                new SendMessage(datapath, message).start();
+                new SendMessage(datapath, message, MainActivity.this).start();
                 Log.e("refresh", "refresh 보냄");
 
             }
@@ -151,54 +153,55 @@ public class MainActivity extends Activity {
 
     }
 
-    class SendMessage extends Thread {
-        String path;
-        String message;
-
-        SendMessage(String p, String m) {
-            path = p;
-            message = m;
-        }
-
-        public void run() {
-
-            //Get all the nodes//
-
-            Task<List<Node>> nodeListTask =
-                    Wearable.getNodeClient(getApplicationContext()).getConnectedNodes();
-            try {
-
-                //Block on a task and get the result synchronously//
-
-                List<Node> nodes = Tasks.await(nodeListTask);
-
-                //Send the message to each device//
-
-                for (Node node : nodes) {
-                    Task<Integer> sendMessageTask =
-                            Wearable.getMessageClient(MainActivity.this).sendMessage(node.getId(), path, message.getBytes());
-                    try {
-                        Integer result = Tasks.await(sendMessageTask);
-                        //Handle the errors//
-                    } catch (ExecutionException exception) {
-                        //TO DO//
-                    } catch (InterruptedException exception) {
-                        //TO DO//
-                    }
-
-                }
-
-            } catch (ExecutionException exception) {
-
-                //TO DO//
-
-            } catch (InterruptedException exception) {
-
-                //TO DO//
-
-            }
-        }
-    }
+//    class SendMessage extends Thread {
+//        String path;
+//        String message;
+//        Context context;
+//
+//        SendMessage(String p, String m) {
+//            path = p;
+//            message = m;
+//        }
+//
+//        public void run() {
+//            context = getApplicationContext();
+//            //Get all the nodes//
+//
+//            Task<List<Node>> nodeListTask =
+//                    Wearable.getNodeClient(context).getConnectedNodes();
+//            try {
+//
+//                //Block on a task and get the result synchronously//
+//
+//                List<Node> nodes = Tasks.await(nodeListTask);
+//
+//                //Send the message to each device//
+//
+//                for (Node node : nodes) {
+//                    Task<Integer> sendMessageTask =
+//                            Wearable.getMessageClient(context).sendMessage(node.getId(), path, message.getBytes());
+//                    try {
+//                        Integer result = Tasks.await(sendMessageTask);
+//                        //Handle the errors//
+//                    } catch (ExecutionException exception) {
+//                        //TO DO//
+//                    } catch (InterruptedException exception) {
+//                        //TO DO//
+//                    }
+//
+//                }
+//
+//            } catch (ExecutionException exception) {
+//
+//                //TO DO//
+//
+//            } catch (InterruptedException exception) {
+//
+//                //TO DO//
+//
+//            }
+//        }
+//    }
 
 
 }
