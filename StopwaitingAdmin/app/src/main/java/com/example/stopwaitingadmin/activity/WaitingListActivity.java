@@ -3,7 +3,6 @@ package com.example.stopwaitingadmin.activity;
 import com.example.stopwaitingadmin.R;
 
 import android.os.Bundle;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.stopwaitingadmin.adapter.AdminWaitingListAdapter;
 import com.example.stopwaitingadmin.dto.AdminWaitingListItem;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -24,6 +22,7 @@ public class WaitingListActivity extends AppCompatActivity {
     private RecyclerView mWaitingListView;
     private AdminWaitingListAdapter mWaitingListAdapter;
     public static TextView txtNotice;
+
 
 
     @Override
@@ -64,6 +63,8 @@ public class WaitingListActivity extends AppCompatActivity {
         JSONObject jsonBodyObj = new JSONObject();
 
         final String requestBody = String.valueOf(jsonBodyObj.toString());
+
+
     }
 
 }

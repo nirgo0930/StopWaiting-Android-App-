@@ -4,14 +4,20 @@ import android.app.Application;
 
 import com.android.volley.RequestQueue;
 import com.example.stopwaitingadmin.dto.AdminWaitingListItem;
+import com.example.stopwaitingadmin.dto.ReportedUserListItem;
+
 import java.util.ArrayList;
 
 public class DataApplication extends Application {
     static public boolean isTest = false;
 
     static public ArrayList<AdminWaitingListItem> testAdminDBList = new ArrayList<>();
-//    static public ArrayList<WaitingQueue> testWaitingQueueDBList;
+    static public ArrayList<ReportedUserListItem> testReportedUser = new ArrayList<>();
     static public Long qCnt;
+
+    static public ArrayList<AdminWaitingListItem> adminWaitingQueue = new ArrayList<>();
+    static public ArrayList<ReportedUserListItem> reportedUserQueue = new ArrayList<>();
+
 
     static public RequestQueue requestQueue;
 
@@ -28,13 +34,7 @@ public class DataApplication extends Application {
     }
 
 
-//    public static ArrayList<WaitingQueue> getTestWaitingQueueDBList() {
-//        return testWaitingQueueDBList;
-//    }
 
-//    public static void setTestWaitingQueueDBList(ArrayList<WaitingQueue> testWaitingQueueDBList) {
-//        DataApplication.testWaitingQueueDBList = testWaitingQueueDBList;
-//    }
 
 
 

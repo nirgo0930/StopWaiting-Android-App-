@@ -1,6 +1,11 @@
 package com.example.stopwaitingadmin.dto;
 
 public class AdminWaitingListItem {
+    private Long wId;               //웨이팅 id
+    private int mImgId;             //이미지
+    private String mTxtName;        //웨이팅이름
+    private String mTxtUser;        //개설자이름
+    private String mTxtLocation;    //장소이름
 
     public AdminWaitingListItem(Long wId, int imgId, String txtName, String txtUser, String txtLocation) {
         this.wId = wId;
@@ -9,12 +14,6 @@ public class AdminWaitingListItem {
         mTxtUser = txtUser;
         mTxtLocation = txtLocation;
     }
-
-    private Long wId;               //웨이팅 id
-    private int mImgId;             //이미지
-    private String mTxtName;        //웨이팅이름
-    private String mTxtUser;        //개설자이름
-    private String mTxtLocation;    //장소이름
 
     public Long getId() {
         return wId;
