@@ -18,38 +18,12 @@ public class ImgItem implements Serializable {
     private Long id;
     private String uri;
 
-//    public ImgItem() {
-//
-//    }
-
     public ImgItem(String name, Long id, Uri uri) {
         this.name = name;
         this.id = id;
         this.uri = uri.toString();
     }
 
-//    public ImgItem(String name, Long id, String uri) {
-//        this.name = name;
-//        this.id = id;
-//        this.uri = uri;
-//    }
-
-//    public String getName() {
-//        return name;
-//    }
-//
-//    public void setName(String name) {
-//        this.name = name;
-//    }
-//
-//    public Long getId() {
-//        return id;
-//    }
-//
-//    public void setId(Long id) {
-//        this.id = id;
-//    }
-//
     public String getSUri() {
         return uri;
     }

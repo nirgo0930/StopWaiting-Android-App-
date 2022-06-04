@@ -20,14 +20,17 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.bumptech.glide.Glide;
 import com.example.stopwaiting.R;
 import com.example.stopwaiting.databinding.WaitingNormalBinding;
 import com.example.stopwaiting.dto.ImgItem;
+import com.example.stopwaiting.dto.UserInfo;
 import com.example.stopwaiting.dto.WaitingInfo;
 import com.example.stopwaiting.dto.WaitingQueue;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -44,6 +47,7 @@ public class WaitingNormalActivity extends AppCompatActivity {
     //private TextView name, imgCnt, waitCnt, locDetail, info;
     //private ImageView imageView;
     private WaitingInfo mWaitingInfo;
+    private WaitingQueue mWaitingQueue;
 
     private WaitingNormalBinding binding;
 
@@ -68,6 +72,8 @@ public class WaitingNormalActivity extends AppCompatActivity {
             }
         }
 
+        mWaitingQueue = new WaitingQueue();
+        queueRequest(mWaitingInfo.getWaitingId(), mWaitingInfo.getType());
         imageRequest();
 
         pivot = 0;
@@ -84,17 +90,17 @@ public class WaitingNormalActivity extends AppCompatActivity {
             binding.imageView.setImageResource(R.drawable.empty_icon);
         }
 
-        for (int i = 0; i < ((DataApplication) getApplication()).testWaitingQueueDBList.size(); i++) {
-            WaitingQueue temp = ((DataApplication) getApplication()).testWaitingQueueDBList.get(i);
-            if (temp.getQueueName().equals(mWaitingInfo.getName()) && temp.getTime().equals("NORMAL")) {
-                if (temp.getWaitingPersonList() != null) {
-                    binding.txtWaitCnt.setText("현재 " + String.valueOf(temp.getWaitingPersonList().size()) + "명 대기중");
-                } else {
-                    binding.txtWaitCnt.setText("현재 대기 인원이 없습니다.");
-                }
-                break;
-            }
-        }
+//        for (int i = 0; i < ((DataApplication) getApplication()).testWaitingQueueDBList.size(); i++) {
+//            WaitingQueue temp = ((DataApplication) getApplication()).testWaitingQueueDBList.get(i);
+//            if (temp.getQueueName().equals(mWaitingInfo.getName()) && temp.getTime().equals("NORMAL")) {
+//                if (temp.getWaitingPersonList() != null) {
+//                    binding.txtWaitCnt.setText("현재 " + String.valueOf(temp.getWaitingPersonList().size()) + "명 대기중");
+//                } else {
+//                    binding.txtWaitCnt.setText("현재 대기 인원이 없습니다.");
+//                }
+//                break;
+//            }
+//        }
 
         binding.txtWaitingName.setText(mWaitingInfo.getName());
         binding.txtLocDeatail.setText(mWaitingInfo.getLocDetail());
@@ -251,6 +257,76 @@ public class WaitingNormalActivity extends AppCompatActivity {
             tempImg.setSUri(mWaitingInfo.getUrlList().get(i));
 
             imgItems.add(tempImg);
+        }
+    }
+
+    public void queueRequest(Long selectWID, String time) {
+        if (DataApplication.isTest) {
+            for (WaitingQueue temp : ((DataApplication) getApplication()).testWaitingQueueDBList) {
+                if (temp.getWId().equals(selectWID) && temp.getTime().equals("NORMAL")) {
+                    if (temp.getWaitingPersonList() != null) {
+                        waitCnt.setText("현재 " + String.valueOf(temp.getWaitingPersonList().size()) + "명 대기중");
+                    } else {
+                        waitCnt.setText("현재 대기 인원이 없습니다.");
+                    }
+                    break;
+                }
+            }
+        } else {
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, DataApplication.serverURL + "/waitinginfo/" + selectWID + " /queue?time=" + time, null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject jsonObject) {
+                            try {
+                                JSONArray dataArray = jsonObject.getJSONArray("data");
+
+                                for (int i = 0; i < dataArray.length(); i++) {
+                                    JSONObject dataObject = dataArray.getJSONObject(i);
+
+                                    WaitingQueue data = new WaitingQueue();
+
+                                    data.setQueueName(dataObject.getString("queueName"));
+                                    data.setQId(dataObject.getLong("queueId"));
+                                    data.setTime(dataObject.getString("time"));
+                                    data.setMaxPerson(dataObject.getInt("maxPerson"));
+
+                                    ArrayList<UserInfo> tempUserList = new ArrayList<>();
+                                    JSONArray userArray = jsonObject.getJSONArray("waitingPersonList");
+                                    for (int j = 0; j < userArray.length(); j++) {
+                                        JSONObject userObject = dataArray.getJSONObject(i);
+
+                                        UserInfo tempUser = new UserInfo();
+                                        tempUser.setStudentCode(userObject.getLong("id"));
+
+                                        tempUserList.add(tempUser);
+                                    }
+                                    data.setWaitingPersonList(tempUserList);
+
+                                    mWaitingQueue = data;
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(getApplicationContext(), "등록에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                        }
+                    }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json");
+                    return headers;
+                }
+
+            };
+
+            request.setShouldCache(false);
+            DataApplication.requestQueue.add(request);
+
         }
     }
 }

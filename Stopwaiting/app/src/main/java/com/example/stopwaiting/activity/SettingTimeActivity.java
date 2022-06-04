@@ -141,17 +141,21 @@ public class SettingTimeActivity extends AppCompatActivity {
 
     public void addWaitingRequest() {
         if (DataApplication.isTest) {
+
+            ArrayList<Long> tempList = new ArrayList<>();
+            for (int i = 0; i < mTimeList.size(); i++) {
+                tempList.add(DataApplication.qCnt);
+                DataApplication.testWaitingQueueDBList.add(new WaitingQueue(11L,DataApplication.qCnt++,
+                        timeIntent.getStringExtra("name"), mTimeList.get(i),
+                        timeIntent.getIntExtra("maxPerson", 1)));
+            }
             DataApplication.testDBList.add(new WaitingInfo(DataApplication.currentUser.getStudentCode(), 11L,
                     timeIntent.getDoubleExtra("latitude", 0),
                     timeIntent.getDoubleExtra("longitude", 0),
                     timeIntent.getStringExtra("name"), timeIntent.getStringExtra("detail"), timeIntent.getStringExtra("info"),
-                    "TIME", timeIntent.getIntExtra("maxPerson", 1), mTimeList, new ArrayList<>()));
+                    "TIME", timeIntent.getIntExtra("maxPerson", 1), mTimeList, new ArrayList<>(), tempList));
 
-            for (int i = 0; i < mTimeList.size(); i++) {
-                DataApplication.testWaitingQueueDBList.add(new WaitingQueue(DataApplication.qCnt++,
-                        timeIntent.getStringExtra("name"), mTimeList.get(i),
-                        timeIntent.getIntExtra("maxPerson", 1)));
-            }
+
             addImageRequest(11L);
         } else {
             JSONObject jsonBodyObj = new JSONObject();
@@ -171,21 +175,9 @@ public class SettingTimeActivity extends AppCompatActivity {
                 }
                 jsonBodyObj.put("timetables", timeArray);
 
-//                JSONArray imgArray = new JSONArray();
-//                for (int i = 0; i < uriList.size(); i++) {
-//                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uriList.get(i));
-//                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-//                    byte[] imageBytes = baos.toByteArray();
-//                    String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
-//                    imgArray.put(encodedImage);
-//                }
-//                jsonBodyObj.put("images", imgArray);
 
             } catch (JSONException e) {
                 e.printStackTrace();
-//            } catch (IOException e) {
-//                e.printStackTrace();
             }
             final String requestBody = String.valueOf(jsonBodyObj.toString());
 
@@ -222,14 +214,6 @@ public class SettingTimeActivity extends AppCompatActivity {
                         return null;
                     }
                 }
-
-//                @Override
-//                protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
-//                    if (response != null) {
-//                        mStatusCode = response.statusCode;
-//                    }
-//                    return super.parseNetworkResponse(response);
-//                }
             };
 
             request.setRetryPolicy(new DefaultRetryPolicy(30000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
@@ -262,26 +246,9 @@ public class SettingTimeActivity extends AppCompatActivity {
                     new Response.Listener<NetworkResponse>() {
                         @Override
                         public void onResponse(NetworkResponse response) {
-//                            String resultResponse = new String(response.data);
-//                            try {
-//                                JSONObject result = new JSONObject(resultResponse);
-//                                String status = result.getString("status");
-//                                String message = result.getString("message");
-//
-//                                if (status.equals("")) {
-//                                    // tell everybody you have succed upload image and post strings
-//                                    Log.i("Messsage", message);
-
-
                             Intent temp = new Intent(SettingTimeActivity.this, MyPageActivity.class);
                             MyPageActivity.myPageActivity.finish();
                             startActivity(temp);
-//                                } else {
-//                                    Log.i("Unexpected", message);
-//                                }
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            }
                         }
                     }, new Response.ErrorListener() {
                 @Override

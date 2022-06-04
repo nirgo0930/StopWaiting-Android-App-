@@ -80,8 +80,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         markers = new ArrayList<>();
         ((DataApplication) getApplication()).waitingList = new ArrayList<>();
 
-//        waitingInfoAllRequest();
-
         FragmentManager fm = getSupportFragmentManager();
         MapFragment mapFragment = (MapFragment) fm.findFragmentById(R.id.map);
         if (mapFragment == null) {
@@ -109,7 +107,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-//        refresh();
     }
 
     @Override
@@ -355,7 +352,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                         ArrayList<String> timetable = new ArrayList();
                                         JSONArray timeArray = dataObject.getJSONArray("timetables");
                                         for (int j = 0; j < timeArray.length(); j++) {
-                                            timetable.add(timeArray.getString(j));
+                                            JSONObject timeObj = timeArray.getJSONObject(j);
+
+                                            timetable.add(timeObj.getString("time"));
                                         }
                                         data.setTimetable(timetable);
                                     } else {

@@ -96,13 +96,13 @@ public class ManageWaitingListActivity extends AppCompatActivity {
 
     public void myWaitingRequest() {
         if (DataApplication.isTest) {
-            for (int i = 0; i < DataApplication.testDBList.size(); i++) {
-                WaitingInfo tempInfo = DataApplication.testDBList.get(i);
+            for (WaitingInfo tempInfo : DataApplication.testDBList) {
                 if (tempInfo.getAdminId().equals(DataApplication.currentUser.getStudentCode())) {
-                    for (int j = 0; j < DataApplication.testWaitingQueueDBList.size(); j++) {
-                        WaitingQueue tempQ = DataApplication.testWaitingQueueDBList.get(j);
-                        if (tempQ.getQueueName().equals(tempInfo.getName())) {
-                            mWaitingQueueList.add(tempQ);
+                    for (WaitingQueue tempQ : DataApplication.testWaitingQueueDBList) {
+                        for (Long selectQID : tempInfo.getQueueList()) {
+                            if (tempQ.getQId().equals(selectQID)) {
+                                mWaitingQueueList.add(tempQ);
+                            }
                         }
                     }
                 }

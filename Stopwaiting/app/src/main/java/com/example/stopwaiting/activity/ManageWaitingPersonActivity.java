@@ -13,7 +13,6 @@ import com.example.stopwaiting.R;
 import com.example.stopwaiting.adapter.ManageWaitingPersonAdapter;
 import com.example.stopwaiting.databinding.WaitingListBinding;
 import com.example.stopwaiting.dto.UserInfo;
-import com.example.stopwaiting.dto.WaitingQueue;
 
 import java.util.ArrayList;
 
@@ -40,13 +39,7 @@ public class ManageWaitingPersonActivity extends AppCompatActivity {
         binding.txtNotice.setText("길게 눌러서 명단에서 제거");
 
         ArrayList<UserInfo> userList = new ArrayList<>();
-
-        for (WaitingQueue tempQueue : DataApplication.testWaitingQueueDBList) {
-            if (tempQueue.getQId().equals(qId)) {
-                userList = tempQueue.getWaitingPersonList();
-                break;
-            }
-        }
+        userList = ManageWaitingActivity.selectQ.getWaitingPersonList();
 
         ManageWaitingPersonAdapter mListAdapter = new ManageWaitingPersonAdapter(this, userList);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());

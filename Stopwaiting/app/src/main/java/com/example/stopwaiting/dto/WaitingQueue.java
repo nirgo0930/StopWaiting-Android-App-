@@ -13,6 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WaitingQueue implements Serializable {
+    private Long wId;
     private Long qId;
     private String queueName;
     private String time;
@@ -23,7 +24,8 @@ public class WaitingQueue implements Serializable {
 //
 //    }
 
-    public WaitingQueue(Long qId, String queueName, String time, int maxPerson) {
+    public WaitingQueue(Long wId, Long qId, String queueName, String time, int maxPerson) {
+        this.wId = wId;
         this.qId = qId;
         this.queueName = queueName;
         this.time = time;

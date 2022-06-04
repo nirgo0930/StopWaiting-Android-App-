@@ -10,15 +10,10 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -193,13 +188,16 @@ public class SettingInfoActivity extends AppCompatActivity {
 
     public void addWaitingRequest() {
         if (DataApplication.isTest) {
+
+            ArrayList<Long> tempList = new ArrayList<>();
+            tempList.add(DataApplication.qCnt);
             DataApplication.testDBList.add(new WaitingInfo(DataApplication.currentUser.getStudentCode(), 10L,
                     settingInfoIntent.getDoubleExtra("latitude", 0),
                     settingInfoIntent.getDoubleExtra("longitude", 0),
                     binding.edtName.getText().toString(), binding.edtLocDetail.getText().toString(), binding.edtInfo.getText().toString(),
-                    "normal", Integer.valueOf(binding.edtMaxPerson.getText().toString()), new ArrayList<>()));
+                    "normal", Integer.valueOf(binding.edtMaxPerson.getText().toString()), new ArrayList<>(),tempList));
 
-            DataApplication.testWaitingQueueDBList.add(new WaitingQueue(DataApplication.qCnt++, binding.edtName.getText().toString(),
+            DataApplication.testWaitingQueueDBList.add(new WaitingQueue(10L,DataApplication.qCnt++, binding.edtName.getText().toString(),
                     "normal", Integer.valueOf(binding.edtMaxPerson.getText().toString())));
 
             addImageRequest(10L);

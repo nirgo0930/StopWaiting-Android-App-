@@ -15,6 +15,7 @@ import com.example.stopwaiting.databinding.WaitingListBinding;
 import com.example.stopwaiting.dto.ImgItem;
 import com.example.stopwaiting.dto.WaitingInfo;
 import com.example.stopwaiting.dto.WaitingListItem;
+import com.example.stopwaiting.dto.WaitingQueue;
 
 import java.util.ArrayList;
 
@@ -57,12 +58,11 @@ public class CheckMyWaitingActivity extends AppCompatActivity {
 
     public void myWaitingRequest() {
         if (DataApplication.myWaiting.size() > 0) {
-            for (int i = 0; i < DataApplication.myWaiting.size(); i++) {
+            for (WaitingQueue myQueue : DataApplication.myWaiting) {
                 WaitingInfo tempInfo = new WaitingInfo();
-                for (int j = 0; j < ((DataApplication) getApplication()).waitingList.size(); j++) {
-                    WaitingInfo temp = ((DataApplication) getApplication()).waitingList.get(j);
-                    if (temp.getName().equals(DataApplication.myWaiting.get(i).getQueueName())) {
-                        tempInfo = temp;
+                for (WaitingInfo selectInfo : ((DataApplication) getApplication()).waitingList) {
+                    if (selectInfo.getName().equals(myQueue.getQueueName())) {
+                        tempInfo = selectInfo;
                         break;
                     }
                 }
@@ -72,8 +72,8 @@ public class CheckMyWaitingActivity extends AppCompatActivity {
                 } else {
                     tempImg.setUri(Uri.parse("drawable://" + R.drawable.empty_icon));
                 }
-                mWaitingList.add(new WaitingListItem(tempImg.getUri(), DataApplication.myWaiting.get(i).getQueueName(), DataApplication.myWaiting.get(i).getQId(),
-                        DataApplication.myWaiting.get(i).getWaitingPersonList().indexOf(DataApplication.currentUser), tempInfo.getLocDetail()));
+                mWaitingList.add(new WaitingListItem(tempImg.getUri(), myQueue.getQueueName(), myQueue.getQId(),
+                        myQueue.getWaitingPersonList().indexOf(DataApplication.currentUser), tempInfo.getLocDetail()));
             }
             binding.txtNotice.setText("신청한 웨이팅은 총 " + mWaitingList.size() + "건 입니다.");
         } else {

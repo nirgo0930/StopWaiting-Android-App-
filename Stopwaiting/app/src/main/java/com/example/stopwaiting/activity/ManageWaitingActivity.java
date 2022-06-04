@@ -7,9 +7,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,7 +16,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.stopwaiting.R;
 import com.example.stopwaiting.databinding.ManageWaitingBinding;
 import com.example.stopwaiting.dto.UserInfo;
 import com.example.stopwaiting.dto.WaitingInfo;
@@ -155,7 +151,7 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
                 next = "-";
             }
         } else {
-            for (int i = 0; i < wQueue.size(); i++) {
+            for (int i = 0; i < wInfo.getQueueList().size(); i++) {
                 temp = wQueue.get(i);
                 if (temp.getTime().equals(binding.txtSelectTime.getText().toString())) {
                     if (temp.getWaitingPersonList().size() != 0) {
@@ -275,9 +271,11 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
     public void queueListRequest(Long wId) {
         wQueue = new ArrayList<>();
         if (DataApplication.isTest) {
-            for (int i = 0; i < DataApplication.testWaitingQueueDBList.size(); i++) {
-                if (DataApplication.testWaitingQueueDBList.get(i).getQueueName().equals(wInfo.getName())) {
-                    wQueue.add(DataApplication.testWaitingQueueDBList.get(i));
+            for (WaitingQueue tempQ : DataApplication.testWaitingQueueDBList) {
+                for (Long tempQID : wInfo.getQueueList()) {
+                    if (tempQ.getQId().equals(tempQID)) {
+                        wQueue.add(tempQ);
+                    }
                 }
             }
         } else {
