@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.stopwaiting.R;
+import com.example.stopwaiting.databinding.ActivityDetailBinding;
 import com.example.stopwaiting.service.SendMessage;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -28,10 +29,17 @@ public class WaitingDetailActivity extends Activity {
     private String location;
     private String qId;
 
+    private ActivityDetailBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail);
+
+        binding = ActivityDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+
+        //setContentView(R.layout.activity_detail);
 
 
         Intent intent = getIntent();
@@ -44,25 +52,25 @@ public class WaitingDetailActivity extends Activity {
         longitude = Double.parseDouble(textList[4]);
         qId = textList[5];
 
-        TextView textLoc = findViewById(R.id.textLoc);
-        TextView textTime = findViewById(R.id.textTime);
+        //TextView textLoc = findViewById(R.id.textLoc);
+        //TextView textTime = findViewById(R.id.textTime);
 
         if(textList[0].equals("normal")){
             if(textList[1].equals("0")){
-                textTime.setText(DataApplication.currentUserInfo.getName()+"님이 체크인하실 차례에용");
+                binding.textTime.setText(DataApplication.currentUserInfo.getName()+"님이 체크인하실 차례에용");
             }
             else{
-                textTime.setText(textList[1]+"명 남았어용");
+                binding.textTime.setText(textList[1]+"명 남았어용");
             }
         }
         else{
-            textTime.setText(textList[1]);
+            binding.textTime.setText(textList[1]);
         }
-        textLoc.setText(location);
+        binding.textLoc.setText(location);
 
         //취소하기
-        Button btnCancel = (Button) findViewById(R.id.btnCancel);
-        btnCancel.setOnClickListener(new View.OnClickListener() {
+        //Button btnCancel = (Button) findViewById(R.id.btnCancel);
+        binding.btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -91,8 +99,8 @@ public class WaitingDetailActivity extends Activity {
         });
 
         //QR인식
-        Button btnQR = (Button) findViewById(R.id.btnQR);
-        btnQR.setOnClickListener(new View.OnClickListener() {
+        //Button btnQR = (Button) findViewById(R.id.btnQR);
+        binding.btnQR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), QRActivity.class);
@@ -101,8 +109,8 @@ public class WaitingDetailActivity extends Activity {
         });
 
         //위치확인
-        Button btnLoc = (Button) findViewById(R.id.btnLoc);
-        btnLoc.setOnClickListener(new View.OnClickListener() {
+        //Button btnLoc = (Button) findViewById(R.id.btnLoc);
+        binding.btnLoc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), MapsActivity.class);

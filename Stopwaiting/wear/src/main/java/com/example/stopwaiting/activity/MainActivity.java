@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.stopwaiting.R;
+import com.example.stopwaiting.databinding.ActivityMainBinding;
 import com.example.stopwaiting.service.SendMessage;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -46,6 +47,8 @@ public class MainActivity extends Activity {
 
     public static Application mainApp;
 
+    private ActivityMainBinding binding;
+
     public static SharedPreferences sharedPreferences;
     public static SharedPreferences.Editor autoEdit;
 
@@ -61,12 +64,16 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mainApp = getApplication();
-        setContentView(R.layout.activity_main);
+//        mainApp = getApplication();
+//        setContentView(R.layout.activity_main);
         Log.e("boot", DataApplication.currentUserInfo.getStudentCode() + "/"
                 + DataApplication.myWaiting.size());
 
-        listView = findViewById(R.id.listView);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+
+        //listView = findViewById(R.id.listView);
         waitingList = new ArrayList<>();
         screenList = new ArrayList<>();
         strs = new ArrayList<>();
@@ -75,13 +82,15 @@ public class MainActivity extends Activity {
         }
 
         textWaitingAdapter = new ArrayAdapter<String>(this, R.layout.listview_item, screenList);
-        listView.setAdapter(textWaitingAdapter);
+        binding.listView.setAdapter(textWaitingAdapter);
+
+        //listView.setAdapter(textWaitingAdapter);
         screenOpen();
 //        textWaitingAdapter = new ArrayAdapter<String>(this, R.layout.listview_item, screenList);
 //        listView.setAdapter(textWaitingAdapter);
 //        screenOpen(textWaitingAdapter, screenList);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        binding.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if (strList != null) {
@@ -93,9 +102,7 @@ public class MainActivity extends Activity {
             }
         });
 
-
-        ImageButton btn_refresh = (ImageButton) findViewById(R.id.btn_refresh);
-        btn_refresh.setOnClickListener(new View.OnClickListener() {
+        binding.btnRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String datapath = "/my_path";
@@ -105,6 +112,18 @@ public class MainActivity extends Activity {
 
             }
         });
+
+//        ImageButton btn_refresh = (ImageButton) findViewById(R.id.btn_refresh);
+//        btn_refresh.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                String datapath = "/my_path";
+//                String message = "refresh";
+//                new SendMessage(datapath, message, MainActivity.this).start();
+//                Log.e("refresh", "refresh 보냄");
+//
+//            }
+//        });
 
 
     }
