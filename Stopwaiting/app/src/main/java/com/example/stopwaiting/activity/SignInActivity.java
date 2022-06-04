@@ -26,7 +26,7 @@ import java.util.Map;
 public class SignInActivity extends AppCompatActivity {
     //private EditText edtName, edtPw, edtPwCk, edtSCode, edtTelNum;
     private boolean dupCheck = false;
-
+    private long checkedId = 0L;
     private SigninBinding binding;
 
     @Override
@@ -73,62 +73,61 @@ public class SignInActivity extends AppCompatActivity {
         if (!binding.edtPassword.getText().toString().equals(binding.edtPwck.getText().toString())) {
             Toast.makeText(getApplicationContext(), "비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
             return;
-        }
-        if (!dupCheck) {
+        } else if (dupCheck && Long.valueOf(binding.edtStudentCode.getText().toString()).equals(checkedId)) {
+            JSONObject jsonBodyObj = new JSONObject();
+            try {
+                jsonBodyObj.put("id", Long.valueOf(binding.edtStudentCode.getText().toString()));
+                jsonBodyObj.put("password", binding.edtPassword.getText().toString());
+                jsonBodyObj.put("name", binding.edtName.getText().toString());
+                jsonBodyObj.put("phoneNumber", binding.edtTelNumber.getText().toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            final String requestBody = String.valueOf(jsonBodyObj.toString());
+
+            StringRequest request = new StringRequest(Request.Method.POST, DataApplication.serverURL + "/signup",
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String jsonObject) {
+                            Toast.makeText(getApplicationContext(), "회원가입에 성공하였습니다.", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(SignInActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(getApplicationContext(), "회원가입에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                        }
+                    }) {
+
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json");
+                    return headers;
+                }
+
+                @Override
+                public byte[] getBody() {
+                    try {
+                        if (requestBody != null && requestBody.length() > 0 && !requestBody.equals("")) {
+                            return requestBody.getBytes("utf-8");
+                        } else {
+                            return null;
+                        }
+                    } catch (UnsupportedEncodingException uee) {
+                        return null;
+                    }
+                }
+            };
+
+            request.setShouldCache(false);
+            DataApplication.requestQueue.add(request);
+        } else {
             Toast.makeText(getApplicationContext(), "중복된 학번입니다.", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        JSONObject jsonBodyObj = new JSONObject();
-        try {
-            jsonBodyObj.put("id", Long.valueOf(binding.edtStudentCode.getText().toString()));
-            jsonBodyObj.put("password", binding.edtPassword.getText().toString());
-            jsonBodyObj.put("name", binding.edtName.getText().toString());
-            jsonBodyObj.put("phoneNumber", binding.edtTelNumber.getText().toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        final String requestBody = String.valueOf(jsonBodyObj.toString());
-
-        StringRequest request = new StringRequest(Request.Method.POST, DataApplication.serverURL + "/signup",
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String jsonObject) {
-                        Toast.makeText(getApplicationContext(), "회원가입에 성공하였습니다.", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(SignInActivity.this, LoginActivity.class);
-                        startActivity(intent);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getApplicationContext(), "회원가입에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-                    }
-                }) {
-
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                headers.put("Content-Type", "application/json");
-                return headers;
-            }
-
-            @Override
-            public byte[] getBody() {
-                try {
-                    if (requestBody != null && requestBody.length() > 0 && !requestBody.equals("")) {
-                        return requestBody.getBytes("utf-8");
-                    } else {
-                        return null;
-                    }
-                } catch (UnsupportedEncodingException uee) {
-                    return null;
-                }
-            }
-        };
-
-        request.setShouldCache(false);
-        DataApplication.requestQueue.add(request);
     }
 
     public void dupCheckRequest() {
@@ -146,6 +145,7 @@ public class SignInActivity extends AppCompatActivity {
                     public void onResponse(String jsonObject) {
                         Toast.makeText(getApplicationContext(), "사용가능한 학번입니다.", Toast.LENGTH_SHORT).show();
                         dupCheck = true;
+                        checkedId = Long.parseLong(binding.edtStudentCode.getText().toString());
                     }
                 },
                 new Response.ErrorListener() {
