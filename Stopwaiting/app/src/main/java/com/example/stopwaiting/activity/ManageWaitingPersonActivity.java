@@ -3,13 +3,11 @@ package com.example.stopwaiting.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.stopwaiting.R;
 import com.example.stopwaiting.adapter.ManageWaitingPersonAdapter;
 import com.example.stopwaiting.databinding.WaitingListBinding;
 import com.example.stopwaiting.dto.UserInfo;
@@ -45,7 +43,5 @@ public class ManageWaitingPersonActivity extends AppCompatActivity {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         binding.recyclerView.setLayoutManager(layoutManager);
         binding.recyclerView.setAdapter(mListAdapter);
-
-
     }
 }

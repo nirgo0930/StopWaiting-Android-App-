@@ -1,8 +1,9 @@
 package com.example.stopwaiting.activity;
 
 import android.app.Activity;
+import android.net.Uri;
 import android.os.Bundle;
-import android.widget.TextView;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -10,17 +11,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.stopwaiting.R;
 import com.example.stopwaiting.adapter.ShowListAdapter;
+import com.example.stopwaiting.databinding.WaitingListBinding;
 import com.example.stopwaiting.dto.WaitingInfo;
 
 import java.util.ArrayList;
 
 public class ShowListActivity extends AppCompatActivity {
-    private RecyclerView recyclerView;
-
     private ArrayList<WaitingInfo> mWaitingList;
     private ShowListAdapter mListAdapter;
-    private TextView txtNotice;
-    public static Activity myWaitingActivity;
+    public static Activity showListActivity;
+
+    private WaitingListBinding binding;
 
     @Override
     protected void onStop() {
@@ -30,31 +31,38 @@ public class ShowListActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.waiting_list);
-        myWaitingActivity = ShowListActivity.this;
-        txtNotice = findViewById(R.id.txtNotice);
-        recyclerView = findViewById(R.id.recyclerView);
+        binding = WaitingListBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        showListActivity = ShowListActivity.this;
         mWaitingList = new ArrayList<>();
 
+
+
+        binding.txtTitle.setText("개설된 웨이팅");
+
         waitingListRequest();
+        for (WaitingInfo info : mWaitingList) {
+            Log.e("info", info.getName());
+            if (info.getUrlList().size() == 0) {
+                info.addImage(Uri.parse("android.resource://" + R.class.getPackage().getName() + "/" + R.drawable.empty_icon).toString());
+            }
+        }
 
         mListAdapter = new ShowListAdapter(this, mWaitingList);
-
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(mListAdapter);
+        binding.recyclerView.setLayoutManager(layoutManager);
+        binding.recyclerView.setAdapter(mListAdapter);
 
         mListAdapter.notifyDataSetChanged();
     }
 
     public void waitingListRequest() {
         if (DataApplication.waitingList.size() > 0) {
-            for (WaitingInfo tempInfo : DataApplication.waitingList) {
-                mWaitingList.add(tempInfo);
-            }
-            txtNotice.setText("신청한 웨이팅은 총 " + mWaitingList.size() + "건 입니다.");
+            mWaitingList = DataApplication.waitingList;
+
+            binding.txtNotice.setText("개설된 웨이팅은 총 " + mWaitingList.size() + "건 입니다.");
         } else {
-            txtNotice.setText("신청한 웨이팅이 없습니다.");
+            binding.txtNotice.setText("개설된 웨이팅이 없습니다.");
         }
     }
 

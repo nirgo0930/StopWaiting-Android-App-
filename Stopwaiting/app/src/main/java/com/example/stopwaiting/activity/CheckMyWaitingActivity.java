@@ -3,7 +3,6 @@ package com.example.stopwaiting.activity;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,11 +19,8 @@ import com.example.stopwaiting.dto.WaitingQueue;
 import java.util.ArrayList;
 
 public class CheckMyWaitingActivity extends AppCompatActivity {
-    //private RecyclerView recyclerView;
-
     private ArrayList<WaitingListItem> mWaitingList;
     private MyWaitingListAdapter mListAdapter;
-    //private TextView txtNotice;
     public static Activity myWaitingActivity;
 
     private WaitingListBinding binding;
@@ -41,8 +37,6 @@ public class CheckMyWaitingActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         myWaitingActivity = CheckMyWaitingActivity.this;
-//        txtNotice = findViewById(R.id.txtNotice);
-//        recyclerView = findViewById(R.id.recyclerView);
         mWaitingList = new ArrayList<>();
 
         myWaitingRequest();
@@ -70,7 +64,7 @@ public class CheckMyWaitingActivity extends AppCompatActivity {
                 if (tempInfo.getUrlList().size() > 0) {
                     tempImg.setSUri(tempInfo.getUrlList().get(0));
                 } else {
-                    tempImg.setUri(Uri.parse("drawable://" + R.drawable.empty_icon));
+                    tempImg.setSUri(Uri.parse("android.resource://" + R.class.getPackage().getName() + "/" + R.drawable.empty_icon).toString());
                 }
                 mWaitingList.add(new WaitingListItem(tempImg.getUri(), myQueue.getQueueName(), myQueue.getQId(),
                         myQueue.getWaitingPersonList().indexOf(DataApplication.currentUser), tempInfo.getLocDetail()));

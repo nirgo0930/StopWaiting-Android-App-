@@ -35,10 +35,7 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
     private ArrayList<WaitingQueue> wQueue;
     private ArrayList<String> timeList;
     private WaitingInfo wInfo;
-    private WaitingQueue selectQ;
-    //private Button btnShowList, btnCheckIn, btnRefresh;
-    //private TextView txtWaitingCnt, txtChoice, txtNextName, txtWaitingName;
-    //private Spinner spinner;
+    public static WaitingQueue selectQ;
     private ArrayAdapter<String> mAdapter;
 
     private ManageWaitingBinding binding;
@@ -55,16 +52,8 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
         timeList = new ArrayList<>();
         selectQ = new WaitingQueue();
 
-//        btnCheckIn = findViewById(R.id.btnCheckIn);
-//        btnShowList = findViewById(R.id.btnShowList);
-//        btnRefresh = findViewById(R.id.btnRefresh);
-//        txtWaitingCnt = findViewById(R.id.txtWaitingCnt);
-//        txtChoice = findViewById(R.id.txtSelectTime);
-//        txtNextName = findViewById(R.id.txtNextName);
-//        txtWaitingName = findViewById(R.id.txtWaitingName);
-//        spinner = findViewById(R.id.spnTime);
-
-        wInfo.setName(intent.getStringExtra("name"));
+        waitingInfoRequest(intent.getLongExtra("qId", 0L));
+//        wInfo.setName();
 
         if (binding.spnTime != null) {
             binding.spnTime.setOnItemSelectedListener(this);
@@ -184,18 +173,21 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
         binding.txtSelectTime.setText("예약할 시간을 선택해 주세요.");
     }
 
-    public void waitingInfoRequest(Long wId) {
+    public void waitingInfoRequest(Long qId) {
         if (DataApplication.isTest) {
-            for (int i = 0; i < DataApplication.testDBList.size(); i++) {
-                if (DataApplication.testDBList.get(i).getWaitingId().equals(wId)) {
-                    wInfo = DataApplication.testDBList.get(i);
-                    break;
+            for (WaitingInfo tempInfo : DataApplication.testDBList) {
+//            for (int i = 0; i < DataApplication.testDBList.size(); i++) {
+                for (Long id : tempInfo.getQueueList()) {
+                    if (id.equals(qId)) {
+                        wInfo = tempInfo;
+                        return;
+                    }
                 }
             }
         } else {
             JSONObject jsonBodyObj = new JSONObject();
             try {
-                jsonBodyObj.put("id", wId);
+                jsonBodyObj.put("id", qId);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

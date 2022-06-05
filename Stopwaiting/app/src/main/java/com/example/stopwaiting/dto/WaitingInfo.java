@@ -72,4 +72,8 @@ public class WaitingInfo implements Serializable {
         return waitingId != null ? waitingId.hashCode() : 0;
     }
 
+    public void addImage(String image) {
+        this.urlList.add(image);
+    }
+
 }

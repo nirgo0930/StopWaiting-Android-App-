@@ -41,7 +41,7 @@ public class ManageWaitingListAdapter extends RecyclerView.Adapter<ManageWaiting
     }
 
     public interface OnItemClickEventListener {
-        void onItemClick(String name);
+        void onItemClick(int pos);
     }
 
     public interface OnItemLongClickEventListener {
@@ -50,9 +50,9 @@ public class ManageWaitingListAdapter extends RecyclerView.Adapter<ManageWaiting
 
     private ManageWaitingListAdapter.OnItemClickEventListener mItemClickListener = new ManageWaitingListAdapter.OnItemClickEventListener() {
         @Override
-        public void onItemClick(String name) {
+        public void onItemClick(int pos) {
             Intent data = new Intent(mContext, ManageWaitingActivity.class);
-            data.putExtra("name", name);
+            data.putExtra("qId", mItemList.get(pos).getQId());
             mContext.startActivity(data);
         }
     };

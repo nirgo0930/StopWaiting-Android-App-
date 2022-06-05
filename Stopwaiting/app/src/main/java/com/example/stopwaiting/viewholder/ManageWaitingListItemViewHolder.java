@@ -10,7 +10,7 @@ import com.example.stopwaiting.R;
 import com.example.stopwaiting.adapter.ManageWaitingListAdapter;
 
 public class ManageWaitingListItemViewHolder extends RecyclerView.ViewHolder {
-    public ImageView imgItem,imgTestItem;
+    public ImageView imgItem;
     public TextView txtName, txtLocDetail, txtWaitCnt;
     public ManageWaitingListAdapter adapter;
 
@@ -27,7 +27,7 @@ public class ManageWaitingListItemViewHolder extends RecyclerView.ViewHolder {
             public void onClick(View a_view) {
                 final int position = getAdapterPosition();
                 if (position != RecyclerView.NO_POSITION) {
-                    mItemClickListener.onItemClick(txtName.getText().toString());
+                    mItemClickListener.onItemClick(position);
                 }
             }
         });

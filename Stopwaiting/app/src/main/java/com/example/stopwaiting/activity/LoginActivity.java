@@ -9,8 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -137,17 +135,17 @@ public class LoginActivity extends AppCompatActivity {
         ArrayList<Long> tempQIDList = new ArrayList<>();
         for (int i = 0; i < temp.size(); i++) {
             ((DataApplication) getApplication()).testWaitingQueueDBList.add
-                    (new WaitingQueue(1L, ((DataApplication) this.getApplication()).qCnt++, "미용실", temp.get(i), 5));
-            tempQIDList.add(((DataApplication) this.getApplication()).qCnt);
+                    (new WaitingQueue(1L, ((DataApplication) this.getApplication()).qCnt, "미용실", temp.get(i), 5));
+            tempQIDList.add(((DataApplication) this.getApplication()).qCnt++);
         }
         ((DataApplication) this.getApplication()).testDBList.add(new WaitingInfo
                 (20170873L, 1L, 36.144760, 128.393884, "미용실", "학생회관 B208",
                         "미용실입니다.", "TIME", 5, temp, new ArrayList<>(), tempQIDList));
 
         ((DataApplication) getApplication()).testWaitingQueueDBList.add
-                (new WaitingQueue(2L, ((DataApplication) this.getApplication()).qCnt++, "특식배부", "NORMAL", 3));
+                (new WaitingQueue(2L, ((DataApplication) this.getApplication()).qCnt, "특식배부", "NORMAL", 3));
         tempQIDList = new ArrayList<>();
-        tempQIDList.add(((DataApplication) this.getApplication()).qCnt);
+        tempQIDList.add(((DataApplication) this.getApplication()).qCnt++);
         ((DataApplication) this.getApplication()).testDBList.add(new WaitingInfo(20170873L, 2L, 36.145619, 128.392535,
                 "특식배부", "디지털관 330", "컴소공 특식배부.", "NORMAL", 3, new ArrayList<>(), tempQIDList));
 
@@ -156,11 +154,11 @@ public class LoginActivity extends AppCompatActivity {
         tempList.add(Uri.parse(root + R.drawable.haircut_cost).toString());
         tempList.add(Uri.parse(root + R.drawable.human_icon).toString());
 
-        WaitingQueue tempQ = new WaitingQueue(3L, ((DataApplication) this.getApplication()).qCnt++, "북카페", "NORMAL", 10);
+        WaitingQueue tempQ = new WaitingQueue(3L, ((DataApplication) this.getApplication()).qCnt, "북카페", "NORMAL", 10);
         tempQ.addWPerson(((DataApplication) getApplication()).currentUser);
         ((DataApplication) getApplication()).testWaitingQueueDBList.add(tempQ);
         tempQIDList = new ArrayList<>();
-        tempQIDList.add(((DataApplication) this.getApplication()).qCnt);
+        tempQIDList.add(((DataApplication) this.getApplication()).qCnt++);
         ((DataApplication) this.getApplication()).testDBList.add(new WaitingInfo(20170526L, 3L, 36.145123, 128.394244,
                 "북카페", "학생회관 B218", "북카페입니다.", "NORMAL", 10, tempList, tempQIDList));
 

@@ -9,8 +9,6 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -44,8 +42,6 @@ public class WaitingNormalActivity extends AppCompatActivity {
     private int pivot, mStatusCode;
     private ArrayList<ImgItem> imgItems;
     private ArrayList<String> urlItems;
-    //private TextView name, imgCnt, waitCnt, locDetail, info;
-    //private ImageView imageView;
     private WaitingInfo mWaitingInfo;
     private WaitingQueue mWaitingQueue;
 
@@ -58,12 +54,6 @@ public class WaitingNormalActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         Intent intent = getIntent();
 
-//        name = findViewById(R.id.txtWaitingName);
-//        locDetail = findViewById(R.id.txtLocDeatail);
-//        imgCnt = findViewById(R.id.txtImgCnt);
-//        waitCnt = findViewById(R.id.txtWaitCnt);
-//        imageView = findViewById(R.id.imageView);
-//        info = findViewById(R.id.txtInfo);
 
         mWaitingInfo = new WaitingInfo();
         for (int i = 0; i < DataApplication.waitingList.size(); i++) {
@@ -89,18 +79,6 @@ public class WaitingNormalActivity extends AppCompatActivity {
             binding.txtImgCnt.setText(content);
             binding.imageView.setImageResource(R.drawable.empty_icon);
         }
-
-//        for (int i = 0; i < ((DataApplication) getApplication()).testWaitingQueueDBList.size(); i++) {
-//            WaitingQueue temp = ((DataApplication) getApplication()).testWaitingQueueDBList.get(i);
-//            if (temp.getQueueName().equals(mWaitingInfo.getName()) && temp.getTime().equals("NORMAL")) {
-//                if (temp.getWaitingPersonList() != null) {
-//                    binding.txtWaitCnt.setText("현재 " + String.valueOf(temp.getWaitingPersonList().size()) + "명 대기중");
-//                } else {
-//                    binding.txtWaitCnt.setText("현재 대기 인원이 없습니다.");
-//                }
-//                break;
-//            }
-//        }
 
         binding.txtWaitingName.setText(mWaitingInfo.getName());
         binding.txtLocDeatail.setText(mWaitingInfo.getLocDetail());
@@ -265,9 +243,9 @@ public class WaitingNormalActivity extends AppCompatActivity {
             for (WaitingQueue temp : ((DataApplication) getApplication()).testWaitingQueueDBList) {
                 if (temp.getWId().equals(selectWID) && temp.getTime().equals("NORMAL")) {
                     if (temp.getWaitingPersonList() != null) {
-                        waitCnt.setText("현재 " + String.valueOf(temp.getWaitingPersonList().size()) + "명 대기중");
+                        binding.txtWaitCnt.setText("현재 " + String.valueOf(temp.getWaitingPersonList().size()) + "명 대기중");
                     } else {
-                        waitCnt.setText("현재 대기 인원이 없습니다.");
+                        binding.txtWaitCnt.setText("현재 대기 인원이 없습니다.");
                     }
                     break;
                 }

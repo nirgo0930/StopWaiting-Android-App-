@@ -1,8 +1,8 @@
 package com.example.stopwaiting.activity;
 
 import android.app.Activity;
+import android.net.Uri;
 import android.os.Bundle;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,13 +33,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ManageWaitingListActivity extends AppCompatActivity {
-    //private TextView txtResult, txtTitle;
-    //private RecyclerView recyclerView;
     private ArrayList<WaitingQueue> mWaitingQueueList;
     private ArrayList<WaitingListItem> mWaitingList;
     private ManageWaitingListAdapter mListAdapter;
     private WaitingInfo tempWaitingInfo;
-    private ImgItem tempImgInfo;
     public static Activity manageWaitingActivity;
 
     private WaitingListBinding binding;
@@ -50,28 +47,23 @@ public class ManageWaitingListActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         manageWaitingActivity = ManageWaitingListActivity.this;
 
-//        txtResult = findViewById(R.id.txtNotice);
-//        txtTitle = findViewById(R.id.txtTitle);
-//        recyclerView = findViewById(R.id.recyclerView);
-
         tempWaitingInfo = new WaitingInfo();
-        tempImgInfo = new ImgItem();
         mWaitingList = new ArrayList<>();
         mWaitingQueueList = new ArrayList<>();
         mListAdapter = new ManageWaitingListAdapter(this, mWaitingList);
 
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-        binding.recyclerView.setLayoutManager(layoutManager);
-        binding.recyclerView.setAdapter(mListAdapter);
-
-        binding.txtTitle.setText("개설한 웨이팅");
 
         myWaitingRequest();
 
         if (mWaitingQueueList.size() > 0) {
             for (WaitingQueue selectQueue : mWaitingQueueList) {
                 waitingInfoRequest(selectQueue.getQId());
-                tempImgInfo.setSUri(tempWaitingInfo.getUrlList().get(0));
+                ImgItem tempImgInfo = new ImgItem();
+                if (tempWaitingInfo.getUrlList().size() > 0) {
+                    tempImgInfo.setSUri(tempWaitingInfo.getUrlList().get(0));
+                } else {
+                    tempImgInfo.setSUri(Uri.parse("android.resource://" + R.class.getPackage().getName() + "/" + R.drawable.empty_icon).toString());
+                }
 
                 boolean check = false;
                 for (int j = 0; j < mWaitingList.size(); j++) {
@@ -84,12 +76,17 @@ public class ManageWaitingListActivity extends AppCompatActivity {
                     mWaitingList.add(new WaitingListItem(tempImgInfo.getUri(), selectQueue.getQueueName(), selectQueue.getQId(),
                             selectQueue.getWaitingPersonList().size(), tempWaitingInfo.getLocDetail()));
                 }
-
             }
             binding.txtNotice.setText("개설한 웨이팅은 총 " + mWaitingList.size() + "건 입니다.");
         } else {
             binding.txtNotice.setText("개설한 웨이팅이 없습니다.");
         }
+
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+        binding.recyclerView.setLayoutManager(layoutManager);
+        binding.recyclerView.setAdapter(mListAdapter);
+
+        binding.txtTitle.setText("개설한 웨이팅");
 
         mListAdapter.notifyDataSetChanged();
     }
@@ -104,10 +101,10 @@ public class ManageWaitingListActivity extends AppCompatActivity {
                                 mWaitingQueueList.add(tempQ);
                             }
                         }
+
                     }
                 }
             }
-
         } else {
             JSONObject jsonBodyObj = new JSONObject();
             try {
@@ -186,11 +183,12 @@ public class ManageWaitingListActivity extends AppCompatActivity {
 
     public void waitingInfoRequest(Long qId) {
         if (DataApplication.isTest) {
-            for (WaitingInfo tempInfo : DataApplication.testDBList) {
-                for (WaitingQueue tempQ : DataApplication.testWaitingQueueDBList) {
-                    if (tempQ.getQId().equals(qId) && tempInfo.getName().equals(tempQ.getQueueName())) {
-                        mWaitingQueueList.add(tempQ);
-                        break;
+            for (int i = 0; i < DataApplication.testDBList.size(); i++) {
+                WaitingInfo tempInfo = DataApplication.testDBList.get(i);
+                for (Long id : tempInfo.getQueueList()) {
+                    if (id.equals(qId)) {
+                        tempWaitingInfo = tempInfo;
+                        return;
                     }
                 }
             }
