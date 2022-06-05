@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,7 +76,7 @@ public class ShowListAdapter extends RecyclerView.Adapter<ShowListViewHolder> {
     public void onBindViewHolder(@NonNull ShowListViewHolder holder, int position) {
         final WaitingInfo waitingItem = mItemList.get(position);
 
-        if (DataApplication.isTest) {
+        if (waitingItem.getUrlList().get(0) == null) {
             Glide.with(mContext.getApplicationContext())
                     .load(Uri.parse(waitingItem.getUrlList().get(0)))
                     .into(holder.imgItem);
@@ -125,12 +126,14 @@ public class ShowListAdapter extends RecyclerView.Adapter<ShowListViewHolder> {
                 }
             }
         } else {
+            Log.e("URL", DataApplication.serverURL + "/waitinginfo/" + selectWID + "/queue?time=" + time);
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, DataApplication.serverURL + "/waitinginfo/" + selectWID + " /queue?time=" + time, null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
                             try {
                                 JSONArray dataArray = jsonObject.getJSONArray("data");
+
 
                                 for (int i = 0; i < dataArray.length(); i++) {
                                     JSONObject dataObject = dataArray.getJSONObject(i);

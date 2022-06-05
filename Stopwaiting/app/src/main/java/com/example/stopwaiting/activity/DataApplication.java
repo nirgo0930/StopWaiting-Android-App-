@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 
 public class DataApplication extends Application {
-    static public boolean isTest = true;
+    static public boolean isTest = false;
     static public boolean isFirstBoot = true;
 
     static public ArrayList<WaitingInfo> testDBList;
@@ -117,7 +117,6 @@ public class DataApplication extends Application {
             try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
                 oos.writeObject(tempUser);
                 serializedMember = baos.toByteArray();
-                Log.e("userCode 안에", String.valueOf(tempUser.getStudentCode()));
             }
         } catch (IOException e) {
             e.printStackTrace();

@@ -11,10 +11,6 @@ import android.text.style.StyleSpan;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -230,16 +226,14 @@ public class WaitingSelectTimeActivity extends AppCompatActivity implements Adap
         } else {
             JSONObject jsonBodyObj = new JSONObject();
             try {
-                jsonBodyObj.put("studentCode", DataApplication.currentUser.getStudentCode());
-                jsonBodyObj.put("waitingId", mWaitingInfo.getWaitingId());
-                jsonBodyObj.put("type", mWaitingInfo.getType());
-                jsonBodyObj.put("time", binding.txtSelectTime.getText());
+                jsonBodyObj.put("id", DataApplication.currentUser.getStudentCode());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             final String requestBody = String.valueOf(jsonBodyObj.toString());
 
-            StringRequest request = new StringRequest(Request.Method.GET, DataApplication.serverURL + "/addwaiting",
+            StringRequest request = new StringRequest(Request.Method.POST,
+                    DataApplication.serverURL + "/waitinginfo/" + mWaitingInfo.getWaitingId() + "/queue/" + binding.txtSelectTime.getText(),
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String jsonObject) {

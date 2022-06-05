@@ -12,8 +12,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -29,7 +27,6 @@ import com.android.volley.Response;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.example.stopwaiting.R;
 import com.example.stopwaiting.databinding.SettingTimeBinding;
 import com.example.stopwaiting.dto.WaitingInfo;
 import com.example.stopwaiting.dto.WaitingQueue;
@@ -145,7 +142,7 @@ public class SettingTimeActivity extends AppCompatActivity {
             ArrayList<Long> tempList = new ArrayList<>();
             for (int i = 0; i < mTimeList.size(); i++) {
                 tempList.add(DataApplication.qCnt);
-                DataApplication.testWaitingQueueDBList.add(new WaitingQueue(11L,DataApplication.qCnt++,
+                DataApplication.testWaitingQueueDBList.add(new WaitingQueue(11L, DataApplication.qCnt++,
                         timeIntent.getStringExtra("name"), mTimeList.get(i),
                         timeIntent.getIntExtra("maxPerson", 1)));
             }
@@ -242,7 +239,7 @@ public class SettingTimeActivity extends AppCompatActivity {
             MyPageActivity.myPageActivity.finish();
             startActivity(temp);
         } else {
-            MultipartRequest multipartRequest = new MultipartRequest(Request.Method.POST, DataApplication.serverURL + "/waitinginfo/images",
+            MultipartRequest multipartRequest = new MultipartRequest(Request.Method.POST, DataApplication.serverURL + "/waitinginfo/" + waitingId + "/images",
                     new Response.Listener<NetworkResponse>() {
                         @Override
                         public void onResponse(NetworkResponse response) {
@@ -306,7 +303,9 @@ public class SettingTimeActivity extends AppCompatActivity {
                             byte[] imageBytes = baos.toByteArray();
 
 
-                            temp[i] = new MultipartRequest.DataPart(timeIntent.getStringExtra("name") + String.valueOf(i) + ".jpg", imageBytes, "image/jpeg");
+                            temp[i] = new MultipartRequest.DataPart(
+                                    String.valueOf(timeIntent.getStringExtra("name")) + String.valueOf(i) + ".jpg", imageBytes, "image/jpeg");
+                            Log.e("img_name",timeIntent.getStringExtra("name"));
                         }
                         params.put("files", temp);
                     }

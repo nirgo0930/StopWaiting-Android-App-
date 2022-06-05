@@ -109,7 +109,7 @@ public class MyWaitingListAdapter extends RecyclerView.Adapter<MyWaitingListItem
     public void onBindViewHolder(@NonNull MyWaitingListItemViewHolder holder, int position) {
         final WaitingListItem waitingItem = mItemList.get(position);
 
-        if (DataApplication.isTest) {
+        if (waitingItem.getImgUrl() == null) {
             Glide.with(mContext.getApplicationContext())
                     .load(waitingItem.getImgUri())
                     .into(holder.imgItem);

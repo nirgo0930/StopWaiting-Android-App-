@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public static Context context_main;
     private Intent mainIntent;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1000;
-    private static final int MYPAGE_REQUEST_CODE = 2000;
+    private static final int CAMERA_MOVE_REQUEST_CODE = 2000;
     private static final String[] PERMISSIONS = {
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Intent intent = mainIntent;
                 intent.setClass(MainActivity.this, MyPageActivity.class);
 
-                startActivityForResult(intent, MYPAGE_REQUEST_CODE);
+                startActivityForResult(intent, CAMERA_MOVE_REQUEST_CODE);
             }
         });
 
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Intent intent = mainIntent;
                 intent.setClass(MainActivity.this, ShowListActivity.class);
 
-                startActivityForResult(intent, MYPAGE_REQUEST_CODE);
+                startActivityForResult(intent, CAMERA_MOVE_REQUEST_CODE);
             }
         });
 
@@ -200,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         refresh();
 
-        if (requestCode == MYPAGE_REQUEST_CODE) {
+        if (requestCode == CAMERA_MOVE_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 String selectName = data.getStringExtra("name");
                 switch (data.getIntExtra("case", 0)) {
@@ -256,39 +256,55 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
             final String requestBody = String.valueOf(jsonBodyObj.toString());
 
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, ((DataApplication) getApplication()).serverURL + "/myWaitingQueue", null,
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,
+                    ((DataApplication) getApplication()).serverURL + "/user/" + DataApplication.currentUser.getStudentCode() + "/queue", null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
+                            Toast.makeText(getApplicationContext(), "신청한 웨이팅 조회.", Toast.LENGTH_SHORT).show();
                             try {
+                                Log.e("data", jsonObject.toString());
                                 JSONArray dataArray = jsonObject.getJSONArray("data");
 
                                 for (int i = 0; i < dataArray.length(); i++) {
                                     JSONObject dataObject = dataArray.getJSONObject(i);
+                                    JSONObject queueObject = dataObject.getJSONObject("waitingQueue");
+
+                                    int nowPersonCnt = queueObject.getJSONArray("userQueues").length();
+
+
+                                    JSONObject timeObject = queueObject.getJSONObject("timetable");
+                                    JSONObject waitingInfoObject = timeObject.getJSONObject("waitingInfo");
 
                                     WaitingQueue data = new WaitingQueue();
 
-                                    data.setQueueName(dataObject.getString("queueName"));
-                                    data.setWId(dataObject.getLong("waitingInfoId"));
-                                    data.setQId(dataObject.getLong("queueId"));
-                                    data.setTime(dataObject.getString("time"));
-                                    data.setMaxPerson(dataObject.getInt("maxPerson"));
+                                    data.setTime(timeObject.getString("time"));
+                                    data.setQId(queueObject.getLong("id"));
+
+                                    data.setQueueName(waitingInfoObject.getString("name"));
+                                    data.setWId(waitingInfoObject.getLong("id"));
+                                    data.setMaxPerson(waitingInfoObject.getInt("maxPerson"));
 
                                     ArrayList<UserInfo> tempUserList = new ArrayList<>();
-                                    JSONArray userArray = jsonObject.getJSONArray("waitingPersonList");
-                                    for (int j = 0; j < userArray.length(); j++) {
-                                        JSONObject userObject = dataArray.getJSONObject(i);
-
+                                    for (int j = 0; j < nowPersonCnt; j++) {
                                         UserInfo tempUser = new UserInfo();
-                                        tempUser.setStudentCode(userObject.getLong("id"));
-
                                         tempUserList.add(tempUser);
                                     }
+//                                    JSONArray userArray = jsonObject.getJSONArray("waitingPersonList");
+//                                    for (int j = 0; j < userArray.length(); j++) {
+//                                        JSONObject userObject = dataArray.getJSONObject(i);
+//
+//                                        UserInfo tempUser = new UserInfo();
+//                                        tempUser.setStudentCode(userObject.getLong("id"));
+//
+//                                        tempUserList.add(tempUser);
+//                                    }
                                     data.setWaitingPersonList(tempUserList);
-
+                                    Log.e("myQ", data.getQueueName());
                                     DataApplication.myWaiting.add(data);
                                 }
                             } catch (JSONException e) {
+                                Log.e("error", e.toString());
                                 e.printStackTrace();
                             }
                         }
@@ -342,7 +358,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         @Override
                         public void onResponse(JSONObject jsonObject) {
                             try {
-                                Log.e("data", jsonObject.toString());
                                 JSONArray dataArray = jsonObject.getJSONArray("data");
 
                                 for (int i = 0; i < dataArray.length(); i++) {

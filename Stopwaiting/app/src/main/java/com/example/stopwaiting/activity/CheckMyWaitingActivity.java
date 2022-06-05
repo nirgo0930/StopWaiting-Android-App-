@@ -3,6 +3,7 @@ package com.example.stopwaiting.activity;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -62,12 +63,16 @@ public class CheckMyWaitingActivity extends AppCompatActivity {
                 }
                 ImgItem tempImg = new ImgItem();
                 if (tempInfo.getUrlList().size() > 0) {
-                    tempImg.setSUri(tempInfo.getUrlList().get(0));
+                    Log.e("imgURL", tempInfo.getUrlList().get(0));
+                    mWaitingList.add(new WaitingListItem(tempInfo.getUrlList().get(0), myQueue.getQueueName(), myQueue.getQId(),
+                            myQueue.getWaitingPersonList().indexOf(DataApplication.currentUser), tempInfo.getLocDetail()));
+
                 } else {
+                    Log.e("imgURL", "android.resource://" + R.class.getPackage().getName() + "/" + R.drawable.empty_icon);
                     tempImg.setSUri(Uri.parse("android.resource://" + R.class.getPackage().getName() + "/" + R.drawable.empty_icon).toString());
+                    mWaitingList.add(new WaitingListItem(tempImg.getUri(), myQueue.getQueueName(), myQueue.getQId(),
+                            myQueue.getWaitingPersonList().indexOf(DataApplication.currentUser), tempInfo.getLocDetail()));
                 }
-                mWaitingList.add(new WaitingListItem(tempImg.getUri(), myQueue.getQueueName(), myQueue.getQId(),
-                        myQueue.getWaitingPersonList().indexOf(DataApplication.currentUser), tempInfo.getLocDetail()));
             }
             binding.txtNotice.setText("신청한 웨이팅은 총 " + mWaitingList.size() + "건 입니다.");
         } else {
