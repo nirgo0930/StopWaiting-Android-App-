@@ -162,14 +162,12 @@ public class WaitingNormalActivity extends AppCompatActivity {
             JSONObject jsonBodyObj = new JSONObject();
             try {
                 jsonBodyObj.put("studentCode", DataApplication.currentUser.getStudentCode());
-                jsonBodyObj.put("waitingId", mWaitingInfo.getWaitingId());
-                jsonBodyObj.put("type", mWaitingInfo.getType());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             final String requestBody = String.valueOf(jsonBodyObj.toString());
 
-            StringRequest request = new StringRequest(Request.Method.GET, DataApplication.serverURL + "/addwaiting",
+            StringRequest request = new StringRequest(Request.Method.POST, DataApplication.serverURL + "/waitinginfo/" + mWaitingInfo.getWaitingId() + "/queue/NORMAL",
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String jsonObject) {
@@ -179,12 +177,12 @@ public class WaitingNormalActivity extends AppCompatActivity {
                                     Toast.makeText(getApplicationContext(), "정상 등록되었습니다.", Toast.LENGTH_SHORT).show();
                                     finish();
                                     break;
-                                case HttpURLConnection.HTTP_NOT_FOUND:
-                                    Toast.makeText(getApplicationContext(), "이미 대기중인 웨이팅입니다.", Toast.LENGTH_SHORT).show();
-                                    break;
-                                case HttpURLConnection.HTTP_INTERNAL_ERROR:
-                                    Toast.makeText(getApplicationContext(), "최대 인원인 웨이팅입니다.", Toast.LENGTH_SHORT).show();
-                                    break;
+//                                case HttpURLConnection.HTTP_NOT_FOUND:
+//                                    Toast.makeText(getApplicationContext(), "이미 대기중인 웨이팅입니다.", Toast.LENGTH_SHORT).show();
+//                                    break;
+//                                case HttpURLConnection.HTTP_INTERNAL_ERROR:
+//                                    Toast.makeText(getApplicationContext(), "최대 인원인 웨이팅입니다.", Toast.LENGTH_SHORT).show();
+//                                    break;
                             }
                         }
                     },

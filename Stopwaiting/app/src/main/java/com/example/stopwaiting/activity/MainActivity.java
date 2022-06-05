@@ -269,6 +269,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     WaitingQueue data = new WaitingQueue();
 
                                     data.setQueueName(dataObject.getString("queueName"));
+                                    data.setWId(dataObject.getLong("waitingInfoId"));
                                     data.setQId(dataObject.getLong("queueId"));
                                     data.setTime(dataObject.getString("time"));
                                     data.setMaxPerson(dataObject.getInt("maxPerson"));
