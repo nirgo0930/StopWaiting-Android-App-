@@ -141,6 +141,7 @@ public class MapsActivity extends Activity implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         // 맵 준비 완료
         mMap = googleMap;
+
         Intent intent = getIntent();
         latitude =intent.getDoubleExtra("latitude",0);
         longitude = intent.getDoubleExtra("longitude", 0);
@@ -152,23 +153,7 @@ public class MapsActivity extends Activity implements OnMapReadyCallback {
         binding.btnMarker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                onMarkerClick(marker);
-//                mMap.setOnMarkerClickListener({
-//                        onMarkerClick(marker){
-//
-//                    }
-//                });
-//                mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-//
-//                    @Override
-//                    public boolean onMarkerClick(Marker marker) {
-//                        String markerId = marker.getId();
-//                        location[0] = marker.getPosition();
-//                        return false;
-//                    }
-//                });
-//                mMap.setOnMarkerClickListener(this);
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(location[0]));
+                mMap.animateCamera(CameraUpdateFactory.newLatLng(location[0]));
             }
         });
         //줌버튼 입력
