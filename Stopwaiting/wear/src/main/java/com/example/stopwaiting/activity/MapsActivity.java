@@ -24,6 +24,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapsActivity extends Activity implements OnMapReadyCallback {
@@ -45,6 +46,7 @@ public class MapsActivity extends Activity implements OnMapReadyCallback {
 
     private double latitude;
     private double longitude;
+
 
     public void onCreate(Bundle savedState) {
         super.onCreate(savedState);
@@ -139,21 +141,46 @@ public class MapsActivity extends Activity implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         // 맵 준비 완료
         mMap = googleMap;
-
         Intent intent = getIntent();
         latitude =intent.getDoubleExtra("latitude",0);
         longitude = intent.getDoubleExtra("longitude", 0);
         String name = intent.getStringExtra("location");
 
-        LatLng location = new LatLng(latitude, longitude);
-        mMap.addMarker(new MarkerOptions().position(location).title(name));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
-
+        final LatLng[] location = {new LatLng(latitude, longitude)};
+        Marker marker = mMap.addMarker(new MarkerOptions().position(location[0]).title(name));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(location[0]));
+        binding.btnMarker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                onMarkerClick(marker);
+//                mMap.setOnMarkerClickListener({
+//                        onMarkerClick(marker){
+//
+//                    }
+//                });
+//                mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+//
+//                    @Override
+//                    public boolean onMarkerClick(Marker marker) {
+//                        String markerId = marker.getId();
+//                        location[0] = marker.getPosition();
+//                        return false;
+//                    }
+//                });
+//                mMap.setOnMarkerClickListener(this);
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(location[0]));
+            }
+        });
         //줌버튼 입력
         mMap.getUiSettings().setZoomControlsEnabled(true);
         
         //초기줌 설정
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 16));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location[0], 16));
 
     }
+
+//    @Override
+//    public boolean onMarkerClick(@NonNull Marker marker) {
+//        return false;
+//    }
 }

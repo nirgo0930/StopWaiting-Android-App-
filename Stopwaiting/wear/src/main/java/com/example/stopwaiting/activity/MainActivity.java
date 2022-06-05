@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import com.example.stopwaiting.R;
 import com.example.stopwaiting.databinding.ActivityMainBinding;
@@ -31,7 +32,7 @@ public class MainActivity extends Activity {
     public static List<String> strs;
     private String type;
 
-    public static Application mainApp;
+    //public static Application mainApp;
 
     private ActivityMainBinding binding;
 
@@ -80,14 +81,20 @@ public class MainActivity extends Activity {
         binding.btnRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String datapath = "/my_path";
-                String message = "refresh";
-                new SendMessage(datapath, message, MainActivity.this).start();
-                Log.e("refresh", "refresh 보냄");
+                Toast.makeText(getApplicationContext(), "새로고침~~", Toast.LENGTH_SHORT).show();
+
+                refreshScreen();
 
             }
         });
 
+    }
+
+    public void refreshScreen(){
+        String datapath = "/my_path";
+        String message = "refresh";
+        new SendMessage(datapath, message, MainActivity.this).start();
+        Log.e("refresh", "refresh 보냄");
     }
 
     public static void screenOpen() {

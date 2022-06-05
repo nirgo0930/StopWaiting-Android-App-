@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.stopwaiting.databinding.ActivityDetailBinding;
 import com.example.stopwaiting.service.SendMessage;
@@ -61,11 +62,14 @@ public class WaitingDetailActivity extends Activity {
                         .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                //예약 취소로 바꾸기
+                                //예약 취소
                                 String datapath = "/my_path";
                                 String onClickMessage = String.valueOf(DataApplication.currentUserInfo.getStudentCode())
                                         + "/"+ qId;
                                 new SendMessage(datapath,onClickMessage,WaitingDetailActivity.this).start();
+                                onBackPressed();
+
+                                Toast.makeText(getApplicationContext(), "예약 취소 완료 \n 새로고침 해주세요", Toast.LENGTH_SHORT).show();
                                 Log.e("test", onClickMessage);
                             }
                         })
