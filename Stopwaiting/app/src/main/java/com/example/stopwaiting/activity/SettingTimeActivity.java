@@ -309,9 +309,7 @@ public class SettingTimeActivity extends AppCompatActivity {
                             byte[] imageBytes = baos.toByteArray();
 
 
-                            temp[i] = new MultipartRequest.DataPart(
-                                    String.valueOf(timeIntent.getStringExtra("name")) + String.valueOf(i) + ".jpg", imageBytes, "image/jpeg");
-                            Log.e("img_name", timeIntent.getStringExtra("name"));
+                            temp[i] = new MultipartRequest.DataPart(waitingId + "_" + String.valueOf(i) + ".jpg", imageBytes, "image/jpeg");
                         }
                         params.put("files", temp);
                     }

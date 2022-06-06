@@ -229,7 +229,7 @@ public class SettingInfoActivity extends AppCompatActivity {
                             Log.e("response", jsonObject);
                             if (uriList.size() > 0) {
                                 addImageRequest(Long.valueOf(jsonObject));
-                            }else{
+                            } else {
                                 Intent temp = new Intent(SettingInfoActivity.this, MyPageActivity.class);
                                 MyPageActivity.myPageActivity.finish();
                                 startActivity(temp);
@@ -351,7 +351,7 @@ public class SettingInfoActivity extends AppCompatActivity {
                             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                             byte[] imageBytes = baos.toByteArray();
 
-                            temp[i] = new MultipartRequest.DataPart(binding.edtName.getText().toString() + String.valueOf(i) + ".jpg", imageBytes, "image/jpeg");
+                            temp[i] = new MultipartRequest.DataPart(waitingId + "_" + String.valueOf(i) + ".jpg", imageBytes, "image/jpeg");
                         }
                         params.put("files", temp);
                     }

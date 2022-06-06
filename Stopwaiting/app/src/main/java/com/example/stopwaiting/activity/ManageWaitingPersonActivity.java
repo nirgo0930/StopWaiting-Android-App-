@@ -29,10 +29,6 @@ public class ManageWaitingPersonActivity extends AppCompatActivity {
         qId = intent.getLongExtra("qId", 0L);
         manageWaitingPersonActivity = ManageWaitingPersonActivity.this;
 
-        //TextView txtTitle = findViewById(R.id.txtTitle);
-        //TextView txtNotice = findViewById(R.id.txtNotice);
-        //recyclerView = findViewById(R.id.recyclerView);
-
         binding.txtTitle.setText("대기 명단");
         binding.txtNotice.setText("길게 눌러서 명단에서 제거");
 

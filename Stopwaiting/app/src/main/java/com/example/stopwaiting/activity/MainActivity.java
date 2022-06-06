@@ -125,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         ActivityCompat.requestPermissions(this, PERMISSIONS, LOCATION_PERMISSION_REQUEST_CODE);
 
         waitingInfoAllRequest();
+        myWaitingRequest();
     }
 
     @Override
@@ -260,39 +261,34 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
+                            Log.e("my", jsonObject.toString());
                             Toast.makeText(getApplicationContext(), "신청한 웨이팅 조회.", Toast.LENGTH_SHORT).show();
                             try {
                                 JSONArray dataArray = jsonObject.getJSONArray("data");
                                 for (int i = 0; i < dataArray.length(); i++) {
                                     WaitingQueue data = new WaitingQueue();
-
                                     JSONObject dataObject = dataArray.getJSONObject(i);
-                                    JSONObject queueObject = dataObject.getJSONObject("waitingQueue");
-                                    data.setQId(queueObject.getLong("id"));
+                                    data.setQId(dataObject.getLong("id"));
 
-                                    JSONObject timeObject = queueObject.getJSONObject("timetable");
+                                    JSONObject timeObject = dataObject.getJSONObject("waitingQueue").getJSONObject("timetable");
                                     data.setTime(timeObject.getString("time"));
 
-                                    JSONObject waitingInfoObject = timeObject.getJSONObject("waitingInfo");
-                                    data.setQueueName(waitingInfoObject.getString("name"));
-                                    data.setWId(waitingInfoObject.getLong("id"));
-                                    data.setMaxPerson(waitingInfoObject.getInt("maxPerson"));
+                                    JSONObject waitingObject = timeObject.getJSONObject("waitingInfo");
+                                    data.setWId(waitingObject.getLong("id"));
+                                    data.setQueueName(waitingObject.getString("name"));
+                                    data.setMaxPerson(waitingObject.getInt("maxPerson"));
 
                                     ArrayList<UserInfo> tempUserList = new ArrayList<>();
-
-                                    JSONArray userArray = queueObject.getJSONArray("userQueues");
+                                    JSONArray userArray = dataObject.getJSONObject("waitingQueue").getJSONArray("userQueues");
                                     for (int j = 0; j < userArray.length(); j++) {
-                                        JSONObject userObject = userArray.getJSONObject(j).getJSONObject("user");
-
                                         UserInfo tempUser = new UserInfo();
+                                        JSONObject userObject = userArray.getJSONObject(j).getJSONObject("user");
                                         tempUser.setStudentCode(userObject.getLong("id"));
-                                        tempUser.setTel(userObject.getString("phoneNumber"));
-                                        tempUser.setName(userObject.getString("name"));
 
                                         tempUserList.add(tempUser);
                                     }
-
                                     data.setWaitingPersonList(tempUserList);
+
                                     DataApplication.myWaiting.add(data);
                                 }
                             } catch (JSONException e) {

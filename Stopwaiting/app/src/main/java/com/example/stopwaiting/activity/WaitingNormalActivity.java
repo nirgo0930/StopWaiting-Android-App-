@@ -24,7 +24,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.bumptech.glide.Glide;
 import com.example.stopwaiting.R;
 import com.example.stopwaiting.databinding.WaitingNormalBinding;
-import com.example.stopwaiting.dto.ImgItem;
 import com.example.stopwaiting.dto.UserInfo;
 import com.example.stopwaiting.dto.WaitingInfo;
 import com.example.stopwaiting.dto.WaitingQueue;
@@ -41,8 +40,7 @@ import java.util.Map;
 
 public class WaitingNormalActivity extends AppCompatActivity {
     private int pivot, mStatusCode;
-    private ArrayList<ImgItem> imgItems;
-    private ArrayList<String> urlItems;
+    private ArrayList<String> imgItems;
     private WaitingInfo mWaitingInfo;
     private WaitingQueue mWaitingQueue;
 
@@ -116,7 +114,18 @@ public class WaitingNormalActivity extends AppCompatActivity {
         binding.btnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                waitingRequest();
+                if (mWaitingQueue.getWaitingPersonList().size() < mWaitingInfo.getMaxPerson()) {
+                    for (UserInfo temp : mWaitingQueue.getWaitingPersonList()) {
+                        Log.e("selectUser", String.valueOf(temp.getStudentCode()));
+                        if (temp.getStudentCode().equals(DataApplication.currentUser.getStudentCode())) {
+                            Toast.makeText(getApplicationContext(), "이미 등록한 웨이팅입니다.", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
+                    waitingRequest();
+                } else {
+                    Toast.makeText(getApplicationContext(), "최대 인원인 웨이팅입니다.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -131,7 +140,7 @@ public class WaitingNormalActivity extends AppCompatActivity {
         binding.txtImgCnt.setText(spannableString);
 
         Glide.with(getApplicationContext())
-                .load(imgItems.get(pivot).getUri())
+                .load(imgItems.get(pivot))
                 .into(binding.imageView);
 
     }
@@ -178,12 +187,7 @@ public class WaitingNormalActivity extends AppCompatActivity {
                                     Toast.makeText(getApplicationContext(), "정상 등록되었습니다.", Toast.LENGTH_SHORT).show();
                                     finish();
                                     break;
-//                                case HttpURLConnection.HTTP_NOT_FOUND:
-//                                    Toast.makeText(getApplicationContext(), "이미 대기중인 웨이팅입니다.", Toast.LENGTH_SHORT).show();
-//                                    break;
-//                                case HttpURLConnection.HTTP_INTERNAL_ERROR:
-//                                    Toast.makeText(getApplicationContext(), "최대 인원인 웨이팅입니다.", Toast.LENGTH_SHORT).show();
-//                                    break;
+
                             }
                         }
                     },
@@ -230,10 +234,8 @@ public class WaitingNormalActivity extends AppCompatActivity {
     public void imageRequest() {
         imgItems = new ArrayList<>();
         for (int i = 0; i < mWaitingInfo.getUrlList().size(); i++) {
-            ImgItem tempImg = new ImgItem();
-            tempImg.setSUri(mWaitingInfo.getUrlList().get(i));
 
-            imgItems.add(tempImg);
+            imgItems.add(mWaitingInfo.getUrlList().get(i));
         }
     }
 
@@ -256,7 +258,6 @@ public class WaitingNormalActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
                             try {
-                                Log.e("arr", jsonObject.toString());
                                 WaitingQueue data = new WaitingQueue();
                                 JSONObject dataObject = jsonObject.getJSONObject("data");
                                 data.setQId(dataObject.getLong("id"));
@@ -273,7 +274,7 @@ public class WaitingNormalActivity extends AppCompatActivity {
                                 JSONArray userArray = dataObject.getJSONArray("userQueues");
                                 for (int j = 0; j < userArray.length(); j++) {
                                     UserInfo tempUser = new UserInfo();
-                                    JSONObject userObject = userArray.getJSONObject(j);
+                                    JSONObject userObject = userArray.getJSONObject(j).getJSONObject("user");
                                     tempUser.setStudentCode(userObject.getLong("id"));
 
                                     tempUserList.add(tempUser);

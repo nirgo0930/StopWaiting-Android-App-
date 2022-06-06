@@ -25,7 +25,6 @@ import com.example.stopwaiting.activity.CheckMyWaitingActivity;
 import com.example.stopwaiting.activity.DataApplication;
 import com.example.stopwaiting.activity.MyPageActivity;
 import com.example.stopwaiting.dto.WaitingListItem;
-import com.example.stopwaiting.dto.WaitingQueue;
 import com.example.stopwaiting.viewholder.MyWaitingListItemViewHolder;
 
 import org.json.JSONObject;
@@ -102,11 +101,9 @@ public class MyWaitingListAdapter extends RecyclerView.Adapter<MyWaitingListItem
     public void onBindViewHolder(@NonNull MyWaitingListItemViewHolder holder, int position) {
         final WaitingListItem waitingItem = mItemList.get(position);
 
-
         Glide.with(mContext.getApplicationContext())
                 .load(waitingItem.getImgUrl())
                 .into(holder.imgItem);
-
 
         holder.txtName.setText(waitingItem.getName());
         holder.txtLocDetail.setText(waitingItem.getLocDetail());
@@ -119,50 +116,34 @@ public class MyWaitingListAdapter extends RecyclerView.Adapter<MyWaitingListItem
     }
 
     public void cancelWaitingRequest(Long qId, int pos) {
-        if (DataApplication.isTest) {
-            for (int i = 0; i < DataApplication.testWaitingQueueDBList.size(); i++) {
-                if (DataApplication.testWaitingQueueDBList.get(i).getQId().equals(qId)) {
-                    WaitingQueue temp = DataApplication.testWaitingQueueDBList.get(i);
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.DELETE,
+                DataApplication.serverURL + "/queue/" + qId + "/" + DataApplication.currentUser.getStudentCode(), null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject jsonObject) {
+                        Toast.makeText(mContext, "선택한 웨이팅을 취소했습니다.", Toast.LENGTH_SHORT).show();
 
-                    DataApplication.myWaiting.remove(temp);
-
-                    temp.removeWPerson(DataApplication.currentUser.getStudentCode());
-                    DataApplication.testWaitingQueueDBList.set(i, temp);
-
-                    mItemList.remove(pos);
-                    notifyDataSetChanged();
-                    break;
-                }
+                        mItemList.remove(pos);
+                        notifyDataSetChanged();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(mContext, "취소에 실패했습니다. 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json");
+                return headers;
             }
-        } else {
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.DELETE,
-                    DataApplication.serverURL + "/queue/" + qId + "/" + DataApplication.currentUser.getStudentCode(), null,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject jsonObject) {
-                            Toast.makeText(mContext, "선택한 웨이팅을 취소했습니다.", Toast.LENGTH_SHORT).show();
+        };
 
-                            mItemList.remove(pos);
-                            notifyDataSetChanged();
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(mContext, "취소에 실패했습니다. 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
-                        }
-                    }) {
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    HashMap<String, String> headers = new HashMap<String, String>();
-                    headers.put("Content-Type", "application/json");
-                    return headers;
-                }
-            };
-
-            request.setShouldCache(false);
-            DataApplication.requestQueue.add(request);
-            Log.e("temp",request.toString());
-        }
+        request.setShouldCache(false);
+        DataApplication.requestQueue.add(request);
+        Log.e("temp", request.toString());
     }
+
 }

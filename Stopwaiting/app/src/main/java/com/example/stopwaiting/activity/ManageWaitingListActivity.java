@@ -49,12 +49,18 @@ public class ManageWaitingListActivity extends AppCompatActivity {
         tempWaitingInfo = new WaitingInfo();
         mWaitingList = new ArrayList<>();
         mWaitingQueueList = new ArrayList<>();
+
         mListAdapter = new ManageWaitingListAdapter(this, mWaitingList);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         binding.recyclerView.setLayoutManager(layoutManager);
         binding.recyclerView.setAdapter(mListAdapter);
         binding.txtTitle.setText("개설한 웨이팅");
+        adminWaitingRequest();
+    }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
         adminWaitingRequest();
     }
 
@@ -117,6 +123,7 @@ public class ManageWaitingListActivity extends AppCompatActivity {
 
                             mWaitingQueueList.add(data);
                         }
+                        mListAdapter.notifyDataSetChanged();
                     } catch (JSONException e) {
                         Log.e("set_Data", String.valueOf(e));
                         e.printStackTrace();
@@ -142,92 +149,6 @@ public class ManageWaitingListActivity extends AppCompatActivity {
             DataApplication.requestQueue.add(request);
         }
     }
-
-//    public void waitingInfoRequest(Long qId) {
-//        if (DataApplication.isTest) {
-//            for (int i = 0; i < DataApplication.testDBList.size(); i++) {
-//                WaitingInfo tempInfo = DataApplication.testDBList.get(i);
-//                for (Long id : tempInfo.getQueueList()) {
-//                    if (id.equals(qId)) {
-//                        tempWaitingInfo = tempInfo;
-//                        return;
-//                    }
-//                }
-//            }
-//        } else {
-//            WaitingInfo tempInfo = new WaitingInfo();
-//            JSONObject jsonBodyObj = new JSONObject();
-//            try {
-//                jsonBodyObj.put("queueId", qId);
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//            final String requestBody = String.valueOf(jsonBodyObj.toString());
-//
-//            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, DataApplication.serverURL + "/waitingInfo",
-//                    null, new Response.Listener<JSONObject>() {
-//                @Override
-//                public void onResponse(JSONObject jsonObject) {
-//                    try {
-//                        JSONArray dataArray = jsonObject.getJSONArray("data");
-//                        for (int i = 0; i < dataArray.length(); i++) {
-//                            JSONObject dataObject = dataArray.getJSONObject(i);
-//
-//                            tempInfo.setWaitingId(dataObject.getLong("id"));
-//                            tempInfo.setAdminId(dataObject.getLong("adminId"));
-//                            tempInfo.setName(dataObject.getString("name"));
-//                            tempInfo.setLatitude(dataObject.getDouble("latitude"));
-//                            tempInfo.setLongitude(dataObject.getDouble("longitude"));
-//                            tempInfo.setLocDetail(dataObject.getString("locDetail"));
-//                            tempInfo.setInfo(dataObject.getString("information"));
-//                            tempInfo.setType(dataObject.getString("type"));
-//                            tempInfo.setMaxPerson(dataObject.getInt("maxPerson"));
-//                            if (tempInfo.getType().equals("time")) {
-//                                ArrayList<String> timetable = new ArrayList();
-//                                JSONArray timeArray = dataObject.getJSONArray("timetable");
-//                                for (int j = 0; j < timeArray.length(); j++) {
-//                                    timetable.add(timeArray.getString(j));
-//                                }
-//                                tempInfo.setTimetable(timetable);
-//                            }
-//
-//                            tempWaitingInfo = tempInfo;
-//                        }
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }, new Response.ErrorListener() {
-//                @Override
-//                public void onErrorResponse(VolleyError error) {
-//                    Toast.makeText(getApplicationContext(), "로딩에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-//                }
-//            }) {
-//                @Override
-//                public Map<String, String> getHeaders() throws AuthFailureError {
-//                    HashMap<String, String> headers = new HashMap<String, String>();
-//                    headers.put("Content-Type", "application/json");
-//                    return headers;
-//                }
-//
-//                @Override
-//                public byte[] getBody() {
-//                    try {
-//                        if (requestBody != null && requestBody.length() > 0 && !requestBody.equals("")) {
-//                            return requestBody.getBytes("utf-8");
-//                        } else {
-//                            return null;
-//                        }
-//                    } catch (UnsupportedEncodingException uee) {
-//                        return null;
-//                    }
-//                }
-//            };
-//
-//            request.setShouldCache(false);
-//            DataApplication.requestQueue.add(request);
-//        }
-//    }
 
     public void setTempWaitingInfo(WaitingQueue selectQueue) {
         for (WaitingInfo tempInfo : DataApplication.waitingList) {

@@ -54,8 +54,8 @@ public class CheckMyWaitingActivity extends AppCompatActivity {
         if (DataApplication.myWaiting.size() > 0) {
             for (WaitingQueue myQueue : DataApplication.myWaiting) {
                 WaitingInfo tempInfo = new WaitingInfo();
-                for (WaitingInfo selectInfo : ((DataApplication) getApplication()).waitingList) {
-                    if (selectInfo.getName().equals(myQueue.getQueueName())) {
+                for (WaitingInfo selectInfo : DataApplication.waitingList) {
+                    if (selectInfo.getWaitingId().equals(myQueue.getWId())) {
                         tempInfo = selectInfo;
                         break;
                     }
@@ -70,7 +70,7 @@ public class CheckMyWaitingActivity extends AppCompatActivity {
                 }
                 if (tempInfo.getUrlList().size() > 0) {
                     mWaitingList.add(new WaitingListItem(tempInfo.getUrlList().get(0), myQueue.getQueueName(), myQueue.getQId(), myQueue.getWId(),
-                            myQueue.getWaitingPersonList().indexOf(DataApplication.currentUser), tempInfo.getLocDetail()));
+                            myCnt, tempInfo.getLocDetail()));
 
                 } else {
                     mWaitingList.add(new WaitingListItem(Uri.parse("android.resource://" + R.class.getPackage().getName() + "/" + R.drawable.empty_icon).toString(),

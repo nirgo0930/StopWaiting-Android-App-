@@ -22,10 +22,6 @@ public class WaitingListItem implements Serializable {
     private String locDetail;
     private String imgUrl;
 
-//    public WaitingListItem() {
-//
-//    }
-
     public WaitingListItem(Uri imgId, String txtName, Long qId, Long wId, int txtWaitingCnt, String txtLocDetail) {
         this.imgUri = imgId;
         this.name = txtName;

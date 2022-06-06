@@ -9,6 +9,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.stopwaiting.activity.DataApplication;
+import com.example.stopwaiting.dto.UserInfo;
 import com.example.stopwaiting.dto.WaitingInfo;
 import com.example.stopwaiting.dto.WearQueueDTO;
 import com.google.android.gms.tasks.Task;
@@ -102,34 +103,47 @@ public class WearService extends WearableListenerService {
             JSONObject jsonBodyObj = new JSONObject();
             try {
                 jsonBodyObj.put("id", DataApplication.currentUser.getStudentCode());
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             final String requestBody = String.valueOf(jsonBodyObj.toString());
 
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, ((DataApplication) getApplication()).serverURL + "/wear", null,
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,
+                    ((DataApplication) getApplication()).serverURL + "/user/" + DataApplication.currentUser.getStudentCode() + "/queue", null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
+                            Log.e("my", jsonObject.toString());
+                            Toast.makeText(getApplicationContext(), "신청한 웨이팅 조회.", Toast.LENGTH_SHORT).show();
                             try {
                                 JSONArray dataArray = jsonObject.getJSONArray("data");
-
                                 for (int i = 0; i < dataArray.length(); i++) {
-                                    JSONObject dataObject = dataArray.getJSONObject(i);
-
                                     WearQueueDTO data = new WearQueueDTO();
+                                    JSONObject dataObject = dataArray.getJSONObject(i);
+                                    data.setQId(dataObject.getLong("id"));
 
-                                    data.setQueueName(dataObject.getString("queueName"));
-                                    data.setQId(dataObject.getLong("queueId"));
-                                    data.setTime(dataObject.getString("time"));
-                                    data.setMyNum(dataObject.getInt("myNum"));
-                                    data.setLatitude(dataObject.getDouble("latitude"));
-                                    data.setLongitude(dataObject.getDouble("longitude"));
+                                    JSONObject timeObject = dataObject.getJSONObject("waitingQueue").getJSONObject("timetable");
+                                    data.setTime(timeObject.getString("time"));
+
+                                    JSONObject waitingObject = timeObject.getJSONObject("waitingInfo");
+
+                                    data.setQueueName(waitingObject.getString("name"));
+                                    data.setLongitude(waitingObject.getDouble("longitude"));
+                                    data.setLatitude(waitingObject.getDouble("latitude"));
+
+                                    ArrayList<UserInfo> tempUserList = new ArrayList<>();
+                                    JSONArray userArray = dataObject.getJSONObject("waitingQueue").getJSONArray("userQueues");
+                                    for (int j = 0; j < userArray.length(); j++) {
+                                        JSONObject userObject = userArray.getJSONObject(j).getJSONObject("user");
+                                        if (DataApplication.currentUser.getStudentCode().equals(userObject.getLong("id"))) {
+                                            data.setMyNum(j);
+                                        }
+                                    }
 
                                     qDTO.add(data);
                                 }
                             } catch (JSONException e) {
+                                Log.e("error", e.toString());
                                 e.printStackTrace();
                             }
                         }

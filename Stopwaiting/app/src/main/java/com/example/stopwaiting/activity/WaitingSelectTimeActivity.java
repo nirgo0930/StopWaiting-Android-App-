@@ -26,7 +26,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.bumptech.glide.Glide;
 import com.example.stopwaiting.R;
 import com.example.stopwaiting.databinding.WaitingTimeBinding;
-import com.example.stopwaiting.dto.ImgItem;
 import com.example.stopwaiting.dto.UserInfo;
 import com.example.stopwaiting.dto.WaitingInfo;
 import com.example.stopwaiting.dto.WaitingQueue;
@@ -47,8 +46,7 @@ public class WaitingSelectTimeActivity extends AppCompatActivity implements Adap
     private int pivot, mStatusCode;
     private WaitingInfo mWaitingInfo;
     private WaitingQueue mWaitingQueue;
-    private ArrayList<ImgItem> imgItems;
-    private ArrayList<String> urlItems, timeList;
+    private ArrayList<String> imgItems, timeList;
 
 
     private WaitingTimeBinding binding;
@@ -133,14 +131,9 @@ public class WaitingSelectTimeActivity extends AppCompatActivity implements Adap
         imgItems = new ArrayList<>();
 
         for (int i = 0; i < mWaitingInfo.getUrlList().size(); i++) {
-            ImgItem temp = new ImgItem();
-            temp.setSUri(mWaitingInfo.getUrlList().get(i));
-            imgItems.add(temp);
+            imgItems.add(mWaitingInfo.getUrlList().get(i));
         }
 
-
-        //imgCnt = findViewById(R.id.txtImgCnt);
-        //imageView = findViewById(R.id.imageView);
         pivot = 0;
         String content = "";
         if (imgItems.size() > 0) {
@@ -195,7 +188,7 @@ public class WaitingSelectTimeActivity extends AppCompatActivity implements Adap
         binding.txtImgCnt.setText(spannableString);
 
         Glide.with(getApplicationContext())
-                .load(imgItems.get(pivot).getUri())
+                .load(imgItems.get(pivot))
                 .into(binding.imageView);
     }
 
@@ -324,7 +317,7 @@ public class WaitingSelectTimeActivity extends AppCompatActivity implements Adap
                                 JSONArray userArray = dataObject.getJSONArray("userQueues");
                                 for (int j = 0; j < userArray.length(); j++) {
                                     UserInfo tempUser = new UserInfo();
-                                    JSONObject userObject = userArray.getJSONObject(j);
+                                    JSONObject userObject = userArray.getJSONObject(j).getJSONObject("user");
                                     tempUser.setStudentCode(userObject.getLong("id"));
 
                                     tempUserList.add(tempUser);

@@ -3,9 +3,11 @@ package com.example.stopwaiting.adapter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,17 +17,15 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.stopwaiting.R;
 import com.example.stopwaiting.activity.DataApplication;
 import com.example.stopwaiting.activity.ManageWaitingPersonActivity;
 import com.example.stopwaiting.dto.UserInfo;
 import com.example.stopwaiting.dto.WaitingQueue;
-import com.example.stopwaiting.R;
 import com.example.stopwaiting.viewholder.ManageWaitingPersonViewHolder;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -53,23 +53,17 @@ public class ManageWaitingPersonAdapter extends RecyclerView.Adapter<ManageWaiti
                     .setPositiveButton("신고하기", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             UserInfo userInfo = mItemList.get(pos);
-                            mItemList.remove(pos);
 
-                            reportUserRequest(ManageWaitingPersonActivity.qId, userInfo.getStudentCode());
-
-                            notifyDataSetChanged();
+                            cancelUserRequest(ManageWaitingPersonActivity.qId, userInfo.getStudentCode(), pos);
+                            reportUserRequest(userInfo.getStudentCode());
                         }
                     })
                     .setNeutralButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             // 확인시 처리 로직
                             UserInfo userInfo = mItemList.get(pos);
-                            mItemList.remove(pos);
 
-                            cancelUserRequest(ManageWaitingPersonActivity.qId, userInfo.getStudentCode());
-
-                            notifyDataSetChanged();
-
+                            cancelUserRequest(ManageWaitingPersonActivity.qId, userInfo.getStudentCode(), pos);
                         }
                     })
                     .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -103,7 +97,7 @@ public class ManageWaitingPersonAdapter extends RecyclerView.Adapter<ManageWaiti
         return mItemList.size();
     }
 
-    public void cancelUserRequest(Long qId, Long sId) {
+    public void cancelUserRequest(Long qId, Long sId, int pos) {
         if (DataApplication.isTest) {
             for (int i = 0; i < DataApplication.testWaitingQueueDBList.size(); i++) {
                 if (DataApplication.testWaitingQueueDBList.get(i).getQId().equals(qId)) {
@@ -115,26 +109,21 @@ public class ManageWaitingPersonAdapter extends RecyclerView.Adapter<ManageWaiti
                 }
             }
         } else {
-            JSONObject jsonBodyObj = new JSONObject();
-            try {
-                jsonBodyObj.put("id", sId);
-                jsonBodyObj.put("waitingQueueId", qId);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            final String requestBody = String.valueOf(jsonBodyObj.toString());
-
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, DataApplication.serverURL + "/cancelWaiting", null,
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.DELETE,
+                    DataApplication.serverURL + "/queue/" + qId + "/" + DataApplication.currentUser.getStudentCode(), null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
-//                            Toast.makeText(getApplicationContext(), "로그인에 성공하였습니다.\n 잠시만 기다려주세요", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mContext, "선택한 웨이팅을 취소했습니다.", Toast.LENGTH_SHORT).show();
+
+                            mItemList.remove(pos);
+                            notifyDataSetChanged();
                         }
                     },
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-//                            Toast.makeText(getApplicationContext(), "로그인에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mContext, "취소에 실패했습니다. 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
                         }
                     }) {
                 @Override
@@ -143,83 +132,37 @@ public class ManageWaitingPersonAdapter extends RecyclerView.Adapter<ManageWaiti
                     headers.put("Content-Type", "application/json");
                     return headers;
                 }
-
-                @Override
-                public byte[] getBody() {
-                    try {
-                        if (requestBody != null && requestBody.length() > 0 && !requestBody.equals("")) {
-                            return requestBody.getBytes("utf-8");
-                        } else {
-                            return null;
-                        }
-                    } catch (UnsupportedEncodingException uee) {
-                        return null;
-                    }
-                }
             };
 
             request.setShouldCache(false);
             DataApplication.requestQueue.add(request);
+            Log.e("temp", request.toString());
         }
     }
 
-    public void reportUserRequest(Long qId, Long sId) {
-        if (DataApplication.isTest) {
-            for (int i = 0; i < DataApplication.testWaitingQueueDBList.size(); i++) {
-                if (DataApplication.testWaitingQueueDBList.get(i).getQId().equals(qId)) {
-                    WaitingQueue temp = DataApplication.testWaitingQueueDBList.get(i);
-
-                    temp.removeWPerson(DataApplication.currentUser.getStudentCode());
-                    DataApplication.testWaitingQueueDBList.set(i, temp);
-                    break;
-                }
-            }
-        } else {
-            JSONObject jsonBodyObj = new JSONObject();
-            try {
-                jsonBodyObj.put("id", sId);
-                jsonBodyObj.put("waitingQueueId", qId);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            final String requestBody = String.valueOf(jsonBodyObj.toString());
-
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, DataApplication.serverURL + "/reportUser", null,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject jsonObject) {
-//                            Toast.makeText(getApplicationContext(), "로그인에 성공하였습니다.\n 잠시만 기다려주세요", Toast.LENGTH_SHORT).show();
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-//                            Toast.makeText(getApplicationContext(), "로그인에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-                        }
-                    }) {
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    HashMap<String, String> headers = new HashMap<String, String>();
-                    headers.put("Content-Type", "application/json");
-                    return headers;
-                }
-
-                @Override
-                public byte[] getBody() {
-                    try {
-                        if (requestBody != null && requestBody.length() > 0 && !requestBody.equals("")) {
-                            return requestBody.getBytes("utf-8");
-                        } else {
-                            return null;
-                        }
-                    } catch (UnsupportedEncodingException uee) {
-                        return null;
+    public void reportUserRequest(Long sId) {
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, DataApplication.serverURL + "/user/" + sId + "/report", null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject jsonObject) {
+                        Toast.makeText(mContext, "신고가 완료되었습니다.", Toast.LENGTH_SHORT).show();
                     }
-                }
-            };
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(mContext, "신고에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json");
+                return headers;
+            }
+        };
 
-            request.setShouldCache(false);
-            DataApplication.requestQueue.add(request);
-        }
+        request.setShouldCache(false);
+        DataApplication.requestQueue.add(request);
     }
 }
