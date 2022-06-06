@@ -30,45 +30,58 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="200dp"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="50dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout">
 
-        <Button
-            android:id="@+id/btnMyWaiting"
+        <TextView
+            android:id="@+id/myInfo"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="신청한 웨이팅"
-            android:textSize="20dp" />
-
-        <Button
-            android:id="@+id/btnNewWaiting"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="웨이팅 개설하기"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="회원 정보"
             android:textAlignment="center"
-            android:textSize="20dp" />
+            android:textSize="30dp" />
 
-        <Button
-            android:id="@+id/btnManageWaiting"
+        <TextView
+            android:id="@+id/txtUserName"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:textSize="20dp"
+            tools:text="이름" />
+
+        <TextView
+            android:id="@+id/txtUserNum"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="웨이팅 관리하기"
-            android:textSize="20dp" />
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:textSize="20dp"
+            android:text="학번" />
 
-        <Button
-            android:id="@+id/btnMyInfo"
+        <TextView
+            android:id="@+id/txtUserPhone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="내 정보 조회"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:textSize="20dp"
+            android:text="휴대전화" />
+
+        <Button
+            android:id="@+id/changeMyInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="100dp"
+            android:text="정보 수정"
             android:textSize="20dp" />
 
         <Button
@@ -76,7 +89,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="로그아웃"
+            android:text="회원 탈퇴"
             android:textAlignment="center"
             android:textSize="20dp" />
 
