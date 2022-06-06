@@ -30,7 +30,6 @@ public class MainActivity extends Activity {
     private static String[] strList;
     private static ArrayList<String> screenList;
     public static List<String> strs;
-    private String type;
 
     //public static Application mainApp;
 
@@ -70,7 +69,6 @@ public class MainActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if (strList != null) {
-                    type = strList[0];
                     Intent intent = new Intent(getApplicationContext(), WaitingDetailActivity.class);
                     intent.putExtra("text", strs.get(i));
                     startActivity(intent);
@@ -103,7 +101,7 @@ public class MainActivity extends Activity {
         strs = new ArrayList<>();
         handler.sendMessage(handler.obtainMessage());
 
-        //이부분 서버에서 받아오는 리스트 부분
+        //서버에서 받아오는 리스트 부분
         for(WearQueueDTO selectQueue : DataApplication.myWaiting){
             String postData = selectQueue.getQueueName() + "/" +
                     selectQueue.getLatitude() + "/" +

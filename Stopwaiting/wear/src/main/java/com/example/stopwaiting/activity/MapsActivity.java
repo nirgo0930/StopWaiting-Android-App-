@@ -164,8 +164,4 @@ public class MapsActivity extends Activity implements OnMapReadyCallback {
 
     }
 
-//    @Override
-//    public boolean onMarkerClick(@NonNull Marker marker) {
-//        return false;
-//    }
 }

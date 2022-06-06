@@ -10,6 +10,8 @@ import com.google.android.gms.wearable.Wearable;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import lombok.SneakyThrows;
+
 public class SendMessage extends Thread{
     String path;
     String message;
@@ -21,6 +23,7 @@ public class SendMessage extends Thread{
         context = c;
     }
 
+    @SneakyThrows
     public void run() {
 
         Task<List<Node>> nodeListTask =
@@ -42,7 +45,7 @@ public class SendMessage extends Thread{
             }
 
         } catch (ExecutionException exception) {
-
+            throw new ExecutionException("ExecutionException",exception);
         } catch (InterruptedException exception) {
 
         }
