@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".activity.LoginActivity">
 
     <TextView
         android:id="@+id/textView2"
@@ -16,6 +16,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/kumohImg"
+        android:layout_width="220dp"
+        android:layout_height="189dp"
+        app:layout_constraintBottom_toTopOf="@+id/edtId"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
+        app:srcCompat="@drawable/kumoh" />
 
     <EditText
         android:id="@+id/edtId"
