@@ -84,5 +84,15 @@ public class MyPageActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        binding.btnMyInfo.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Intent intent = myIntent;
+                intent.setClass(MyPageActivity.this, MyInfoActivity.class);
+
+                startActivity(intent);
+            }
+        });
     }
 }
