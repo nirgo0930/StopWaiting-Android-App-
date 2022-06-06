@@ -170,7 +170,6 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
     public void waitingInfoRequest(Long qId) {
         if (DataApplication.isTest) {
             for (WaitingInfo tempInfo : DataApplication.testDBList) {
-//            for (int i = 0; i < DataApplication.testDBList.size(); i++) {
                 for (Long id : tempInfo.getQueueList()) {
                     if (id.equals(qId)) {
                         wInfo = tempInfo;
@@ -187,36 +186,34 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
             }
             final String requestBody = String.valueOf(jsonBodyObj.toString());
 
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, DataApplication.serverURL + "/waitingInfo", null,
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, DataApplication.serverURL + "/waitingqueue/" + qId, null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
                             try {
-                                JSONArray dataArray = jsonObject.getJSONArray("data");
-                                for (int i = 0; i < dataArray.length(); i++) {
-                                    JSONObject dataObject = dataArray.getJSONObject(i);
-                                    WaitingInfo data = new WaitingInfo();
+                                JSONObject dataObject = jsonObject.getJSONObject("data");
+                                WaitingInfo data = new WaitingInfo();
 
-                                    data.setWaitingId(dataObject.getLong("id"));
-                                    data.setAdminId(dataObject.getLong("adminId"));
-                                    data.setName(dataObject.getString("name"));
-                                    data.setLatitude(dataObject.getDouble("latitude"));
-                                    data.setLongitude(dataObject.getDouble("longitude"));
-                                    data.setLocDetail(dataObject.getString("locDetail"));
-                                    data.setInfo(dataObject.getString("information"));
-                                    data.setType(dataObject.getString("type"));
-                                    data.setMaxPerson(dataObject.getInt("maxPerson"));
-                                    if (data.getType().equals("time")) {
-                                        ArrayList<String> timetable = new ArrayList();
-                                        JSONArray timeArray = dataObject.getJSONArray("timetable");
-                                        for (int j = 0; j < timeArray.length(); j++) {
-                                            timetable.add(timeArray.getString(j));
-                                        }
-                                        data.setTimetable(timetable);
-                                    }
+                                data.setWaitingId(dataObject.getLong("id"));
+                                data.setAdminId(dataObject.getLong("adminId"));
+                                data.setName(dataObject.getString("name"));
+                                data.setLatitude(dataObject.getDouble("latitude"));
+                                data.setLongitude(dataObject.getDouble("longitude"));
+                                data.setLocDetail(dataObject.getString("locationDetail"));
+                                data.setInfo(dataObject.getString("information"));
+                                data.setType(dataObject.getString("type"));
+                                data.setMaxPerson(dataObject.getInt("maxPerson"));
+//                                if (data.getType().equals("time")) {
+//                                    ArrayList<String> timetable = new ArrayList();
+//                                    JSONArray timeArray = dataObject.getJSONArray("timetable");
+//                                    for (int j = 0; j < timeArray.length(); j++) {
+//                                        timetable.add(timeArray.getString(j));
+//                                    }
+//                                    data.setTimetable(timetable);
+//                                }
 
-                                    wInfo = data;
-                                }
+                                wInfo = data;
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -256,6 +253,7 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
 
     public void queueListRequest(Long wId) {
         wQueue = new ArrayList<>();
+        timeList = new ArrayList<>();
         if (DataApplication.isTest) {
             for (WaitingQueue tempQ : DataApplication.testWaitingQueueDBList) {
                 for (Long tempQID : wInfo.getQueueList()) {
@@ -273,7 +271,7 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
             }
             final String requestBody = String.valueOf(jsonBodyObj.toString());
 
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, DataApplication.serverURL + "/waitingQueueList", null,
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, DataApplication.serverURL + "/waitinginfo/" + wId + "/queues", null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
@@ -283,20 +281,27 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
                                     JSONObject dataObject = dataArray.getJSONObject(i);
                                     WaitingQueue data = new WaitingQueue();
 
-                                    data.setQId(dataObject.getLong("qId"));
-                                    data.setQueueName(dataObject.getString("qName"));
-                                    data.setTime(dataObject.getString("time"));
-                                    data.setMaxPerson(dataObject.getInt("maxPerson"));
+                                    data.setQId(dataObject.getLong("id"));
+
+                                    JSONObject timeObject = dataObject.getJSONObject("timetable");
+
+                                    JSONObject queueObject = timeObject.getJSONObject("waitingInfo");
+
+                                    data.setQueueName(queueObject.getString("name"));
+                                    data.setMaxPerson(queueObject.getInt("maxPerson"));
+
+                                    data.setTime(timeObject.getString("time"));
+                                    timeList.add(timeObject.getString("time"));
 
                                     ArrayList<UserInfo> tempPersonList = new ArrayList<>();
-                                    JSONArray personArray = jsonObject.getJSONArray("data");
+                                    JSONArray personArray = dataObject.getJSONArray("userQueues");
                                     for (int j = 0; j < personArray.length(); j++) {
                                         JSONObject personObject = personArray.getJSONObject(i);
                                         UserInfo tempPerson = new UserInfo();
 
-                                        tempPerson.setStudentCode(personObject.getLong("studentCode"));
+                                        tempPerson.setStudentCode(personObject.getLong("id"));
                                         tempPerson.setName(personObject.getString("name"));
-                                        tempPerson.setTel(personObject.getString("telephone"));
+                                        tempPerson.setTel(personObject.getString("phoneNumber"));
 
                                         tempPersonList.add(tempPerson);
                                     }

@@ -39,8 +39,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
-//    private EditText edt_id, edt_password;
-//    private Button btn_login, btn_new;
     public static Activity login_Activity;
     private String sharedID = "Login";
     private String token;
@@ -64,16 +62,16 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = LoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        //setContentView(R.layout.login);
         login_Activity = LoginActivity.this;
 
         FirebaseMessaging.getInstance().getToken().addOnSuccessListener(new OnSuccessListener<String>() {
             @Override
             public void onSuccess(String data) {
                 token = data;
-                Log.e("-----------------toekn", token);
+                Log.e("-----------------token", token);
             }
         });
+
 
         SharedPreferences sharedPreferences = getSharedPreferences(sharedID, Activity.MODE_PRIVATE);
         checkPermissions(permission_list);
@@ -81,18 +79,13 @@ public class LoginActivity extends AppCompatActivity {
         if (((DataApplication) getApplication()).requestQueue == null)
             ((DataApplication) getApplication()).requestQueue = Volley.newRequestQueue(getApplicationContext());
 
-//        edt_id = findViewById(R.id.edtId);
-//        edt_password = findViewById(R.id.edtPw);
-//        btn_login = findViewById(R.id.btnLogin);
-//        btn_new = findViewById(R.id.btnNewSignIn);
-
         String loginId = sharedPreferences.getString("inputId", null);
         String loginPwd = sharedPreferences.getString("inputPwd", null);
+        token = sharedPreferences.getString("token", null);
 
-        if (loginId != null && loginPwd != null) {
+        if (loginId != null && loginPwd != null && token != null) {
             Toast.makeText(getApplicationContext(), loginId + "님 자동로그인 입니다!", Toast.LENGTH_SHORT).show();
-            //edt_id.setText(loginId);
-            //edt_password.setText(loginPwd);
+
             binding.edtId.setText(loginId);
             binding.edtPw.setText(loginPwd);
 
@@ -116,6 +109,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 autoLogin.putString("inputId", binding.edtId.getText().toString());
                 autoLogin.putString("inputPwd", binding.edtPw.getText().toString());
+                autoLogin.putString("token", token);
 
                 autoLogin.commit();
 

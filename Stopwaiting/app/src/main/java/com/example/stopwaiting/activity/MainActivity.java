@@ -263,7 +263,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         public void onResponse(JSONObject jsonObject) {
                             Toast.makeText(getApplicationContext(), "신청한 웨이팅 조회.", Toast.LENGTH_SHORT).show();
                             try {
-                                Log.e("data", jsonObject.toString());
+                                Log.e("QueueData", jsonObject.toString());
                                 JSONArray dataArray = jsonObject.getJSONArray("data");
 
                                 for (int i = 0; i < dataArray.length(); i++) {

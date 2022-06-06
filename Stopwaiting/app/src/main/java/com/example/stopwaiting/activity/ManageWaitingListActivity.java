@@ -3,6 +3,7 @@ package com.example.stopwaiting.activity;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -114,11 +115,12 @@ public class ManageWaitingListActivity extends AppCompatActivity {
             }
             final String requestBody = String.valueOf(jsonBodyObj.toString());
 
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, DataApplication.serverURL + "/waitinginfo?admin=" + DataApplication.currentUser.getStudentCode(),
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, DataApplication.serverURL + "/waitinginfo?adminId=" + DataApplication.currentUser.getStudentCode(),
                     null, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject jsonObject) {
                     try {
+                        Log.e("myData", jsonObject.toString());
                         JSONArray dataArray = jsonObject.getJSONArray("data");
                         mWaitingQueueList = new ArrayList<>();
                         for (int i = 0; i < dataArray.length(); i++) {
@@ -152,6 +154,7 @@ public class ManageWaitingListActivity extends AppCompatActivity {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
+                    Log.e("errorCode", error.toString());
                     Toast.makeText(getApplicationContext(), "로딩에 실패하였습니다.", Toast.LENGTH_SHORT).show();
                 }
             }) {
