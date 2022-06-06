@@ -433,7 +433,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             };
 
             request.setShouldCache(false);
-            ((DataApplication) getApplication()).requestQueue.add(request);
+            DataApplication.requestQueue.add(request);
         }
     }
 

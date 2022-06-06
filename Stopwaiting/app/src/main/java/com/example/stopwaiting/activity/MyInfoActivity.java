@@ -36,7 +36,7 @@ public class MyInfoActivity extends AppCompatActivity {
         myInfoActivity = MyInfoActivity.this;
 
         binding.txtUserName.setText(DataApplication.currentUser.getName());
-        binding.txtUserNum.setText(Math.toIntExact(DataApplication.currentUser.getStudentCode()));
+        binding.txtUserNum.setText(String.valueOf(DataApplication.currentUser.getStudentCode()));
         binding.txtUserPhone.setText(DataApplication.currentUser.getTel());
 
 //        MyInfoRequest();

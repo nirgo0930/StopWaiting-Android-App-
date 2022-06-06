@@ -44,6 +44,7 @@
         <activity android:name=".activity.ManageWaitingActivity" />
         <activity android:name=".activity.ManageWaitingPersonActivity" />
         <activity android:name=".activity.ScanQRActivity" />
+        <activity android:name=".activity.MyInfoActivity" />
 
         <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"
