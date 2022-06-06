@@ -35,9 +35,10 @@ public class MyInfoActivity extends AppCompatActivity {
 
         myInfoActivity = MyInfoActivity.this;
 
-        binding.txtUserName.setText(DataApplication.currentUser.getName());
-        binding.txtUserNum.setText(String.valueOf(DataApplication.currentUser.getStudentCode()));
-        binding.txtUserPhone.setText(DataApplication.currentUser.getTel());
+        binding.txtMyName.setText(((DataApplication) getApplication()).currentUser.getName() + " 님");
+        binding.txtUserName.setText("이름 : " + DataApplication.currentUser.getName());
+        binding.txtUserNum.setText("학번 : " + String.valueOf(DataApplication.currentUser.getStudentCode()));
+        binding.txtUserPhone.setText("전화번호 : " + DataApplication.currentUser.getTel());
 
 //        MyInfoRequest();
     }
