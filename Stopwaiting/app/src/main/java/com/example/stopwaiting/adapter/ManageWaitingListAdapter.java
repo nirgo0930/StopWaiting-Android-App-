@@ -20,8 +20,6 @@ import com.bumptech.glide.Glide;
 import com.example.stopwaiting.R;
 import com.example.stopwaiting.activity.DataApplication;
 import com.example.stopwaiting.activity.ManageWaitingActivity;
-import com.example.stopwaiting.databinding.WaitingItemBinding;
-import com.example.stopwaiting.databinding.WaitingTimeBinding;
 import com.example.stopwaiting.dto.WaitingListItem;
 import com.example.stopwaiting.viewholder.ManageWaitingListItemViewHolder;
 
@@ -55,6 +53,7 @@ public class ManageWaitingListAdapter extends RecyclerView.Adapter<ManageWaiting
         public void onItemClick(int pos) {
             Intent data = new Intent(mContext, ManageWaitingActivity.class);
             data.putExtra("qId", mItemList.get(pos).getQId());
+            data.putExtra("wId", mItemList.get(pos).getWId());
             mContext.startActivity(data);
         }
     };

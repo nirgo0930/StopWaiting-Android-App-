@@ -3,6 +3,7 @@ package com.example.stopwaiting.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -20,7 +21,6 @@ import com.example.stopwaiting.dto.UserInfo;
 import com.example.stopwaiting.dto.WaitingInfo;
 import com.example.stopwaiting.dto.WaitingQueue;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -51,14 +51,12 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
         timeList = new ArrayList<>();
         selectQ = new WaitingQueue();
 
-        waitingInfoRequest(intent.getLongExtra("qId", 0L));
+        binding.spnTime.setOnItemSelectedListener(this);
 
-        if (binding.spnTime != null) {
-            binding.spnTime.setOnItemSelectedListener(this);
-        }
-        mAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, timeList);
-        mAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        binding.spnTime.setAdapter(mAdapter);
+        waitingInfoRequest(intent.getLongExtra("wId", 0L));
+        queueListRequest(intent.getLongExtra("wId", 0L));
+
+        binding.txtWaitingName.setText(wInfo.getName());
 
         binding.btnCheckIn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,6 +83,8 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
             }
         });
 
+//        binding.txtSelectTime.setText(timeList.get(0));
+
         refresh();
     }
 
@@ -108,22 +108,12 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
         waitingInfoRequest(wInfo.getWaitingId());
         queueListRequest(wInfo.getWaitingId());
 
-        binding.txtWaitingName.setText(wInfo.getName());
-
-        timeList = new ArrayList<>();
-        if (wInfo.getTimetable() != null) {
-            timeList = wInfo.getTimetable();
-            mAdapter.notifyDataSetChanged();
-        } else {
-            timeList.add("normal");
-        }
-
         WaitingQueue temp = new WaitingQueue();
 
         String wCnt = "";
         String next = "";
 
-        if (wQueue.get(0).getTime().equals("normal")) {
+        if (wQueue.get(0).getTime().equals("NORMAL")) {
             temp = wQueue.get(0);
 
             if (temp.getWaitingPersonList().size() != 0) {
@@ -134,7 +124,7 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
                 next = "-";
             }
         } else {
-            for (int i = 0; i < wInfo.getQueueList().size(); i++) {
+            for (int i = 0; i < wQueue.size(); i++) {
                 temp = wQueue.get(i);
                 if (temp.getTime().equals(binding.txtSelectTime.getText().toString())) {
                     if (temp.getWaitingPersonList().size() != 0) {
@@ -151,198 +141,80 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
         }
         selectQ = temp;
 
-
         binding.txtWaitingCnt.setText(wCnt);
         binding.txtNextName.setText(next);
     }
 
     public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
-        String spinner_item = adapterView.getItemAtPosition(pos).toString();
-        binding.txtSelectTime.setText(spinner_item);
+//        String spinner_item = .toString();
 
-        refresh();
+        binding.txtSelectTime.setText(adapterView.getItemAtPosition(pos).toString());
+        Log.e("select", String.valueOf(binding.txtSelectTime.getText()));
+
+        WaitingQueue temp = new WaitingQueue();
+
+        String wCnt = "";
+        String next = "";
+
+        if (wQueue.get(0).getTime().equals("NORMAL")) {
+            temp = wQueue.get(0);
+
+            if (temp.getWaitingPersonList().size() != 0) {
+                wCnt = (temp.getWaitingPersonList().size()) + " 명";
+                next = temp.getWaitingPersonList().get(0).getName();
+            } else {
+                wCnt = "0 명";
+                next = "-";
+            }
+        } else {
+            for (int i = 0; i < wQueue.size(); i++) {
+                temp = wQueue.get(i);
+                if (temp.getTime().equals(binding.txtSelectTime.getText().toString())) {
+                    if (temp.getWaitingPersonList().size() != 0) {
+                        wCnt = (temp.getWaitingPersonList().size()) + " 명";
+                        next = temp.getWaitingPersonList().get(0).getName();
+                    } else {
+                        wCnt = "0 명";
+                        next = "-";
+                    }
+
+                    break;
+                }
+            }
+        }
+        selectQ = temp;
+
     }
 
     public void onNothingSelected(AdapterView<?> adapterView) {
         binding.txtSelectTime.setText("예약할 시간을 선택해 주세요.");
     }
 
-    public void waitingInfoRequest(Long qId) {
-        if (DataApplication.isTest) {
-            for (WaitingInfo tempInfo : DataApplication.testDBList) {
-                for (Long id : tempInfo.getQueueList()) {
-                    if (id.equals(qId)) {
-                        wInfo = tempInfo;
-                        return;
-                    }
+    public void waitingInfoRequest(Long wId) {
+        for (WaitingInfo tempInfo : DataApplication.waitingList) {
+            if (tempInfo.getWaitingId().equals(wId)) {
+                wInfo = tempInfo;
+                if (wInfo.getTimetable() != null) {
+                    timeList = wInfo.getTimetable();
+                    mAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, timeList);
+                    mAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    binding.spnTime.setAdapter(mAdapter);
+                    mAdapter.notifyDataSetChanged();
+                } else {
+                    timeList.add("NORMAL");
                 }
+                return;
             }
-        } else {
-            JSONObject jsonBodyObj = new JSONObject();
-            try {
-                jsonBodyObj.put("id", qId);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            final String requestBody = String.valueOf(jsonBodyObj.toString());
-
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, DataApplication.serverURL + "/waitingqueue/" + qId, null,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject jsonObject) {
-                            try {
-                                JSONObject dataObject = jsonObject.getJSONObject("data");
-                                WaitingInfo data = new WaitingInfo();
-
-                                data.setWaitingId(dataObject.getLong("id"));
-                                data.setAdminId(dataObject.getLong("adminId"));
-                                data.setName(dataObject.getString("name"));
-                                data.setLatitude(dataObject.getDouble("latitude"));
-                                data.setLongitude(dataObject.getDouble("longitude"));
-                                data.setLocDetail(dataObject.getString("locationDetail"));
-                                data.setInfo(dataObject.getString("information"));
-                                data.setType(dataObject.getString("type"));
-                                data.setMaxPerson(dataObject.getInt("maxPerson"));
-//                                if (data.getType().equals("time")) {
-//                                    ArrayList<String> timetable = new ArrayList();
-//                                    JSONArray timeArray = dataObject.getJSONArray("timetable");
-//                                    for (int j = 0; j < timeArray.length(); j++) {
-//                                        timetable.add(timeArray.getString(j));
-//                                    }
-//                                    data.setTimetable(timetable);
-//                                }
-
-                                wInfo = data;
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(getApplicationContext(), "로그인에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-                        }
-                    }) {
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    HashMap<String, String> headers = new HashMap<String, String>();
-                    headers.put("Content-Type", "application/json");
-                    return headers;
-                }
-
-                @Override
-                public byte[] getBody() {
-                    try {
-                        if (requestBody != null && requestBody.length() > 0 && !requestBody.equals("")) {
-                            return requestBody.getBytes("utf-8");
-                        } else {
-                            return null;
-                        }
-                    } catch (UnsupportedEncodingException uee) {
-                        return null;
-                    }
-                }
-            };
-
-            request.setShouldCache(false);
-            DataApplication.requestQueue.add(request);
         }
     }
 
     public void queueListRequest(Long wId) {
         wQueue = new ArrayList<>();
         timeList = new ArrayList<>();
-        if (DataApplication.isTest) {
-            for (WaitingQueue tempQ : DataApplication.testWaitingQueueDBList) {
-                for (Long tempQID : wInfo.getQueueList()) {
-                    if (tempQ.getQId().equals(tempQID)) {
-                        wQueue.add(tempQ);
-                    }
-                }
+        for (WaitingQueue tempQ : ManageWaitingListActivity.mWaitingQueueList) {
+            if (tempQ.getWId().equals(wInfo.getWaitingId())) {
+                wQueue.add(tempQ);
             }
-        } else {
-            JSONObject jsonBodyObj = new JSONObject();
-            try {
-                jsonBodyObj.put("id", wId);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            final String requestBody = String.valueOf(jsonBodyObj.toString());
-
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, DataApplication.serverURL + "/waitinginfo/" + wId + "/queues", null,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject jsonObject) {
-                            try {
-                                JSONArray dataArray = jsonObject.getJSONArray("data");
-                                for (int i = 0; i < dataArray.length(); i++) {
-                                    JSONObject dataObject = dataArray.getJSONObject(i);
-                                    WaitingQueue data = new WaitingQueue();
-
-                                    data.setQId(dataObject.getLong("id"));
-
-                                    JSONObject timeObject = dataObject.getJSONObject("timetable");
-
-                                    JSONObject queueObject = timeObject.getJSONObject("waitingInfo");
-
-                                    data.setQueueName(queueObject.getString("name"));
-                                    data.setMaxPerson(queueObject.getInt("maxPerson"));
-
-                                    data.setTime(timeObject.getString("time"));
-                                    timeList.add(timeObject.getString("time"));
-
-                                    ArrayList<UserInfo> tempPersonList = new ArrayList<>();
-                                    JSONArray personArray = dataObject.getJSONArray("userQueues");
-                                    for (int j = 0; j < personArray.length(); j++) {
-                                        JSONObject personObject = personArray.getJSONObject(i);
-                                        UserInfo tempPerson = new UserInfo();
-
-                                        tempPerson.setStudentCode(personObject.getLong("id"));
-                                        tempPerson.setName(personObject.getString("name"));
-                                        tempPerson.setTel(personObject.getString("phoneNumber"));
-
-                                        tempPersonList.add(tempPerson);
-                                    }
-                                    data.setWaitingPersonList(tempPersonList);
-
-                                    wQueue.add(data);
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(getApplicationContext(), "로그인에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-                        }
-                    }) {
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    HashMap<String, String> headers = new HashMap<String, String>();
-                    headers.put("Content-Type", "application/json");
-                    return headers;
-                }
-
-                @Override
-                public byte[] getBody() {
-                    try {
-                        if (requestBody != null && requestBody.length() > 0 && !requestBody.equals("")) {
-                            return requestBody.getBytes("utf-8");
-                        } else {
-                            return null;
-                        }
-                    } catch (UnsupportedEncodingException uee) {
-                        return null;
-                    }
-                }
-            };
-
-            request.setShouldCache(false);
-            DataApplication.requestQueue.add(request);
         }
     }
 

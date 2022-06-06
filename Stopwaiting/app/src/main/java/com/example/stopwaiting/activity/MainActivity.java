@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Marker marker = new Marker();
 
         marker.setPosition(new LatLng(waitingInfo.getLatitude(), waitingInfo.getLongitude()));
-        Log.e("loc-----------", waitingInfo.getLatitude() + "/" + waitingInfo.getLongitude());
+//        Log.e("loc-----------", waitingInfo.getLatitude() + "/" + waitingInfo.getLongitude());
         marker.setMap(naverMap);
         marker.setWidth(1);
         marker.setHeight(1);
@@ -263,15 +263,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         public void onResponse(JSONObject jsonObject) {
                             Toast.makeText(getApplicationContext(), "신청한 웨이팅 조회.", Toast.LENGTH_SHORT).show();
                             try {
-                                Log.e("QueueData", jsonObject.toString());
+//                                Log.e("QueueData", jsonObject.toString());
                                 JSONArray dataArray = jsonObject.getJSONArray("data");
 
                                 for (int i = 0; i < dataArray.length(); i++) {
                                     JSONObject dataObject = dataArray.getJSONObject(i);
                                     JSONObject queueObject = dataObject.getJSONObject("waitingQueue");
-
-                                    int nowPersonCnt = queueObject.getJSONArray("userQueues").length();
-
 
                                     JSONObject timeObject = queueObject.getJSONObject("timetable");
                                     JSONObject waitingInfoObject = timeObject.getJSONObject("waitingInfo");
@@ -286,21 +283,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     data.setMaxPerson(waitingInfoObject.getInt("maxPerson"));
 
                                     ArrayList<UserInfo> tempUserList = new ArrayList<>();
-                                    for (int j = 0; j < nowPersonCnt; j++) {
+
+                                    JSONArray userArray = queueObject.getJSONArray("userQueues");
+                                    for (int j = 0; j < userArray.length(); j++) {
+                                        JSONObject userObject = userArray.getJSONObject(j).getJSONObject("user");
+
                                         UserInfo tempUser = new UserInfo();
+                                        tempUser.setStudentCode(userObject.getLong("id"));
+                                        tempUser.setTel(userObject.getString("phoneNumber"));
+                                        tempUser.setName(userObject.getString("name"));
+
                                         tempUserList.add(tempUser);
                                     }
-//                                    JSONArray userArray = jsonObject.getJSONArray("waitingPersonList");
-//                                    for (int j = 0; j < userArray.length(); j++) {
-//                                        JSONObject userObject = dataArray.getJSONObject(i);
-//
-//                                        UserInfo tempUser = new UserInfo();
-//                                        tempUser.setStudentCode(userObject.getLong("id"));
-//
-//                                        tempUserList.add(tempUser);
-//                                    }
+
                                     data.setWaitingPersonList(tempUserList);
-                                    Log.e("myQ", data.getQueueName());
+//                                    Log.e("myQ", data.getQueueName());
                                     DataApplication.myWaiting.add(data);
                                 }
                             } catch (JSONException e) {
@@ -392,14 +389,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                             JSONObject imgInfo = imageArray.getJSONObject(j);
 
                                             urlList.add(((DataApplication) getApplication()).imgURL + imgInfo.getString("fileurl"));
-                                            Log.e("URL", ((DataApplication) getApplication()).imgURL + imgInfo.getString("fileurl"));
+//                                            Log.e("URL", ((DataApplication) getApplication()).imgURL + imgInfo.getString("fileurl"));
 
                                         }
                                     }
                                     data.setUrlList(urlList);
 
                                     setInfo(data);
-                                    Log.e("wId", String.valueOf(data.getWaitingId()));
+//                                    Log.e("wId", String.valueOf(data.getWaitingId()));
                                     ((DataApplication) getApplication()).waitingList.add(data);
 
                                 }
