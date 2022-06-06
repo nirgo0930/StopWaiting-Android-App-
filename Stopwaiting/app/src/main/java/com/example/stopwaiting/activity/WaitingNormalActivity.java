@@ -8,6 +8,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -63,7 +64,7 @@ public class WaitingNormalActivity extends AppCompatActivity {
         }
 
         mWaitingQueue = new WaitingQueue();
-        queueRequest(mWaitingInfo.getWaitingId(), mWaitingInfo.getType());
+        queueRequest(mWaitingInfo.getWaitingId(), mWaitingInfo.getTimetable().get(0));
         imageRequest();
 
         pivot = 0;
@@ -161,7 +162,7 @@ public class WaitingNormalActivity extends AppCompatActivity {
         } else {
             JSONObject jsonBodyObj = new JSONObject();
             try {
-                jsonBodyObj.put("studentCode", DataApplication.currentUser.getStudentCode());
+                jsonBodyObj.put("id", DataApplication.currentUser.getStudentCode());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -249,38 +250,46 @@ public class WaitingNormalActivity extends AppCompatActivity {
                 }
             }
         } else {
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, DataApplication.serverURL + "/waitinginfo/" + selectWID + " /queue?time=" + time, null,
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,
+                    DataApplication.serverURL + "/waitinginfo/" + selectWID + " /queue?time=" + time, null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
                             try {
-                                JSONArray dataArray = jsonObject.getJSONArray("data");
+                                Log.e("arr", jsonObject.toString());
+                                WaitingQueue data = new WaitingQueue();
+                                JSONObject dataObject = jsonObject.getJSONObject("data");
+                                data.setQId(dataObject.getLong("id"));
 
-                                for (int i = 0; i < dataArray.length(); i++) {
-                                    JSONObject dataObject = dataArray.getJSONObject(i);
+                                JSONObject timeObject = dataObject.getJSONObject("timetable");
+                                data.setTime(timeObject.getString("time"));
 
-                                    WaitingQueue data = new WaitingQueue();
+                                JSONObject waitingObject = timeObject.getJSONObject("waitingInfo");
+                                data.setWId(waitingObject.getLong("id"));
+                                data.setQueueName(waitingObject.getString("name"));
+                                data.setMaxPerson(waitingObject.getInt("maxPerson"));
 
-                                    data.setQueueName(dataObject.getString("queueName"));
-                                    data.setQId(dataObject.getLong("queueId"));
-                                    data.setTime(dataObject.getString("time"));
-                                    data.setMaxPerson(dataObject.getInt("maxPerson"));
+                                ArrayList<UserInfo> tempUserList = new ArrayList<>();
+                                JSONArray userArray = dataObject.getJSONArray("userQueues");
+                                for (int j = 0; j < userArray.length(); j++) {
+                                    UserInfo tempUser = new UserInfo();
+                                    JSONObject userObject = userArray.getJSONObject(j);
+                                    tempUser.setStudentCode(userObject.getLong("id"));
 
-                                    ArrayList<UserInfo> tempUserList = new ArrayList<>();
-                                    JSONArray userArray = jsonObject.getJSONArray("waitingPersonList");
-                                    for (int j = 0; j < userArray.length(); j++) {
-                                        JSONObject userObject = dataArray.getJSONObject(i);
-
-                                        UserInfo tempUser = new UserInfo();
-                                        tempUser.setStudentCode(userObject.getLong("id"));
-
-                                        tempUserList.add(tempUser);
-                                    }
-                                    data.setWaitingPersonList(tempUserList);
-
-                                    mWaitingQueue = data;
+                                    tempUserList.add(tempUser);
                                 }
+                                data.setWaitingPersonList(tempUserList);
+
+                                mWaitingQueue = data;
+
+                                if (mWaitingQueue.getWaitingPersonList() != null) {
+                                    binding.txtWaitCnt.setText("현재 " + String.valueOf(mWaitingQueue.getWaitingPersonList().size()) + "명 대기중");
+                                } else {
+                                    binding.txtWaitCnt.setText("현재 대기 인원이 없습니다.");
+                                }
+
                             } catch (JSONException e) {
+                                Log.e("err", e.toString());
                                 e.printStackTrace();
                             }
                         }
@@ -288,7 +297,7 @@ public class WaitingNormalActivity extends AppCompatActivity {
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(getApplicationContext(), "등록에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "조회에 실패하였습니다.", Toast.LENGTH_SHORT).show();
                         }
                     }) {
                 @Override
@@ -302,7 +311,6 @@ public class WaitingNormalActivity extends AppCompatActivity {
 
             request.setShouldCache(false);
             DataApplication.requestQueue.add(request);
-
         }
     }
 }

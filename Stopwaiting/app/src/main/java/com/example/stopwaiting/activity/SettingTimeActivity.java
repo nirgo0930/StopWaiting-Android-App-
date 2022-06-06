@@ -183,7 +183,13 @@ public class SettingTimeActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(String jsonObject) {
                             Log.e("response", jsonObject);
-                            addImageRequest(Long.valueOf(jsonObject));
+                            if (uriList.size() > 0) {
+                                addImageRequest(Long.valueOf(jsonObject));
+                            } else {
+                                Intent temp = new Intent(SettingTimeActivity.this, MyPageActivity.class);
+                                MyPageActivity.myPageActivity.finish();
+                                startActivity(temp);
+                            }
                         }
                     },
                     new Response.ErrorListener() {
@@ -305,7 +311,7 @@ public class SettingTimeActivity extends AppCompatActivity {
 
                             temp[i] = new MultipartRequest.DataPart(
                                     String.valueOf(timeIntent.getStringExtra("name")) + String.valueOf(i) + ".jpg", imageBytes, "image/jpeg");
-                            Log.e("img_name",timeIntent.getStringExtra("name"));
+                            Log.e("img_name", timeIntent.getStringExtra("name"));
                         }
                         params.put("files", temp);
                     }

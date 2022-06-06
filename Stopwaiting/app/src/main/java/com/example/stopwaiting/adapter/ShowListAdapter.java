@@ -41,7 +41,6 @@ public class ShowListAdapter extends RecyclerView.Adapter<ShowListViewHolder> {
     private Context mContext;
     private List<WaitingInfo> mItemList;
     private WaitingQueue mWaitingQueue;
-    private int myNum = 0;
 
     public ShowListAdapter(Context a_context, List<WaitingInfo> a_itemList) {
         mContext = a_context;
@@ -97,25 +96,13 @@ public class ShowListAdapter extends RecyclerView.Adapter<ShowListViewHolder> {
 
         mWaitingQueue = new WaitingQueue();
         if (waitingItem.getType().equals("NORMAL")) {
-            queueRequest(waitingItem.getWaitingId(), "NORMAL");
-            if (mWaitingQueue.getWaitingPersonList() != null) {
-                myNum = mWaitingQueue.getWaitingPersonList().size();
-            } else {
-                myNum = 0;
-            }
+            queueRequest(waitingItem.getWaitingId(), "NORMAL", holder);
 
-            holder.txtWaitCnt.setText("대기중인 인원 :  " + String.valueOf(myNum) + " 명");
         } else {
             for (String time : waitingItem.getTimetable()) {
                 if (((DataApplication) mContext.getApplicationContext()).firstIsLater(time, nowTime)) {
-                    queueRequest(waitingItem.getWaitingId(), time);
-                    if (mWaitingQueue.getWaitingPersonList() != null) {
-                        myNum = mWaitingQueue.getWaitingPersonList().size();
-                    } else {
-                        myNum = 0;
-                    }
+                    queueRequest(waitingItem.getWaitingId(), time, holder);
 
-                    holder.txtWaitCnt.setText("대기중인 인원 :  " + String.valueOf(myNum) + " 명");
                     break;
                 }
             }
@@ -129,7 +116,7 @@ public class ShowListAdapter extends RecyclerView.Adapter<ShowListViewHolder> {
         return mItemList.size();
     }
 
-    public void queueRequest(Long selectWID, String time) {
+    public void queueRequest(Long selectWID, String time, ShowListViewHolder holder) {
         if (DataApplication.isTest) {
             for (WaitingQueue temp : DataApplication.testWaitingQueueDBList) {
                 if (temp.getWId().equals(selectWID) && temp.getTime().equals(time)) {
@@ -142,30 +129,36 @@ public class ShowListAdapter extends RecyclerView.Adapter<ShowListViewHolder> {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
                             try {
-                                JSONArray dataArray = jsonObject.getJSONArray("data");
-                                for (int i = 0; i < dataArray.length(); i++) {
-                                    JSONObject dataObject = dataArray.getJSONObject(i);
+                                Log.e("arr", jsonObject.toString());
+                                WaitingQueue data = new WaitingQueue();
+                                JSONObject dataObject = jsonObject.getJSONObject("data");
+                                data.setQId(dataObject.getLong("id"));
 
-                                    JSONObject timeObject = dataObject.getJSONObject("timetable");
-                                    JSONObject waitingInfoObject = timeObject.getJSONObject("waitingInfo");
+                                JSONObject timeObject = dataObject.getJSONObject("timetable");
+                                data.setTime(timeObject.getString("time"));
 
-                                    WaitingQueue data = new WaitingQueue();
+                                JSONObject waitingObject = timeObject.getJSONObject("waitingInfo");
+                                data.setWId(waitingObject.getLong("id"));
+                                data.setQueueName(waitingObject.getString("name"));
+                                data.setMaxPerson(waitingObject.getInt("maxPerson"));
 
-                                    data.setTime(timeObject.getString("time"));
-                                    data.setQId(dataObject.getLong("id"));
+                                ArrayList<UserInfo> tempUserList = new ArrayList<>();
+                                JSONArray userArray = dataObject.getJSONArray("userQueues");
+                                for (int j = 0; j < userArray.length(); j++) {
+                                    UserInfo tempUser = new UserInfo();
+                                    JSONObject userObject = userArray.getJSONObject(j);
+                                    tempUser.setStudentCode(userObject.getLong("id"));
 
-                                    data.setQueueName(waitingInfoObject.getString("name"));
-                                    data.setWId(waitingInfoObject.getLong("id"));
-                                    data.setMaxPerson(waitingInfoObject.getInt("maxPerson"));
+                                    tempUserList.add(tempUser);
+                                }
+                                data.setWaitingPersonList(tempUserList);
 
-                                    int nowPersonCnt = dataObject.getJSONArray("userQueues").length();
-                                    ArrayList<UserInfo> tempUserList = new ArrayList<>();
-                                    for (int j = 0; j < nowPersonCnt; j++) {
-                                        UserInfo tempUser = new UserInfo();
-                                        tempUserList.add(tempUser);
-                                    }
+                                mWaitingQueue = data;
 
-                                    mWaitingQueue = data;
+                                if (mWaitingQueue.getWaitingPersonList() != null) {
+                                    holder.txtWaitCnt.setText("대기중인 인원 :  " + String.valueOf(mWaitingQueue.getWaitingPersonList().size()) + " 명");
+                                } else {
+                                    holder.txtWaitCnt.setText("현재 대기 인원이 없습니다.");
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();

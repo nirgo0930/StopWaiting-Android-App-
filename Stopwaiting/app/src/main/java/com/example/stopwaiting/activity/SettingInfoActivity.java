@@ -31,6 +31,7 @@ import com.example.stopwaiting.dto.WaitingInfo;
 import com.example.stopwaiting.dto.WaitingQueue;
 import com.example.stopwaiting.service.MultipartRequest;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -195,9 +196,9 @@ public class SettingInfoActivity extends AppCompatActivity {
                     settingInfoIntent.getDoubleExtra("latitude", 0),
                     settingInfoIntent.getDoubleExtra("longitude", 0),
                     binding.edtName.getText().toString(), binding.edtLocDetail.getText().toString(), binding.edtInfo.getText().toString(),
-                    "normal", Integer.valueOf(binding.edtMaxPerson.getText().toString()), new ArrayList<>(),tempList));
+                    "normal", Integer.valueOf(binding.edtMaxPerson.getText().toString()), new ArrayList<>(), tempList));
 
-            DataApplication.testWaitingQueueDBList.add(new WaitingQueue(10L,DataApplication.qCnt++, binding.edtName.getText().toString(),
+            DataApplication.testWaitingQueueDBList.add(new WaitingQueue(10L, DataApplication.qCnt++, binding.edtName.getText().toString(),
                     "normal", Integer.valueOf(binding.edtMaxPerson.getText().toString())));
 
             addImageRequest(10L);
@@ -212,6 +213,10 @@ public class SettingInfoActivity extends AppCompatActivity {
                 jsonBodyObj.put("information", binding.edtInfo.getText().toString());
                 jsonBodyObj.put("maxPerson", Integer.valueOf(binding.edtMaxPerson.getText().toString()));
                 jsonBodyObj.put("type", "NORMAL");
+                JSONArray timeArray = new JSONArray();
+                timeArray.put("NORMAL");
+
+                jsonBodyObj.put("timetables", timeArray);
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -222,7 +227,13 @@ public class SettingInfoActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(String jsonObject) {
                             Log.e("response", jsonObject);
-                            addImageRequest(Long.valueOf(jsonObject));
+                            if (uriList.size() > 0) {
+                                addImageRequest(Long.valueOf(jsonObject));
+                            }else{
+                                Intent temp = new Intent(SettingInfoActivity.this, MyPageActivity.class);
+                                MyPageActivity.myPageActivity.finish();
+                                startActivity(temp);
+                            }
                         }
                     },
                     new Response.ErrorListener() {

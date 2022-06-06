@@ -250,7 +250,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             JSONObject jsonBodyObj = new JSONObject();
             try {
                 jsonBodyObj.put("id", DataApplication.currentUser.getStudentCode());
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -263,21 +262,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         public void onResponse(JSONObject jsonObject) {
                             Toast.makeText(getApplicationContext(), "신청한 웨이팅 조회.", Toast.LENGTH_SHORT).show();
                             try {
-//                                Log.e("QueueData", jsonObject.toString());
                                 JSONArray dataArray = jsonObject.getJSONArray("data");
-
                                 for (int i = 0; i < dataArray.length(); i++) {
-                                    JSONObject dataObject = dataArray.getJSONObject(i);
-                                    JSONObject queueObject = dataObject.getJSONObject("waitingQueue");
-
-                                    JSONObject timeObject = queueObject.getJSONObject("timetable");
-                                    JSONObject waitingInfoObject = timeObject.getJSONObject("waitingInfo");
-
                                     WaitingQueue data = new WaitingQueue();
 
-                                    data.setTime(timeObject.getString("time"));
+                                    JSONObject dataObject = dataArray.getJSONObject(i);
+                                    JSONObject queueObject = dataObject.getJSONObject("waitingQueue");
                                     data.setQId(queueObject.getLong("id"));
 
+                                    JSONObject timeObject = queueObject.getJSONObject("timetable");
+                                    data.setTime(timeObject.getString("time"));
+
+                                    JSONObject waitingInfoObject = timeObject.getJSONObject("waitingInfo");
                                     data.setQueueName(waitingInfoObject.getString("name"));
                                     data.setWId(waitingInfoObject.getLong("id"));
                                     data.setMaxPerson(waitingInfoObject.getInt("maxPerson"));
@@ -297,7 +293,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     }
 
                                     data.setWaitingPersonList(tempUserList);
-//                                    Log.e("myQ", data.getQueueName());
                                     DataApplication.myWaiting.add(data);
                                 }
                             } catch (JSONException e) {
@@ -359,7 +354,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                                 for (int i = 0; i < dataArray.length(); i++) {
                                     JSONObject dataObject = dataArray.getJSONObject(i);
-
+                                    Log.e("temp", dataObject.toString());
                                     WaitingInfo data = new WaitingInfo();
                                     data.setWaitingId(dataObject.getLong("id"));
                                     data.setAdminId(dataObject.getLong("adminId"));
@@ -370,18 +365,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     data.setInfo(dataObject.getString("information"));
                                     data.setType(dataObject.getString("type"));
                                     data.setMaxPerson(dataObject.getInt("maxPerson"));
-                                    if (data.getType().equals("TIME")) {
-                                        ArrayList<String> timetable = new ArrayList();
-                                        JSONArray timeArray = dataObject.getJSONArray("timetables");
-                                        for (int j = 0; j < timeArray.length(); j++) {
-                                            JSONObject timeObj = timeArray.getJSONObject(j);
 
-                                            timetable.add(timeObj.getString("time"));
-                                        }
-                                        data.setTimetable(timetable);
-                                    } else {
-                                        data.setTimetable(new ArrayList());
+                                    ArrayList<String> timetable = new ArrayList();
+                                    JSONArray timeArray = dataObject.getJSONArray("timetables");
+                                    for (int j = 0; j < timeArray.length(); j++) {
+                                        JSONObject timeObj = timeArray.getJSONObject(j);
+
+                                        timetable.add(timeObj.getString("time"));
                                     }
+                                    data.setTimetable(timetable);
+
                                     ArrayList<String> urlList = new ArrayList();
                                     if (dataObject.getJSONArray("images") != null) {
                                         JSONArray imageArray = dataObject.getJSONArray("images");
@@ -389,14 +382,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                             JSONObject imgInfo = imageArray.getJSONObject(j);
 
                                             urlList.add(((DataApplication) getApplication()).imgURL + imgInfo.getString("fileurl"));
-//                                            Log.e("URL", ((DataApplication) getApplication()).imgURL + imgInfo.getString("fileurl"));
 
                                         }
                                     }
                                     data.setUrlList(urlList);
 
                                     setInfo(data);
-//                                    Log.e("wId", String.valueOf(data.getWaitingId()));
                                     ((DataApplication) getApplication()).waitingList.add(data);
 
                                 }

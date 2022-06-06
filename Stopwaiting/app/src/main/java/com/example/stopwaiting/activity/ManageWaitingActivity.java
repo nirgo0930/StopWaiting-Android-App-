@@ -17,14 +17,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.stopwaiting.databinding.ManageWaitingBinding;
-import com.example.stopwaiting.dto.UserInfo;
 import com.example.stopwaiting.dto.WaitingInfo;
 import com.example.stopwaiting.dto.WaitingQueue;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -146,8 +143,6 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
     }
 
     public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
-//        String spinner_item = .toString();
-
         binding.txtSelectTime.setText(adapterView.getItemAtPosition(pos).toString());
         Log.e("select", String.valueOf(binding.txtSelectTime.getText()));
 
@@ -177,13 +172,14 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
                         wCnt = "0 명";
                         next = "-";
                     }
-
                     break;
                 }
             }
         }
         selectQ = temp;
 
+        binding.txtWaitingCnt.setText(wCnt);
+        binding.txtNextName.setText(next);
     }
 
     public void onNothingSelected(AdapterView<?> adapterView) {
@@ -218,54 +214,108 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
         }
     }
 
+//    public void checkInRequest(Long qr, Long qId) {
+//        if (DataApplication.isTest) {
+//            if (selectQ.getWaitingPersonList().size() != 0) {
+//                UserInfo temp = new UserInfo();
+//                for (int i = 0; i < selectQ.getWaitingPersonList().size(); i++) {
+//                    if (selectQ.getWaitingPersonList().get(i).getStudentCode().equals(qr)) {
+//                        temp = selectQ.getWaitingPersonList().get(i);
+//                        if (selectQ.removeWPerson(temp.getStudentCode())) {
+//                            DataApplication.testWaitingQueueDBList.set(DataApplication.testWaitingQueueDBList.indexOf(selectQ), selectQ);
+//                            Toast.makeText(getApplicationContext(), temp.getName() + " 님 어서오세요.", Toast.LENGTH_SHORT).show();
+//                        } else {
+//                            Toast.makeText(getApplicationContext(), "등록된 웨이팅이 아닙니다.", Toast.LENGTH_SHORT).show();
+//                        }
+//                        break;
+//                    }
+//                }
+//            } else {
+//                Toast.makeText(getApplicationContext(), "대기 중인 사람이 없습니다.", Toast.LENGTH_SHORT).show();
+//            }
+//        } else {
+//            JSONObject jsonBodyObj = new JSONObject();
+//            try {
+//                jsonBodyObj.put("id", qr);
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//            final String requestBody = String.valueOf(jsonBodyObj.toString());
+//
+//            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, DataApplication.serverURL + "/queue/" + qId, null,
+//                    new Response.Listener<JSONObject>() {
+//                        @Override
+//                        public void onResponse(JSONObject jsonObject) {
+//                            try {
+//                                String userName = jsonObject.getString("name");
+//                                Toast.makeText(getApplicationContext(), userName + " 님 어서오세요.", Toast.LENGTH_SHORT).show();
+//
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                                Toast.makeText(getApplicationContext(), "등록된 웨이팅이 아닙니다.", Toast.LENGTH_SHORT).show();
+//                            }
+//                        }
+//                    },
+//                    new Response.ErrorListener() {
+//                        @Override
+//                        public void onErrorResponse(VolleyError error) {
+//                            Toast.makeText(getApplicationContext(), "로딩에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+//                        }
+//                    }) {
+//                @Override
+//                public Map<String, String> getHeaders() throws AuthFailureError {
+//                    HashMap<String, String> headers = new HashMap<String, String>();
+//                    headers.put("Content-Type", "application/json");
+//                    return headers;
+//                }
+//
+//                @Override
+//                public byte[] getBody() {
+//                    try {
+//                        if (requestBody != null && requestBody.length() > 0 && !requestBody.equals("")) {
+//                            return requestBody.getBytes("utf-8");
+//                        } else {
+//                            return null;
+//                        }
+//                    } catch (UnsupportedEncodingException uee) {
+//                        return null;
+//                    }
+//                }
+//            };
+//
+//            request.setShouldCache(false);
+//            DataApplication.requestQueue.add(request);
+//        }
+//    }
+
     public void checkInRequest(Long qr, Long qId) {
         if (DataApplication.isTest) {
-            if (selectQ.getWaitingPersonList().size() != 0) {
-                UserInfo temp = new UserInfo();
-                for (int i = 0; i < selectQ.getWaitingPersonList().size(); i++) {
-                    if (selectQ.getWaitingPersonList().get(i).getStudentCode().equals(qr)) {
-                        temp = selectQ.getWaitingPersonList().get(i);
-                        if (selectQ.removeWPerson(temp.getStudentCode())) {
-                            DataApplication.testWaitingQueueDBList.set(DataApplication.testWaitingQueueDBList.indexOf(selectQ), selectQ);
-                            Toast.makeText(getApplicationContext(), temp.getName() + " 님 어서오세요.", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(getApplicationContext(), "등록된 웨이팅이 아닙니다.", Toast.LENGTH_SHORT).show();
-                        }
-                        break;
-                    }
+            for (int i = 0; i < DataApplication.testWaitingQueueDBList.size(); i++) {
+                if (DataApplication.testWaitingQueueDBList.get(i).getQId().equals(qId)) {
+                    WaitingQueue temp = DataApplication.testWaitingQueueDBList.get(i);
+
+                    DataApplication.myWaiting.remove(temp);
+
+                    temp.removeWPerson(qr);
+                    DataApplication.testWaitingQueueDBList.set(i, temp);
+
+                    break;
                 }
-            } else {
-                Toast.makeText(getApplicationContext(), "대기 중인 사람이 없습니다.", Toast.LENGTH_SHORT).show();
             }
         } else {
-            JSONObject jsonBodyObj = new JSONObject();
-            try {
-                jsonBodyObj.put("qrCode", qr);
-                jsonBodyObj.put("qId", qId);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            final String requestBody = String.valueOf(jsonBodyObj.toString());
-
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, DataApplication.serverURL + "/checkIn", null,
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.DELETE,
+                    DataApplication.serverURL + "/queue/" + qId + "/" + qr, null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
-                            try {
-                                String userName = jsonObject.getString("name");
-                                Toast.makeText(getApplicationContext(), userName + " 님 어서오세요.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), qr + " 님 어서오세요.", Toast.LENGTH_SHORT).show();
 
-
-                                Toast.makeText(getApplicationContext(), "등록된 웨이팅이 아닙니다.", Toast.LENGTH_SHORT).show();
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
                         }
                     },
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(getApplicationContext(), "로딩에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "등록된 웨이팅이 아닙니다.", Toast.LENGTH_SHORT).show();
                         }
                     }) {
                 @Override
@@ -273,19 +323,6 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
                     HashMap<String, String> headers = new HashMap<String, String>();
                     headers.put("Content-Type", "application/json");
                     return headers;
-                }
-
-                @Override
-                public byte[] getBody() {
-                    try {
-                        if (requestBody != null && requestBody.length() > 0 && !requestBody.equals("")) {
-                            return requestBody.getBytes("utf-8");
-                        } else {
-                            return null;
-                        }
-                    } catch (UnsupportedEncodingException uee) {
-                        return null;
-                    }
                 }
             };
 

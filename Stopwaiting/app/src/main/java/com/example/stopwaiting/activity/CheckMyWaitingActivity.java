@@ -3,7 +3,6 @@ package com.example.stopwaiting.activity;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -12,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.stopwaiting.R;
 import com.example.stopwaiting.adapter.MyWaitingListAdapter;
 import com.example.stopwaiting.databinding.WaitingListBinding;
-import com.example.stopwaiting.dto.ImgItem;
+import com.example.stopwaiting.dto.UserInfo;
 import com.example.stopwaiting.dto.WaitingInfo;
 import com.example.stopwaiting.dto.WaitingListItem;
 import com.example.stopwaiting.dto.WaitingQueue;
@@ -61,17 +60,21 @@ public class CheckMyWaitingActivity extends AppCompatActivity {
                         break;
                     }
                 }
-                ImgItem tempImg = new ImgItem();
+                int myCnt = 0;
+                for (UserInfo temp : myQueue.getWaitingPersonList()) {
+                    if (temp.getStudentCode().equals(DataApplication.currentUser.getStudentCode())) {
+                        break;
+                    } else {
+                        myCnt++;
+                    }
+                }
                 if (tempInfo.getUrlList().size() > 0) {
-                    Log.e("imgURL", tempInfo.getUrlList().get(0));
                     mWaitingList.add(new WaitingListItem(tempInfo.getUrlList().get(0), myQueue.getQueueName(), myQueue.getQId(), myQueue.getWId(),
                             myQueue.getWaitingPersonList().indexOf(DataApplication.currentUser), tempInfo.getLocDetail()));
 
                 } else {
-                    Log.e("imgURL", "android.resource://" + R.class.getPackage().getName() + "/" + R.drawable.empty_icon);
-                    tempImg.setSUri(Uri.parse("android.resource://" + R.class.getPackage().getName() + "/" + R.drawable.empty_icon).toString());
-                    mWaitingList.add(new WaitingListItem(tempImg.getUri(), myQueue.getQueueName(), myQueue.getQId(), myQueue.getWId(),
-                            myQueue.getWaitingPersonList().indexOf(DataApplication.currentUser), tempInfo.getLocDetail()));
+                    mWaitingList.add(new WaitingListItem(Uri.parse("android.resource://" + R.class.getPackage().getName() + "/" + R.drawable.empty_icon).toString(),
+                            myQueue.getQueueName(), myQueue.getQId(), myQueue.getWId(), myCnt, tempInfo.getLocDetail()));
                 }
             }
             binding.txtNotice.setText("신청한 웨이팅은 총 " + mWaitingList.size() + "건 입니다.");

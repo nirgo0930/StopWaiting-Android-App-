@@ -8,6 +8,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -20,14 +21,17 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.bumptech.glide.Glide;
 import com.example.stopwaiting.R;
 import com.example.stopwaiting.databinding.WaitingTimeBinding;
 import com.example.stopwaiting.dto.ImgItem;
+import com.example.stopwaiting.dto.UserInfo;
 import com.example.stopwaiting.dto.WaitingInfo;
 import com.example.stopwaiting.dto.WaitingQueue;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -42,12 +46,10 @@ import java.util.Map;
 public class WaitingSelectTimeActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private int pivot, mStatusCode;
     private WaitingInfo mWaitingInfo;
-    //private ImageView imageView;
-    //private TextView name, imgCnt, choice, waitCnt, timeDetail, locDetail, info;
-    //private Button btnOk;
-    //private Spinner spinner;
+    private WaitingQueue mWaitingQueue;
     private ArrayList<ImgItem> imgItems;
     private ArrayList<String> urlItems, timeList;
+
 
     private WaitingTimeBinding binding;
 
@@ -57,14 +59,6 @@ public class WaitingSelectTimeActivity extends AppCompatActivity implements Adap
         binding = WaitingTimeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         Intent intent = getIntent();
-
-//        info = findViewById(R.id.txtInfo);
-//        name = findViewById(R.id.txtWaitingName);
-//        locDetail = findViewById(R.id.txtLocDeatail);
-//        waitCnt = findViewById(R.id.txtWaitCnt);
-//        timeDetail = findViewById(R.id.txtInfo);
-//        choice = findViewById(R.id.txtSelectTime);
-//        spinner = findViewById(R.id.spnTime);
 
         mWaitingInfo = new WaitingInfo();
         for (int i = 0; i < DataApplication.waitingList.size(); i++) {
@@ -90,7 +84,6 @@ public class WaitingSelectTimeActivity extends AppCompatActivity implements Adap
         binding.txtInfo.setText(mWaitingInfo.getInfo());
         binding.txtInfo.setText(mWaitingInfo.getLocDetail());
 
-        //btnOk = findViewById(R.id.btnOk);
         binding.btnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -108,19 +101,23 @@ public class WaitingSelectTimeActivity extends AppCompatActivity implements Adap
         binding.txtWaitCnt.setText("현재 대기 인원이 없습니다.");
 
         if (((DataApplication) this.getApplication()).firstIsLater(spinner_item, nowTime)) {
-            for (int i = 0; i < ((DataApplication) getApplication()).testWaitingQueueDBList.size(); i++) {
-                WaitingQueue temp = ((DataApplication) getApplication()).testWaitingQueueDBList.get(i);
-                if (temp.getQueueName().equals(binding.txtWaitingName.getText()) && temp.getTime().equals(spinner_item)) {
-                    if (temp.getWaitingPersonList() != null) {
-                        binding.txtWaitCnt.setText("현재 " + String.valueOf(temp.getWaitingPersonList().size()) + "명 대기중");
-                    } else {
-                        binding.txtWaitCnt.setText("현재 대기 인원이 없습니다.");
+            if (DataApplication.isTest) {
+                for (int i = 0; i < ((DataApplication) getApplication()).testWaitingQueueDBList.size(); i++) {
+                    WaitingQueue temp = ((DataApplication) getApplication()).testWaitingQueueDBList.get(i);
+                    if (temp.getQueueName().equals(binding.txtWaitingName.getText()) && temp.getTime().equals(spinner_item)) {
+                        if (temp.getWaitingPersonList() != null) {
+                            binding.txtWaitCnt.setText("현재 " + String.valueOf(temp.getWaitingPersonList().size()) + "명 대기중");
+                        } else {
+                            binding.txtWaitCnt.setText("현재 대기 인원이 없습니다.");
+                        }
+                        break;
                     }
-                    break;
                 }
+                binding.txtSelectTime.setText(spinner_item);
+                binding.btnOk.setClickable(true);
+            } else {
+                queueRequest(mWaitingInfo.getWaitingId(), spinner_item);
             }
-            binding.txtSelectTime.setText(spinner_item);
-            binding.btnOk.setClickable(true);
         } else {
             onNothingSelected(adapterView);
             Toast.makeText(this, "선택한 시간은 예약이 불가능합니다.", Toast.LENGTH_SHORT).show();
@@ -285,6 +282,82 @@ public class WaitingSelectTimeActivity extends AppCompatActivity implements Adap
                     }
                     return super.parseNetworkResponse(response);
                 }
+            };
+
+            request.setShouldCache(false);
+            DataApplication.requestQueue.add(request);
+        }
+    }
+
+    public void queueRequest(Long selectWID, String time) {
+        if (DataApplication.isTest) {
+            for (WaitingQueue temp : ((DataApplication) getApplication()).testWaitingQueueDBList) {
+                if (temp.getWId().equals(selectWID) && temp.getTime().equals("NORMAL")) {
+                    if (temp.getWaitingPersonList() != null) {
+                        binding.txtWaitCnt.setText("현재 " + String.valueOf(temp.getWaitingPersonList().size()) + "명 대기중");
+                    } else {
+                        binding.txtWaitCnt.setText("현재 대기 인원이 없습니다.");
+                    }
+                    break;
+                }
+            }
+        } else {
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, DataApplication.serverURL + "/waitinginfo/" + selectWID + " /queue?time=" + time, null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject jsonObject) {
+                            try {
+                                Log.e("arr", jsonObject.toString());
+                                WaitingQueue data = new WaitingQueue();
+                                JSONObject dataObject = jsonObject.getJSONObject("data");
+                                data.setQId(dataObject.getLong("id"));
+
+                                JSONObject timeObject = dataObject.getJSONObject("timetable");
+                                data.setTime(timeObject.getString("time"));
+
+                                JSONObject waitingObject = timeObject.getJSONObject("waitingInfo");
+                                data.setWId(waitingObject.getLong("id"));
+                                data.setQueueName(waitingObject.getString("name"));
+                                data.setMaxPerson(waitingObject.getInt("maxPerson"));
+
+                                ArrayList<UserInfo> tempUserList = new ArrayList<>();
+                                JSONArray userArray = dataObject.getJSONArray("userQueues");
+                                for (int j = 0; j < userArray.length(); j++) {
+                                    UserInfo tempUser = new UserInfo();
+                                    JSONObject userObject = userArray.getJSONObject(j);
+                                    tempUser.setStudentCode(userObject.getLong("id"));
+
+                                    tempUserList.add(tempUser);
+                                }
+                                data.setWaitingPersonList(tempUserList);
+
+                                mWaitingQueue = data;
+
+                                if (mWaitingQueue.getWaitingPersonList() != null) {
+                                    binding.txtWaitCnt.setText("현재 " + String.valueOf(mWaitingQueue.getWaitingPersonList().size()) + "명 대기중");
+                                } else {
+                                    binding.txtWaitCnt.setText("현재 대기 인원이 없습니다.");
+                                }
+
+                            } catch (JSONException e) {
+                                Log.e("err", e.toString());
+                                e.printStackTrace();
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(getApplicationContext(), "조회에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                        }
+                    }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json");
+                    return headers;
+                }
+
             };
 
             request.setShouldCache(false);
