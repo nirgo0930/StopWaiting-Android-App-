@@ -22,6 +22,7 @@ public class DataApplication extends Application {
     static public RequestQueue requestQueue;
 
     static public String serverURL = "http://192.168.25.37:8080/api/v1";
+    static public String imgURL = "http://192.168.25.37:8080";
     private String path = "/my_path";
 
 

@@ -127,7 +127,7 @@ public class LoginActivity extends AppCompatActivity {
             }
             final String requestBody = String.valueOf(jsonBodyObj.toString());
 
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, DataApplication.serverURL + "/login", null,
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, DataApplication.serverURL + "/login", null, ///loginbyadmin
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
@@ -175,6 +175,7 @@ public class LoginActivity extends AppCompatActivity {
             };
 
             request.setShouldCache(false);
+            DataApplication.requestQueue = Volley.newRequestQueue(this);
             DataApplication.requestQueue.add(request);
         }
 

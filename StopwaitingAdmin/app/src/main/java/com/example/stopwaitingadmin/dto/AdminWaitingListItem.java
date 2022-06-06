@@ -12,12 +12,12 @@ import lombok.Setter;
 //@AllArgsConstructor
 public class AdminWaitingListItem {
     private Long wId;               //웨이팅 id
-    private int mImgId;             //이미지
+    private String mImgId;          //이미지
     private String mTxtName;        //웨이팅이름
     private String mTxtUser;        //개설자이름
     private String mTxtLocation;    //장소이름
 
-    public AdminWaitingListItem(Long wId, int imgId, String txtName, String txtUser, String txtLocation) {
+    public AdminWaitingListItem(Long wId, String imgId, String txtName, String txtUser, String txtLocation) {
         this.wId = wId;
         mImgId = imgId;
         mTxtName = txtName;
@@ -33,11 +33,11 @@ public class AdminWaitingListItem {
         this.wId = wId;
     }
 
-    public int getImgId() {
+    public String getImgId() {
         return mImgId;
     }
 
-    public void setImgId(int mImgId) {
+    public void setImgId(String mImgId) {
         this.mImgId = mImgId;
     }
 

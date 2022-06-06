@@ -15,6 +15,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.stopwaitingadmin.R;
 import com.example.stopwaitingadmin.adapter.ReportedUserListAdapter;
 import com.example.stopwaitingadmin.databinding.ReportedUserListBinding;
@@ -57,23 +58,32 @@ public class ReportedUserActivity extends AppCompatActivity {
         mReportedUserListView.setLayoutManager(layoutManager);
         mReportedUserListView.setAdapter(mReportedUserListAdapter);
 
+        if (DataApplication.requestQueue != null) {
+            DataApplication.requestQueue = Volley.newRequestQueue(getApplicationContext());
+        } //RequestQueue 생성
+
         // List 설정
-        bindList();
+//        bindList();
 
         mReportedUserListAdapter.notifyDataSetChanged();
 
-        binding.txtReportedUserNotice.setText("신고된 회원이 " + String.valueOf(mReportedUserList.size()) + "명 존재합니다.");
 
     }
-
 
     private void bindList() {
-        mReportedUserList.add(new ReportedUserListItem(20171250, "한유현", 1));
-        mReportedUserList.add(new ReportedUserListItem(12345678, "방진성", 1));
-        mReportedUserList.add(new ReportedUserListItem(135792468, "이윤석", 2));
+        Log.e("user", String.valueOf(DataApplication.reportedUserQueue.size()));
+        for (int i = 0; i < DataApplication.reportedUserQueue.size(); i++) {
+            Log.e("user", DataApplication.reportedUserQueue.get(i).getReportedUserName());
+            mReportedUserList.add(DataApplication.reportedUserQueue.get(i));
+
+
+        }
+//        mReportedUserList.add(new ReportedUserListItem(20171250, "한유현", 1));
+//        mReportedUserList.add(new ReportedUserListItem(12345678, "방진성", 1));
+//        mReportedUserList.add(new ReportedUserListItem(135792468, "이윤석", 2));
     }
 
-    public void rePortedUserQueueRequest(){
+    public void rePortedUserQueueRequest() {
         JSONObject jsonBodyObj = new JSONObject();
 
         final String requestBody = String.valueOf(jsonBodyObj.toString());
@@ -83,16 +93,17 @@ public class ReportedUserActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject jsonObject) {
                         try {
+                            Log.e("data", jsonObject.toString());
                             JSONArray dataArray = jsonObject.getJSONArray("data");
 
                             for (int i = 0; i < dataArray.length(); i++) {
                                 JSONObject dataObject = dataArray.getJSONObject(i);
 
                                 ReportedUserListItem data = new ReportedUserListItem();
-
-                                data.setReportedUserNum(dataObject.getInt("UserNum"));
-                                data.setReportedUserName(dataObject.getString("UserName"));
-                                data.setReportedCount(dataObject.getInt("reportedCount"));
+                                Log.e("data2", dataObject.toString());
+                                data.setReportedUserNum(dataObject.getLong("id"));
+                                data.setReportedUserName(dataObject.getString("name"));
+                                data.setReportedCount(dataObject.getInt("reported"));
 
 //                                ArrayList<UserInfo> tempUserList = new ArrayList<>();
 //                                JSONArray userArray = jsonObject.getJSONArray("waitingPersonList");
@@ -107,7 +118,12 @@ public class ReportedUserActivity extends AppCompatActivity {
 //                                data.setWaitingPersonList(tempUserList);
 
                                 DataApplication.reportedUserQueue.add(data);
+                                Log.e("name", DataApplication.reportedUserQueue.get(i).getReportedUserName());
                             }
+                            bindList();
+                            mReportedUserListAdapter.notifyDataSetChanged();
+                            binding.txtReportedUserNotice.setText("신고된 회원이 " + String.valueOf(mReportedUserList.size()) + "명 존재합니다.");
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -141,6 +157,7 @@ public class ReportedUserActivity extends AppCompatActivity {
         };
 
         request.setShouldCache(false);
+        DataApplication.requestQueue = Volley.newRequestQueue(this);
         DataApplication.requestQueue.add(request);
     }
 

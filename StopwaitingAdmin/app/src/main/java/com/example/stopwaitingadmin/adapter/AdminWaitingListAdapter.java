@@ -1,4 +1,5 @@
 package com.example.stopwaitingadmin.adapter;
+import com.bumptech.glide.Glide;
 import com.example.stopwaitingadmin.R;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import com.example.stopwaitingadmin.viewholder.AdminWaitingListItemViewHolder;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AdminWaitingListAdapter extends RecyclerView.Adapter<AdminWaitingListItemViewHolder> {
@@ -35,7 +37,9 @@ public class AdminWaitingListAdapter extends RecyclerView.Adapter<AdminWaitingLi
     @Override
     public void onBindViewHolder(@NonNull AdminWaitingListItemViewHolder holder, int position) {
         final AdminWaitingListItem waitingItem = mItemList.get(position);
-        holder.imgItem.setImageResource(waitingItem.getImgId());
+        Glide.with(mContext.getApplicationContext())
+                .load(waitingItem.getImgId())
+                .into(holder.imgItem);
         holder.txtName.setText(waitingItem.getTxtName());
         holder.txtUser.setText("신청자 : " + waitingItem.getTxtUser());
         holder.txtLocation.setText(waitingItem.getTxtLocation());
@@ -46,15 +50,5 @@ public class AdminWaitingListAdapter extends RecyclerView.Adapter<AdminWaitingLi
         return mItemList.size();
     }
 
-//    public void permissionResultRequest(Boolean TorF){
-//        JSONObject jsonBodyObj = new JSONObject();
-//        try {
-//            jsonBodyObj.put("WaitingId",mItemList.get(pos) );
-//            jsonBodyObj.put("PermissionResult", TorF);
-//
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//        final String requestBody = String.valueOf(jsonBodyObj.toString());
-//    }
+
 }

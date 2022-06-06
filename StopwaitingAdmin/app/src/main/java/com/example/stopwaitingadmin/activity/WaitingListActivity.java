@@ -5,8 +5,10 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.stopwaitingadmin.R;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
@@ -39,50 +41,67 @@ public class WaitingListActivity extends AppCompatActivity {
     private AdminWaitListBinding binding;
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        finish();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = AdminWaitListBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         LoginActivity.login_Activity.finish();
 
-        waitingItemQueueRequest();
-
         txtNotice = findViewById(R.id.txtWaitingListNotice);
+        mWaitingListView = findViewById(R.id.WaitingListRecyclerView);
 
         mWaitingItemList = new ArrayList<>();
-        mWaitingListView = findViewById(R.id.WaitingListRecyclerView);
         mWaitingListAdapter = new AdminWaitingListAdapter(this, mWaitingItemList);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         mWaitingListView.setLayoutManager(layoutManager);
         mWaitingListView.setAdapter(mWaitingListAdapter);
 
-        // List 설정
-        bindList();
+        if (DataApplication.requestQueue != null) {
+            DataApplication.requestQueue = Volley.newRequestQueue(getApplicationContext());
+        } //RequestQueue 생성
 
-        mWaitingListAdapter.notifyDataSetChanged();
+        // List 설정 - 저장부분 바로 뒤로 이동
+//        bindList();
+        waitingItemQueueRequest();
 
-        binding.txtWaitingListNotice.setText("승인 대기중인 웨이팅이 " + String.valueOf(mWaitingItemList.size()) + "건 존재합니다.");
+
+//        binding.txtWaitingListNotice.setText("승인 대기중인 웨이팅이 " + String.valueOf(mWaitingItemList.size()) + "건 존재합니다.");
 
     }
 
 
     private void bindList() {
-        mWaitingItemList.add(new AdminWaitingListItem(1L, R.drawable.empty_icon, "미용실", "한유현", "학생회관 B208"));
-        mWaitingItemList.add(new AdminWaitingListItem(2L, R.drawable.empty_icon, "특식배부", "방진성", "디지털관 DB134"));
-        mWaitingItemList.add(new AdminWaitingListItem(3L, R.drawable.empty_icon, "북카페", "이윤석", "학생회관 B113"));
+//        mWaitingItemList = new ArrayList<>();
+        for (int i = 0; i < DataApplication.adminWaitingQueue.size(); i++) {
+            Log.e("user", DataApplication.adminWaitingQueue.get(i).getTxtUser());
+            mWaitingItemList.add(DataApplication.adminWaitingQueue.get(i));
+            mWaitingListAdapter.notifyDataSetChanged();
+        }
+
+//        mWaitingItemList.add(new AdminWaitingListItem(1L, "R.drawable.empty_icon", "미용실", "한유현", "학생회관 B208"));
+//        mWaitingItemList.add(new AdminWaitingListItem(2L, "R.drawable.empty_icon", "특식배부", "방진성", "디지털관 DB134"));
+//        mWaitingItemList.add(new AdminWaitingListItem(3L, "R.drawable.empty_icon", "북카페", "이윤석", "학생회관 B113"));
     }
 
-    public void waitingItemQueueRequest(){
+    public void waitingItemQueueRequest() { //서버에 승인 대기중인 웨이팅 리스트 요청
+        DataApplication.adminWaitingQueue = new ArrayList<>();
         JSONObject jsonBodyObj = new JSONObject();
 
         final String requestBody = String.valueOf(jsonBodyObj.toString());
 
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, DataApplication.serverURL + "/waitinginfo/hold", null,
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, DataApplication.serverURL + "/waitinginfo/holded", null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject jsonObject) {
                         try {
+                            Log.e("data", jsonObject.toString());
                             JSONArray dataArray = jsonObject.getJSONArray("data");
 
                             for (int i = 0; i < dataArray.length(); i++) {
@@ -90,26 +109,35 @@ public class WaitingListActivity extends AppCompatActivity {
 
                                 AdminWaitingListItem data = new AdminWaitingListItem();
 
-                                data.setImgId(dataObject.getInt("imgId"));
-                                data.setTxtName(dataObject.getString("txtName"));
-                                data.setTxtUser(dataObject.getString("txtUser"));
-                                data.setTxtLocation(dataObject.getString("txtLocation"));
+                                data.setId(dataObject.getLong("id"));
+//                                data.setImgId(dataObject.getString("file"));
+                                data.setTxtName(dataObject.getString("name"));
+                                data.setTxtUser(dataObject.getString("adminId"));
+                                data.setTxtLocation(dataObject.getString("locationDetail"));
 
-//                                ArrayList<UserInfo> tempUserList = new ArrayList<>();
-//                                JSONArray userArray = jsonObject.getJSONArray("waitingPersonList");
-//                                for (int j = 0; j < userArray.length(); j++) {
-//                                    JSONObject userObject = dataArray.getJSONObject(i);
-//
-//                                    UserInfo tempUser = new UserInfo();
-//                                    tempUser.setStudentCode(userObject.getLong("id"));
-//
-//                                    tempUserList.add(tempUser);
-//                                }
-//                                data.setWaitingPersonList(tempUserList);
+                                //이미지 값 저장
+                                String imgContent = "";
+
+                                JSONArray imageArray = dataObject.getJSONArray("images");
+                                if (imageArray.length() > 0) { //신청시 추가한 사진이 있으면
+                                    JSONObject imgInfo = imageArray.getJSONObject(0);
+
+                                    imgContent = DataApplication.imgURL + imgInfo.getString("fileurl");
+//                                    urlList.add(((DataApplication) getApplication()).imgURL + imgInfo.getString("fileurl"));
+//                                    Log.e("URL", ((DataApplication) getApplication()).imgURL + imgInfo.getString("fileurl"));
+                                    data.setImgId(imgContent);
+                                } else {
+                                    data.setImgId(Uri.parse("android.resource://" + R.class.getPackage().getName() + "/" + R.drawable.empty_icon).toString());
+                                }
 
                                 DataApplication.adminWaitingQueue.add(data);
                             }
+                            bindList();
+                            mWaitingListAdapter.notifyDataSetChanged();
+
+                            binding.txtWaitingListNotice.setText("승인 대기중인 웨이팅이 " + String.valueOf(mWaitingItemList.size()) + "건 존재합니다.");
                         } catch (JSONException e) {
+                            Log.e("error", e.toString());
                             e.printStackTrace();
                         }
                     }
@@ -142,7 +170,12 @@ public class WaitingListActivity extends AppCompatActivity {
         };
 
         request.setShouldCache(false);
+        DataApplication.requestQueue = Volley.newRequestQueue(this);
         DataApplication.requestQueue.add(request);
+    }
+
+    public void printHoldWaitingRequest() {
+
     }
 
 }
