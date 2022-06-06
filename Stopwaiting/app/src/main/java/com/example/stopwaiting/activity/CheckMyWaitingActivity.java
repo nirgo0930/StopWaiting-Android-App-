@@ -64,13 +64,13 @@ public class CheckMyWaitingActivity extends AppCompatActivity {
                 ImgItem tempImg = new ImgItem();
                 if (tempInfo.getUrlList().size() > 0) {
                     Log.e("imgURL", tempInfo.getUrlList().get(0));
-                    mWaitingList.add(new WaitingListItem(tempInfo.getUrlList().get(0), myQueue.getQueueName(), myQueue.getQId(),
+                    mWaitingList.add(new WaitingListItem(tempInfo.getUrlList().get(0), myQueue.getQueueName(), myQueue.getQId(), myQueue.getWId(),
                             myQueue.getWaitingPersonList().indexOf(DataApplication.currentUser), tempInfo.getLocDetail()));
 
                 } else {
                     Log.e("imgURL", "android.resource://" + R.class.getPackage().getName() + "/" + R.drawable.empty_icon);
                     tempImg.setSUri(Uri.parse("android.resource://" + R.class.getPackage().getName() + "/" + R.drawable.empty_icon).toString());
-                    mWaitingList.add(new WaitingListItem(tempImg.getUri(), myQueue.getQueueName(), myQueue.getQId(),
+                    mWaitingList.add(new WaitingListItem(tempImg.getUri(), myQueue.getQueueName(), myQueue.getQId(), myQueue.getWId(),
                             myQueue.getWaitingPersonList().indexOf(DataApplication.currentUser), tempInfo.getLocDetail()));
                 }
             }

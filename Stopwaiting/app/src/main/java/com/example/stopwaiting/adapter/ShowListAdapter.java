@@ -49,15 +49,15 @@ public class ShowListAdapter extends RecyclerView.Adapter<ShowListViewHolder> {
     }
 
     public interface OnItemClickEventListener {
-        void onItemClick(String name);
+        void onItemClick(int pos);
     }
 
     private OnItemClickEventListener mItemClickListener = new OnItemClickEventListener() {
         @Override
-        public void onItemClick(String name) {
+        public void onItemClick(int pos) {
 
             Intent data = new Intent();
-            data.putExtra("name", name);
+            data.putExtra("id", mItemList.get(pos).getWaitingId());
             data.putExtra("case", 1);
 
             ShowListActivity.showListActivity.setResult(Activity.RESULT_OK, data);
@@ -76,11 +76,15 @@ public class ShowListAdapter extends RecyclerView.Adapter<ShowListViewHolder> {
     public void onBindViewHolder(@NonNull ShowListViewHolder holder, int position) {
         final WaitingInfo waitingItem = mItemList.get(position);
 
-        if (waitingItem.getUrlList().get(0) == null) {
+        Log.e("waitingInfo", waitingItem.getName());
+
+
+        if (waitingItem.getUrlList().size() <= 0) {
             Glide.with(mContext.getApplicationContext())
-                    .load(Uri.parse(waitingItem.getUrlList().get(0)))
+                    .load(Uri.parse("android.resource://" + R.class.getPackage().getName() + "/" + R.drawable.empty_icon).toString())
                     .into(holder.imgItem);
         } else {
+            Log.e("IMG", waitingItem.getUrlList().get(0));
             Glide.with(mContext.getApplicationContext())
                     .load(waitingItem.getUrlList().get(0))
                     .into(holder.imgItem);
@@ -91,19 +95,26 @@ public class ShowListAdapter extends RecyclerView.Adapter<ShowListViewHolder> {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         String nowTime = sdf.format(new Date(System.currentTimeMillis()));
 
+        mWaitingQueue = new WaitingQueue();
         if (waitingItem.getType().equals("NORMAL")) {
             queueRequest(waitingItem.getWaitingId(), "NORMAL");
-            myNum = mWaitingQueue.getWaitingPersonList().size();
+            if (mWaitingQueue.getWaitingPersonList() != null) {
+                myNum = mWaitingQueue.getWaitingPersonList().size();
+            } else {
+                myNum = 0;
+            }
 
-            if (myNum < 1) myNum = 0;
             holder.txtWaitCnt.setText("대기중인 인원 :  " + String.valueOf(myNum) + " 명");
         } else {
             for (String time : waitingItem.getTimetable()) {
                 if (((DataApplication) mContext.getApplicationContext()).firstIsLater(time, nowTime)) {
                     queueRequest(waitingItem.getWaitingId(), time);
-                    myNum = mWaitingQueue.getWaitingPersonList().size();
+                    if (mWaitingQueue.getWaitingPersonList() != null) {
+                        myNum = mWaitingQueue.getWaitingPersonList().size();
+                    } else {
+                        myNum = 0;
+                    }
 
-                    if (myNum < 1) myNum = 0;
                     holder.txtWaitCnt.setText("대기중인 인원 :  " + String.valueOf(myNum) + " 명");
                     break;
                 }
@@ -126,36 +137,33 @@ public class ShowListAdapter extends RecyclerView.Adapter<ShowListViewHolder> {
                 }
             }
         } else {
-            Log.e("URL", DataApplication.serverURL + "/waitinginfo/" + selectWID + "/queue?time=" + time);
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, DataApplication.serverURL + "/waitinginfo/" + selectWID + " /queue?time=" + time, null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
                             try {
                                 JSONArray dataArray = jsonObject.getJSONArray("data");
-
-
                                 for (int i = 0; i < dataArray.length(); i++) {
                                     JSONObject dataObject = dataArray.getJSONObject(i);
 
+                                    JSONObject timeObject = dataObject.getJSONObject("timetable");
+                                    JSONObject waitingInfoObject = timeObject.getJSONObject("waitingInfo");
+
                                     WaitingQueue data = new WaitingQueue();
 
-                                    data.setQueueName(dataObject.getString("queueName"));
-                                    data.setQId(dataObject.getLong("queueId"));
-                                    data.setTime(dataObject.getString("time"));
-                                    data.setMaxPerson(dataObject.getInt("maxPerson"));
+                                    data.setTime(timeObject.getString("time"));
+                                    data.setQId(dataObject.getLong("id"));
 
+                                    data.setQueueName(waitingInfoObject.getString("name"));
+                                    data.setWId(waitingInfoObject.getLong("id"));
+                                    data.setMaxPerson(waitingInfoObject.getInt("maxPerson"));
+
+                                    int nowPersonCnt = dataObject.getJSONArray("userQueues").length();
                                     ArrayList<UserInfo> tempUserList = new ArrayList<>();
-                                    JSONArray userArray = jsonObject.getJSONArray("waitingPersonList");
-                                    for (int j = 0; j < userArray.length(); j++) {
-                                        JSONObject userObject = dataArray.getJSONObject(i);
-
+                                    for (int j = 0; j < nowPersonCnt; j++) {
                                         UserInfo tempUser = new UserInfo();
-                                        tempUser.setStudentCode(userObject.getLong("id"));
-
                                         tempUserList.add(tempUser);
                                     }
-                                    data.setWaitingPersonList(tempUserList);
 
                                     mWaitingQueue = data;
                                 }

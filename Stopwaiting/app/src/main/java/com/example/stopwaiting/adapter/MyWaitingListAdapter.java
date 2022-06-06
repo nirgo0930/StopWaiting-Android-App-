@@ -45,7 +45,7 @@ public class MyWaitingListAdapter extends RecyclerView.Adapter<MyWaitingListItem
     }
 
     public interface OnItemClickEventListener {
-        void onItemClick(String name);
+        void onItemClick(int pos);
     }
 
     public interface OnItemLongClickEventListener {
@@ -54,10 +54,10 @@ public class MyWaitingListAdapter extends RecyclerView.Adapter<MyWaitingListItem
 
     private OnItemClickEventListener mItemClickListener = new OnItemClickEventListener() {
         @Override
-        public void onItemClick(String name) {
+        public void onItemClick(int pos) {
 
             Intent data = new Intent();
-            data.putExtra("name", name);
+            data.putExtra("id", mItemList.get(pos).getWId());
             data.putExtra("case", 1);
 
             MyPageActivity.myPageActivity.setResult(Activity.RESULT_OK, data);

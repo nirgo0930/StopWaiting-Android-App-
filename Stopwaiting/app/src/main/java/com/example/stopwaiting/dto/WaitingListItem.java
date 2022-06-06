@@ -17,6 +17,7 @@ public class WaitingListItem implements Serializable {
     private Uri imgUri;
     private String name;
     private Long qId;
+    private Long wId;
     private int waitingCnt;
     private String locDetail;
     private String imgUrl;
@@ -25,18 +26,20 @@ public class WaitingListItem implements Serializable {
 //
 //    }
 
-    public WaitingListItem(Uri imgId, String txtName, Long qId, int txtWaitingCnt, String txtLocDetail) {
+    public WaitingListItem(Uri imgId, String txtName, Long qId, Long wId, int txtWaitingCnt, String txtLocDetail) {
         this.imgUri = imgId;
         this.name = txtName;
         this.qId = qId;
+        this.wId = wId;
         this.waitingCnt = txtWaitingCnt;
         this.locDetail = txtLocDetail;
     }
 
-    public WaitingListItem(String imgId, String txtName, Long qId, int txtWaitingCnt, String txtLocDetail) {
+    public WaitingListItem(String imgId, String txtName, Long qId, Long wId, int txtWaitingCnt, String txtLocDetail) {
         this.imgUrl = imgId;
         this.name = txtName;
         this.qId = qId;
+        this.wId = wId;
         this.waitingCnt = txtWaitingCnt;
         this.locDetail = txtLocDetail;
     }

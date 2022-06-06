@@ -3,7 +3,6 @@ package com.example.stopwaiting.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -53,7 +52,6 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
         selectQ = new WaitingQueue();
 
         waitingInfoRequest(intent.getLongExtra("qId", 0L));
-//        wInfo.setName();
 
         if (binding.spnTime != null) {
             binding.spnTime.setOnItemSelectedListener(this);
@@ -96,12 +94,8 @@ public class ManageWaitingActivity extends AppCompatActivity implements AdapterV
 
         if (requestCode == 4000) {
             if (resultCode == RESULT_OK) {
-//                Toast.makeText(this, "test4000", Toast.LENGTH_LONG).show();
-                Log.e("-------------------//////////////", data.getStringExtra("qr"));
                 Long qr = Long.valueOf(data.getStringExtra("qr"));
                 checkInRequest(qr, selectQ.getQId());
-
-
             }
         } else if (requestCode == 5000) {
 

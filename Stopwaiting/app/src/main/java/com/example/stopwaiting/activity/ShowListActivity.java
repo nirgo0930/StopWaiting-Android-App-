@@ -1,15 +1,12 @@
 package com.example.stopwaiting.activity;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.stopwaiting.R;
 import com.example.stopwaiting.adapter.ShowListAdapter;
 import com.example.stopwaiting.databinding.WaitingListBinding;
 import com.example.stopwaiting.dto.WaitingInfo;
@@ -36,17 +33,16 @@ public class ShowListActivity extends AppCompatActivity {
         showListActivity = ShowListActivity.this;
         mWaitingList = new ArrayList<>();
 
-
-
         binding.txtTitle.setText("개설된 웨이팅");
 
         waitingListRequest();
-        for (WaitingInfo info : mWaitingList) {
-            Log.e("info", info.getName());
-            if (info.getUrlList().size() == 0) {
-                info.addImage(Uri.parse("android.resource://" + R.class.getPackage().getName() + "/" + R.drawable.empty_icon).toString());
-            }
-        }
+
+//        for (WaitingInfo info : mWaitingList) {
+//            Log.e("info", info.getName());
+//            if (info.getUrlList().size() == 0) {
+//                info.addImage(Uri.parse("android.resource://" + R.class.getPackage().getName() + "/" + R.drawable.empty_icon).toString());
+//            }
+//        }
 
         mListAdapter = new ShowListAdapter(this, mWaitingList);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());

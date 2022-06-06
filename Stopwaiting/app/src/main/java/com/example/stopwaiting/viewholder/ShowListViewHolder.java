@@ -26,7 +26,7 @@ public class ShowListViewHolder extends RecyclerView.ViewHolder {
             public void onClick(View a_view) {
                 final int position = getAdapterPosition();
                 if (position != RecyclerView.NO_POSITION) {
-                    mItemClickListener.onItemClick(txtName.getText().toString());
+                    mItemClickListener.onItemClick(position);
                 }
             }
         });

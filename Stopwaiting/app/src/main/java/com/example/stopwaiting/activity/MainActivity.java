@@ -198,15 +198,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        refresh();
+//        refresh();
 
         if (requestCode == CAMERA_MOVE_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                String selectName = data.getStringExtra("name");
+                Long selectId = data.getLongExtra("id", 0);
                 switch (data.getIntExtra("case", 0)) {
                     case 1:
                         for (WaitingInfo temp : DataApplication.waitingList) {
-                            if (temp.getName().equals(selectName)) {
+                            if (temp.getWaitingId().equals(selectId)) {
                                 CameraUpdate cameraUpdate = CameraUpdate.scrollAndZoomTo(
                                         new LatLng(temp.getLatitude(), temp.getLongitude()), 15).animate(CameraAnimation.Fly, 1000);
                                 naverMap.moveCamera(cameraUpdate);
@@ -353,7 +353,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         } else {
             JSONObject jsonBodyObj = new JSONObject();
             final String requestBody = String.valueOf(jsonBodyObj.toString());
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, ((DataApplication) getApplication()).serverURL + "/waitinginfo", null,
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, ((DataApplication) getApplication()).serverURL + "/waitinginfo/confirmed", null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {

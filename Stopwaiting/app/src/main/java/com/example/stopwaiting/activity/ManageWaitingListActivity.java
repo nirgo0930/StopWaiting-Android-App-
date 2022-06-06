@@ -73,7 +73,7 @@ public class ManageWaitingListActivity extends AppCompatActivity {
                     }
                 }
                 if (!check) {
-                    mWaitingList.add(new WaitingListItem(tempImgInfo.getUri(), selectQueue.getQueueName(), selectQueue.getQId(),
+                    mWaitingList.add(new WaitingListItem(tempImgInfo.getUri(), selectQueue.getQueueName(), selectQueue.getQId(), selectQueue.getWId(),
                             selectQueue.getWaitingPersonList().size(), tempWaitingInfo.getLocDetail()));
                 }
             }
@@ -114,7 +114,7 @@ public class ManageWaitingListActivity extends AppCompatActivity {
             }
             final String requestBody = String.valueOf(jsonBodyObj.toString());
 
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, DataApplication.serverURL + "/manageWaitingList",
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, DataApplication.serverURL + "/waitinginfo?admin=" + DataApplication.currentUser.getStudentCode(),
                     null, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject jsonObject) {
