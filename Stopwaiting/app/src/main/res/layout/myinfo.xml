@@ -77,7 +77,7 @@
             android:text="휴대전화" />
 
         <Button
-            android:id="@+id/changeMyInfo"
+            android:id="@+id/btnChangeMyInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="100dp"
@@ -85,7 +85,7 @@
             android:textSize="20dp" />
 
         <Button
-            android:id="@+id/btnLogOut"
+            android:id="@+id/btnDeleteUser"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
