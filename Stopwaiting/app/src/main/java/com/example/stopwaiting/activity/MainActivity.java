@@ -346,27 +346,27 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         @Override
                         public void onResponse(JSONObject jsonObject) {
                             try {
+                                Log.e("temp", jsonObject.toString());
                                 JSONArray dataArray = jsonObject.getJSONArray("data");
-
                                 for (int i = 0; i < dataArray.length(); i++) {
-                                    JSONObject dataObject = dataArray.getJSONObject(i);
-                                    Log.e("temp", dataObject.toString());
                                     WaitingInfo data = new WaitingInfo();
 
+                                    JSONObject dataObject = dataArray.getJSONObject(i);
+
+                                    data.setWaitingId(dataObject.getLong("id"));
                                     data.setAdminId(dataObject.getLong("adminId"));
-                                    data.setName(dataObject.getString("name"));
                                     data.setLatitude(dataObject.getDouble("latitude"));
                                     data.setLongitude(dataObject.getDouble("longitude"));
+                                    data.setName(dataObject.getString("name"));
                                     data.setLocDetail(dataObject.getString("locationDetail"));
                                     data.setInfo(dataObject.getString("information"));
                                     data.setType(dataObject.getString("type"));
                                     data.setMaxPerson(dataObject.getInt("maxPerson"));
 
                                     ArrayList<String> timetable = new ArrayList();
-                                    JSONArray timeArray = dataObject.getJSONArray("timetables");
-                                    for (int j = 0; j < timeArray.length(); j++) {
-                                        JSONObject timeObj = timeArray.getJSONObject(j);
-                                        data.setWaitingId(timeObj.getJSONObject("waitingInfo").getLong("id"));
+                                    JSONArray timeArr = dataObject.getJSONArray("timetables");
+                                    for (int j = 0; j < timeArr.length(); j++) {
+                                        JSONObject timeObj = timeArr.getJSONObject(j);
                                         timetable.add(timeObj.getString("time"));
                                     }
                                     data.setTimetable(timetable);
