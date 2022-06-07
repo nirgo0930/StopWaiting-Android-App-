@@ -268,7 +268,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 for (int i = 0; i < dataArray.length(); i++) {
                                     WaitingQueue data = new WaitingQueue();
                                     JSONObject dataObject = dataArray.getJSONObject(i);
-                                    data.setQId(dataObject.getLong("id"));
+                                    data.setQId(dataObject.getJSONObject("waitingQueue").getLong("id"));
 
                                     JSONObject timeObject = dataObject.getJSONObject("waitingQueue").getJSONObject("timetable");
                                     data.setTime(timeObject.getString("time"));
@@ -346,7 +346,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         @Override
                         public void onResponse(JSONObject jsonObject) {
                             try {
-                                Log.e("temp", jsonObject.toString());
+//                                Log.e("temp", jsonObject.toString());
                                 JSONArray dataArray = jsonObject.getJSONArray("data");
                                 for (int i = 0; i < dataArray.length(); i++) {
                                     WaitingInfo data = new WaitingInfo();
@@ -435,6 +435,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 temp.setName(tempQueue.getQueueName());
                 if (tempInfo.getName().equals(tempQueue.getQueueName()) && !tempList.contains(temp.getName())) {
                     tempList.add(tempInfo);
+                    Log.e("tempInfo", String.valueOf(tempInfo.getWaitingId()));
                     break;
                 }
             }

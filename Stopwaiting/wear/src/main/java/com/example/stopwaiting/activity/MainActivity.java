@@ -105,7 +105,7 @@ public class MainActivity extends Activity {
             String postData = selectQueue.getQueueName() + "/" +
                     selectQueue.getLatitude() + "/" +
                     selectQueue.getLongitude() + "/" +
-                    Long.toString(selectQueue.getWId());
+                    Long.toString(selectQueue.getQId());
 
             if (selectQueue.getTime().equals("NORMAL")) {
                 str = "normal/" + selectQueue.getMyNum() + "/" +

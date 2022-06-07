@@ -110,12 +110,13 @@ public class WearService extends WearableListenerService {
                                 for (int i = 0; i < dataArray.length(); i++) {
                                     WearQueueDTO data = new WearQueueDTO();
                                     JSONObject dataObject = dataArray.getJSONObject(i);
-                                    data.setQId(dataObject.getLong("id"));
+                                    data.setQId(dataObject.getJSONObject("waitingQueue").getLong("id"));
 
                                     JSONObject timeObject = dataObject.getJSONObject("waitingQueue").getJSONObject("timetable");
                                     data.setTime(timeObject.getString("time"));
 
                                     JSONObject waitingObject = timeObject.getJSONObject("waitingInfo");
+                                    data.setWId(waitingObject.getLong("id"));
 
                                     data.setQueueName(waitingObject.getString("name"));
                                     data.setLongitude(waitingObject.getDouble("longitude"));
