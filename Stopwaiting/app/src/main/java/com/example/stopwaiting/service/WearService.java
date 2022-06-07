@@ -51,9 +51,12 @@ public class WearService extends WearableListenerService {
 
                     Log.e("test", message);
                     break;
-
                 default://예약 취소 여기로
                     Log.e("cancel", message);
+                    String[] strArr = message.split("/");
+
+                    Long qId = Long.valueOf(strArr[0]);
+                    cancelWaitingRequest(qId);
             }
 
         } else {
@@ -64,19 +67,6 @@ public class WearService extends WearableListenerService {
     public void setWearOS() {
         ((DataApplication) getApplication()).sendRefresh();
         ((DataApplication) getApplication()).sendUserInfo();
-
-//        ArrayList<WaitingInfo> tempList = new ArrayList<>();
-//        for (int i = 0; i < DataApplication.waitingList.size(); i++) {
-//            for (int j = 0; j < ((DataApplication) getApplication()).myWaiting.size(); j++) {
-//                WaitingInfo tempA = new WaitingInfo();
-//                tempA.setName(DataApplication.myWaiting.get(j).getQueueName());
-//                if (DataApplication.waitingList.get(i).getName().equals(DataApplication.myWaiting.get(j).getQueueName()) &&
-//                        !tempList.contains(tempA.getName())) {
-//                    tempList.add(DataApplication.waitingList.get(i));
-//                    break;
-//                }
-//            }
-//        }
 
         sendMyQueueInfo();
     }
@@ -178,6 +168,34 @@ public class WearService extends WearableListenerService {
             request.setShouldCache(false);
             DataApplication.requestQueue.add(request);
         }
+    }
+
+    public void cancelWaitingRequest(Long qId) {
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.DELETE,
+                DataApplication.serverURL + "/queue/" + qId + "/" + DataApplication.currentUser.getStudentCode(), null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject jsonObject) {
+                        setWearOS();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json");
+                return headers;
+            }
+        };
+
+        request.setShouldCache(false);
+        DataApplication.requestQueue.add(request);
+        Log.e("temp", request.toString());
     }
 
     public void sendMyQueueInfo() {

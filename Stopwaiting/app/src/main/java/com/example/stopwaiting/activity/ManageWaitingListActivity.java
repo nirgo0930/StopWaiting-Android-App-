@@ -65,6 +65,7 @@ public class ManageWaitingListActivity extends AppCompatActivity {
     }
 
     public void adminWaitingRequest() {
+        mWaitingQueueList = new ArrayList<>();
         if (DataApplication.isTest) {
             for (WaitingInfo tempInfo : DataApplication.testDBList) {
                 if (tempInfo.getAdminId().equals(DataApplication.currentUser.getStudentCode())) {
@@ -84,14 +85,10 @@ public class ManageWaitingListActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(JSONObject jsonObject) {
                     try {
-//                        Log.e("allData", jsonObject.toString());
                         JSONArray dataArray = jsonObject.getJSONArray("data");
-                        mWaitingQueueList = new ArrayList<>();
 
                         for (int i = 0; i < dataArray.length(); i++) {
                             JSONObject queueObject = dataArray.getJSONObject(i);
-//                            JSONObject queueObject = dataObject.getJSONObject("waitingQueue");
-
                             JSONObject timeObject = queueObject.getJSONObject("timetable");
                             JSONObject waitingInfoObject = timeObject.getJSONObject("waitingInfo");
 

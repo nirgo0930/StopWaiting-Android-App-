@@ -17,8 +17,11 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
@@ -255,7 +258,37 @@ public class LoginActivity extends AppCompatActivity {
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(getApplicationContext(), "로그인에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                            NetworkResponse networkResponse = error.networkResponse;
+                            String errorMessage = "Unknown error";
+                            if (networkResponse == null) {
+                                if (error.getClass().equals(TimeoutError.class)) {
+                                    errorMessage = "Request timeout";
+                                } else if (error.getClass().equals(NoConnectionError.class)) {
+                                    errorMessage = "Failed to connect server";
+                                }
+                            } else {
+                                String result = new String(networkResponse.data);
+
+                                JSONObject response = null;
+                                try {
+                                    response = new JSONObject(result);
+                                    String status = response.getString("status");
+                                    String message = response.getString("message");
+
+
+                                    Log.e("Error Status", status);
+                                    Log.e("Error Message", message);
+
+                                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                    try {
+                                        Toast.makeText(getApplicationContext(), response.getString("message"), Toast.LENGTH_SHORT).show();
+                                    } catch (JSONException jsonException) {
+                                        jsonException.printStackTrace();
+                                    }
+                                }
+                            }
                         }
                     }) {
                 @Override
