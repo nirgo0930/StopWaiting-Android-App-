@@ -352,7 +352,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     JSONObject dataObject = dataArray.getJSONObject(i);
                                     Log.e("temp", dataObject.toString());
                                     WaitingInfo data = new WaitingInfo();
-                                    data.setWaitingId(dataObject.getLong("id"));
+
                                     data.setAdminId(dataObject.getLong("adminId"));
                                     data.setName(dataObject.getString("name"));
                                     data.setLatitude(dataObject.getDouble("latitude"));
@@ -366,7 +366,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     JSONArray timeArray = dataObject.getJSONArray("timetables");
                                     for (int j = 0; j < timeArray.length(); j++) {
                                         JSONObject timeObj = timeArray.getJSONObject(j);
-
+                                        data.setWaitingId(timeObj.getJSONObject("waitingInfo").getLong("id"));
                                         timetable.add(timeObj.getString("time"));
                                     }
                                     data.setTimetable(timetable);
