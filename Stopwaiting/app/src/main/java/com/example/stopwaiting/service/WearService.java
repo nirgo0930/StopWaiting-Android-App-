@@ -55,7 +55,7 @@ public class WearService extends WearableListenerService {
                     Log.e("cancel", message);
                     String[] strArr = message.split("/");
 
-                    Long qId = Long.valueOf(strArr[0]);
+                    Long qId = Long.valueOf(strArr[1]);
                     cancelWaitingRequest(qId);
             }
 

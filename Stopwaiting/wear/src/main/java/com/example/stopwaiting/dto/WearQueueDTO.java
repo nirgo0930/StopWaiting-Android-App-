@@ -13,6 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class WearQueueDTO implements Serializable {
     private Long qId;
+    private Long wId;
     private String queueName;
     private String time;
     private int myNum;
@@ -23,7 +24,13 @@ public class WearQueueDTO implements Serializable {
         this.qId = data.getQId();
         this.queueName = data.getQueueName();
         this.time = data.getTime();
-        this.myNum = data.getWaitingPersonList().indexOf(user);
+        for (UserInfo userInfo : data.getWaitingPersonList()) {
+            if (userInfo.getStudentCode().equals(user)) {
+                this.myNum = data.getWaitingPersonList().indexOf(user);
+                break;
+            }
+        }
+        this.wId = wData.getId();
         this.longitude = wData.getLongitude();
         this.latitude = wData.getLatitude();
     }
