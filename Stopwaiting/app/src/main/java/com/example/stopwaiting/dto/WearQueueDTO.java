@@ -1,5 +1,7 @@
 package com.example.stopwaiting.dto;
 
+import android.util.Log;
+
 import java.io.Serializable;
 
 import lombok.AllArgsConstructor;
@@ -33,5 +35,7 @@ public class WearQueueDTO implements Serializable {
         this.wId = wData.getWaitingId();
         this.longitude = wData.getLongitude();
         this.latitude = wData.getLatitude();
+
+        Log.e("newDTO", String.valueOf(wId) + "/" + queueName);
     }
 }
