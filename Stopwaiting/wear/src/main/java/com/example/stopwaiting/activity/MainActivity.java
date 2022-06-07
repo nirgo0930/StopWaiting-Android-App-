@@ -1,7 +1,6 @@
 package com.example.stopwaiting.activity;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -106,7 +105,7 @@ public class MainActivity extends Activity {
             String postData = selectQueue.getQueueName() + "/" +
                     selectQueue.getLatitude() + "/" +
                     selectQueue.getLongitude() + "/" +
-                    Long.toString(selectQueue.getQId());
+                    Long.toString(selectQueue.getWId());
 
             if (selectQueue.getTime().equals("NORMAL")) {
                 str = "normal/" + selectQueue.getMyNum() + "/" +

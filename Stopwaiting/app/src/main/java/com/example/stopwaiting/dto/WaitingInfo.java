@@ -41,20 +41,6 @@ public class WaitingInfo implements Serializable {
         this.queueList = queueList;
     }
 
-//    public WaitingInfo(Long adm, Long waitingId, Double latitude, Double longitude, String name, String locDetail, String info, String type, int maxPerson, ArrayList timetable, ArrayList<String> urlList) {
-//        this.adminId = adm;
-//        this.waitingId = waitingId;
-//        this.latitude = latitude;
-//        this.longitude = longitude;
-//        this.name = name;
-//        this.locDetail = locDetail;
-//        this.info = info;
-//        this.type = type;
-//        this.maxPerson = maxPerson;
-//        this.timetable = timetable;
-//        this.urlList = urlList;
-//    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
