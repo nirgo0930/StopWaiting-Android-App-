@@ -24,6 +24,7 @@ public class WearQueueDTO implements Serializable {
 
     public WearQueueDTO(UserInfo user, WaitingQueue data, WaitingInfo wData) {
         this.qId = data.getQId();
+        this.wId = wData.getWaitingId();
         this.queueName = data.getQueueName();
         this.time = data.getTime();
         for (UserInfo userInfo : data.getWaitingPersonList()) {
@@ -32,7 +33,6 @@ public class WearQueueDTO implements Serializable {
                 break;
             }
         }
-        this.wId = wData.getWaitingId();
         this.longitude = wData.getLongitude();
         this.latitude = wData.getLatitude();
 

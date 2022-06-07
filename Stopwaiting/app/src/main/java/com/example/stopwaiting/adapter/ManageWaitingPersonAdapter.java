@@ -89,6 +89,7 @@ public class ManageWaitingPersonAdapter extends RecyclerView.Adapter<ManageWaiti
 
         holder.txtName.setText(waitingPerson.getName());
         holder.txtCnt.setText(String.valueOf(position + 1) + ".");
+        holder.txtSCode.setText(String.valueOf(waitingPerson.getStudentCode()));
         holder.txtTelNum.setText(waitingPerson.getTel());
     }
 
@@ -110,7 +111,7 @@ public class ManageWaitingPersonAdapter extends RecyclerView.Adapter<ManageWaiti
             }
         } else {
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.DELETE,
-                    DataApplication.serverURL + "/queue/" + qId + "/" + DataApplication.currentUser.getStudentCode(), null,
+                    DataApplication.serverURL + "/queue/" + qId + "/" + sId, null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {

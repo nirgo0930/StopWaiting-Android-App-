@@ -23,10 +23,8 @@ import com.example.stopwaiting.activity.ManageWaitingActivity;
 import com.example.stopwaiting.dto.WaitingListItem;
 import com.example.stopwaiting.viewholder.ManageWaitingListItemViewHolder;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,10 +67,8 @@ public class ManageWaitingListAdapter extends RecyclerView.Adapter<ManageWaiting
                         public void onClick(DialogInterface dialog, int whichButton) {
                             // 확인시 처리 로직
                             String name = mItemList.get(pos).getName();
+                            removeWaitingRequest(mItemList.get(pos).getWId());
                             mItemList.remove(pos);
-
-                            removeWaitingRequest(mItemList.get(pos).getName());
-
                             notifyDataSetChanged();
                         }
                     })
@@ -121,60 +117,29 @@ public class ManageWaitingListAdapter extends RecyclerView.Adapter<ManageWaiting
         return mItemList.size();
     }
 
-    public void removeWaitingRequest(String name) {
-        if (DataApplication.isTest) {
-            for (int i = 0; i < DataApplication.testDBList.size(); i++) {
-                if (DataApplication.testDBList.get(i).getName().equals(name)) {
-
-                    DataApplication.testDBList.remove(i);
-                    break;
-                }
-            }
-        } else {
-            JSONObject jsonBodyObj = new JSONObject();
-            try {
-                jsonBodyObj.put("waitingName", name);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            final String requestBody = String.valueOf(jsonBodyObj.toString());
-
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, DataApplication.serverURL + "/removeWaiting", null,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject jsonObject) {
+    public void removeWaitingRequest(Long wId) {
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.DELETE, DataApplication.serverURL + "/waitinginfo/" + wId, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject jsonObject) {
 //                            Toast.makeText(getApplicationContext(), "로그인에 성공하였습니다.\n 잠시만 기다려주세요", Toast.LENGTH_SHORT).show();
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-//                            Toast.makeText(getApplicationContext(), "로그인에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-                        }
-                    }) {
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    HashMap<String, String> headers = new HashMap<String, String>();
-                    headers.put("Content-Type", "application/json");
-                    return headers;
-                }
-
-                @Override
-                public byte[] getBody() {
-                    try {
-                        if (requestBody != null && requestBody.length() > 0 && !requestBody.equals("")) {
-                            return requestBody.getBytes("utf-8");
-                        } else {
-                            return null;
-                        }
-                    } catch (UnsupportedEncodingException uee) {
-                        return null;
                     }
-                }
-            };
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+//                            Toast.makeText(getApplicationContext(), "로그인에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json");
+                return headers;
+            }
+        };
 
-            request.setShouldCache(false);
-            DataApplication.requestQueue.add(request);
-        }
+        request.setShouldCache(false);
+        DataApplication.requestQueue.add(request);
     }
 }

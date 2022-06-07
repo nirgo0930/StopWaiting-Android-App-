@@ -261,7 +261,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
-                            Log.e("my", jsonObject.toString());
+//                            Log.e("my", jsonObject.toString());
                             Toast.makeText(getApplicationContext(), "신청한 웨이팅 조회.", Toast.LENGTH_SHORT).show();
                             try {
                                 JSONArray dataArray = jsonObject.getJSONArray("data");
