@@ -23,6 +23,8 @@ public class DataApplication extends Application {
 
     static public String serverURL = "http://stopwaitingserver-env-1.eba-pxdbitvs.ap-northeast-2.elasticbeanstalk.com/api/v1";
     static public String imgURL = "http://stopwaitingserver-env-1.eba-pxdbitvs.ap-northeast-2.elasticbeanstalk.com";
+    //    static public String serverURL = "";
+    //    static public String imgURL = "";
     private String path = "/my_path";
 
 
