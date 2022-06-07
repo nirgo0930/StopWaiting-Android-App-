@@ -21,8 +21,8 @@ public class DataApplication extends Application {
 
     static public RequestQueue requestQueue;
 
-    static public String serverURL = "http://192.168.25.37:8080/api/v1";
-    static public String imgURL = "http://192.168.25.37:8080";
+    static public String serverURL = "http://stopwaitingserver-env-1.eba-pxdbitvs.ap-northeast-2.elasticbeanstalk.com/api/v1";
+    static public String imgURL = "http://stopwaitingserver-env-1.eba-pxdbitvs.ap-northeast-2.elasticbeanstalk.com";
     private String path = "/my_path";
 
 

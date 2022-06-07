@@ -26,6 +26,9 @@ import com.android.volley.toolbox.Volley;
 import com.example.stopwaitingadmin.R;
 import com.example.stopwaitingadmin.databinding.LoginBinding;
 import com.example.stopwaitingadmin.dto.AdminWaitingListItem;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -65,6 +68,14 @@ public class LoginActivity extends AppCompatActivity {
 
         if (DataApplication.requestQueue == null)
             DataApplication.requestQueue = Volley.newRequestQueue(getApplicationContext());
+        FirebaseApp.initializeApp(this);
+        FirebaseMessaging.getInstance().getToken().addOnSuccessListener(new OnSuccessListener<String>() {
+            @Override
+            public void onSuccess(String data) {
+                token = data;
+                Log.e("-----------------token", token);
+            }
+        });
 
         binding.btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -149,7 +160,7 @@ public class LoginActivity extends AppCompatActivity {
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Log.e("Test",error.toString());
+                            Log.e("Test", error.toString());
                             Toast.makeText(getApplicationContext(), "로그인에 실패하였습니다.", Toast.LENGTH_SHORT).show();
                         }
                     }) {
