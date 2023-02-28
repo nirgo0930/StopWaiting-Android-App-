@@ -1,5 +1,5 @@
 # 2022-1학기 창의융합종합설계
-# 안드로이드 및 Wear OS를 이용한 이벤트성 행사 예약 대기 처리 어플리케이션
+안드로이드 및 Wear OS를 이용한 이벤트성 행사 예약 대기 처리 어플리케이션
 
 # 사용기술
  Java, JSP, Spring, FireBase, MySQL, Wear OS
